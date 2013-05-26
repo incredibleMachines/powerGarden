@@ -1,0 +1,129 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Button
+        android:id="@+id/btn_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="71dp"
+        android:layout_marginLeft="33dp"
+        android:text="- start -" />
+
+    <TextView
+        android:id="@+id/datastream_id_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_counter"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:textSize="20dp"
+        android:text="Humidity: "
+        tools:context=".MainActivity" />
+
+    <TextView
+        android:id="@+id/current_value_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/datastream_id_1"
+        android:layout_alignBottom="@+id/datastream_id_1"
+        android:layout_toRightOf="@+id/datastream_id_1"
+        android:layout_marginLeft="60dp"
+        android:textSize="20dp"
+        android:text="0"
+        tools:context=".MainActivity" />
+    
+    <TextView
+        android:id="@+id/datastream_id_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/datastream_id_1"
+        android:layout_marginTop="90dp"
+        android:textSize="20dp"
+        android:text="Temperature: "
+        tools:context=".MainActivity" />
+
+    <TextView
+        android:id="@+id/current_value_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/datastream_id_2"
+        android:layout_below="@+id/current_value_1"
+        android:layout_toRightOf="@+id/datastream_id_2"
+        android:layout_marginLeft="60dp"
+        android:textSize="20dp"
+        android:text="0"
+        tools:context=".MainActivity" />
+    
+     <TextView
+        android:id="@+id/datastream_id_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/datastream_id_1"
+        android:layout_marginTop="130dp"
+        android:textSize="20dp"
+        android:text="Soil Moisture: "
+        tools:context=".MainActivity" />
+
+    <TextView
+        android:id="@+id/current_value_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/datastream_id_3"
+        android:layout_below="@+id/current_value_2"
+        android:layout_toRightOf="@+id/datastream_id_3"
+        android:layout_marginLeft="60dp"
+        android:textSize="20dp"
+        android:text="0"
+        tools:context=".MainActivity" />
+    
+   <TextView
+        android:id="@+id/arduino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:layout_alignLeft="@+id/btn_counter"
+        android:textSize="50dp"
+      
+        android:text="plant 1 sense: "
+        tools:context=".MainActivity" />
+
+    <TextView
+        android:id="@+id/arduino_value_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/arduino"
+		android:layout_alignBaseline="@+id/arduino"
+        android:layout_marginLeft="60dp"
+        android:textSize="50dp"
+        android:text="0"
+        tools:context=".MainActivity" />
+    
+       <TextView
+        android:id="@+id/arduino2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="310dp"
+        android:layout_alignLeft="@+id/btn_counter"
+        android:textSize="50dp"
+      
+        android:text="plant 2 sense: "
+        tools:context=".MainActivity" />
+
+    <TextView
+        android:id="@+id/arduino_value_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/arduino2"
+		android:layout_alignBaseline="@+id/arduino2"
+        android:layout_marginLeft="60dp"
+        android:textSize="50dp"
+        android:text="0"
+        tools:context=".MainActivity" />
+    
+    
+
+</RelativeLayout>
