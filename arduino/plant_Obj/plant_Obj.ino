@@ -13,7 +13,12 @@ Plant plant[3];
 
 void setup(){
   
-  for(int i = 0; i<NUM_PLANT; i++) plant[i].capSense = new CapacitiveSensor(CAP_PIN, plant_pin[i] );
+  for(int i = 0; i<NUM_PLANT; i++) {
+                  plant[i].capSense = new CapacitiveSensor(CAP_PIN, plant_pin[i] );
+                  delay(50);
+                  plant[i].capSense->set_CS_AutocaL_Millis(0xFFFFFFFF);  
+                  delay(50);
+              }
   
   Serial.begin(57600); 
 }
