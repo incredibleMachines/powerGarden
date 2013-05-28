@@ -124,6 +124,27 @@
         android:text="0"
         tools:context=".MainActivity" />
     
+     <TextView
+        android:id="@+id/arduino3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="370dp"
+        android:layout_alignLeft="@+id/btn_counter"
+        android:textSize="50dp"
+        android:text="plant 3 sense: "
+        tools:context=".MainActivity" />
+
+    <TextView
+        android:id="@+id/arduino_value_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/arduino3"
+		android:layout_alignBaseline="@+id/arduino3"
+        android:layout_marginLeft="60dp"
+        android:textSize="50dp"
+        android:text="0"
+        tools:context=".MainActivity" />
+    
     
 
 </RelativeLayout>

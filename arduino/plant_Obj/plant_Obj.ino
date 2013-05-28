@@ -6,6 +6,7 @@
 #define PLANT_1 2
 #define PLANT_2 6
 #define PLANT_3 8
+#define TIMEOUT 30
 
 int plant_pin[] = { 2, 6, 8};
 
@@ -28,7 +29,7 @@ void loop() {
 
  for(int i = 0; i<NUM_PLANT; i++){
    plant[i].start = millis();
-   plant[i].touch = plant[i].capSense->capacitiveSensor(30);
+   plant[i].touch = plant[i].capSense->capacitiveSensor(TIMEOUT);
    plantTouch(&plant[i]);
    Serial.print("Plant");
    Serial.print(i);

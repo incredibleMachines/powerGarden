@@ -4,7 +4,6 @@
 // November 29, 2011
 
 package com.incrediblemachines.powergarden;
-
 import com.incrediblemachines.powergarden.R;
 
 import java.io.FileDescriptor;
@@ -28,66 +27,64 @@ import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity implements Runnable{
     /** Called when the activity is first created. */
     
 	private static final String TAG = "LoginActivity";
 	
-	   private final WebSocketConnection mConnection = new WebSocketConnection();
+    private final WebSocketConnection mConnection = new WebSocketConnection();
+    
+    private GardenMedia gardenAV = new GardenMedia();
+   
+    TextView datastreamId;
+    TextView datastreamId2;
+    TextView currentValue;
+    TextView currentValue2;
+    
+    TextView plant1Label;
+    TextView plant2Label;
+    TextView plant3Label;
+   
+    TextView plantVal_1;
+    TextView plantVal_2;
+    TextView plantVal_3;
+   
+    Button counter;
+   
+    JSONObject dataIn;
+    JSONObject dataToSend;
+    JSONArray datastreams;
+   
+    CosmParser parser;
+   
+    public int currentCount;
+   
+    int arduinoVal;
+   
+    String FEEDID = "81331";
+    String APIKEY = "_sG8TKAucC_cY02I8FIjYzkZkv-SAKxWWGZDWVh2eDlJbz0g";
 	   
-	   TextView datastreamId;
-	   TextView datastreamId2;
-	   TextView currentValue;
-	   TextView currentValue2;
-	   
-	   TextView analogValIn;
-	   TextView analog2ValIn;
-	   
-	   Button counter;
-	   
-	   JSONObject dataIn;
-	   JSONObject dataToSend;
-	   JSONArray datastreams;
-	   
-	   CosmParser parser;
-	   
-
-	   public int currentCount;
-	   
-	   int arduinoVal;
-	   
-	   String FEEDID = "81331";
-	   String APIKEY = "_sG8TKAucC_cY02I8FIjYzkZkv-SAKxWWGZDWVh2eDlJbz0g";
-	   
-
 	boolean debug = false;
 	
 	/*** service stuff ***/
@@ -115,19 +112,19 @@ public class MainActivity extends Activity implements Runnable{
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		
-        super.onCreate(savedInstanceState);
-        Log.d(TAG,"onCreate");
-                
-        setContentView(R.layout.main_activity);
-        
-        /******* ADK service stuff ******/
-        mUsbManager = UsbManager.getInstance(this);
+	    super.onCreate(savedInstanceState);
+	    Log.d(TAG,"onCreate");
+	            
+	    setContentView(R.layout.main_activity);
+	    
+	    /******* ADK service stuff ******/
+	    mUsbManager = UsbManager.getInstance(this);
 		mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(
 				ACTION_USB_PERMISSION), 0);
 		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
 		filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
 		registerReceiver(mUsbReceiver, filter);
-
+	
 		if (getLastNonConfigurationInstance() != null) {
 			mAccessory = (UsbAccessory) getLastNonConfigurationInstance();
 			openAccessory(mAccessory);
@@ -136,9 +133,9 @@ public class MainActivity extends Activity implements Runnable{
 		startService(new Intent(this, ADKService.class));
 		/***** end service stuff *****/      		
 		
-        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-        
+	    //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+	    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+	    
 	    ExistenceLightOtf = Typeface.createFromAsset(getAssets(),"fonts/Existence-Light.ttf");
 	    Museo300Regular = Typeface.createFromAsset(getAssets(),"fonts/Museo300-Regular.otf");
 	    Museo500Regular = Typeface.createFromAsset(getAssets(),"fonts/Museo500-Regular.otf");
@@ -149,117 +146,24 @@ public class MainActivity extends Activity implements Runnable{
 	    counter.setOnClickListener(mCounter);
 	    
 	      
-	      datastreamId = (TextView) findViewById(R.id.datastream_id_1);
-	      currentValue = (TextView) findViewById(R.id.current_value_1);
-	      datastreamId2 = (TextView) findViewById(R.id.datastream_id_2);
-	      currentValue2 = (TextView) findViewById(R.id.current_value_2);
-	      
-	      analogValIn = (TextView) findViewById(R.id.arduino_value_1);
-	      
-	      analog2ValIn = (TextView) findViewById(R.id.arduino_value_2);
+	    datastreamId = (TextView) findViewById(R.id.datastream_id_1);
+	    currentValue = (TextView) findViewById(R.id.current_value_1);
+	    datastreamId2 = (TextView) findViewById(R.id.datastream_id_2);
+	    currentValue2 = (TextView) findViewById(R.id.current_value_2);
+	  
+	    plantVal_1 = (TextView) findViewById(R.id.arduino_value_1);
+	    plantVal_2 = (TextView) findViewById(R.id.arduino_value_2);
+	    plantVal_3 = (TextView) findViewById(R.id.arduino_value_3);
 	    
-    	Resources res = getResources();
-    	
-    	
-    	start();
+	    plant1Label = (TextView) findViewById(R.id.arduino);
+	    plant2Label = (TextView) findViewById(R.id.arduino2);
+	    plant3Label = (TextView) findViewById(R.id.arduino3);
+	    
+		Resources res = getResources();
+		
+		//start();  <--- connect to socket port
     }
 
-	private void start() {
-		   
-	      final String wsuri = "ws://api.cosm.com:8080";
-	      
-	      try {
-	         mConnection.connect(wsuri, new WebSocketHandler() {
-	 
-	            @Override
-	            public void onOpen() {
-	               Log.d(TAG, "Status: Connected to " + wsuri);
-	               
-	               //open subscription to this feed's socket
-	               //mConnection.sendTextMessage("{\"method\" : \"subscribe\",\"resource\" : \"/feeds/"+FEEDID+"\",\"headers\" :{\"X-ApiKey\" : \""+APIKEY+"\"},\"token\" : \"0xabcdef\"}");
-	               
-	               //initial pull of current datastreams
-	               //qamConnection.sendTextMessage("{\"method\":\"get\",\"resource\":\"/feeds/"+FEEDID+"9m  \",\"headers\":{\"X-ApiKey\":\""+APIKEY+"\"},\"token\":\"0xabcdef\"}");       
-	            }
-	 
-	            @Override
-	            public void onTextMessage(String payload) {
-	               Log.d(TAG, "Got echo: " + payload);
-	               try {
-	            	   JSONObject rawIn = new JSONObject(payload);
-	            	   if(rawIn.has("body")){
-		            	   dataIn = new JSONObject();
-		            	   dataIn = rawIn.getJSONObject("body");
-		            	   parser = new CosmParser(dataIn);			
-		            	   updateTextViews();  
-	            	   }
-					
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	               
-	            }
-	 
-	            @Override
-	            public void onClose(int code, String reason) {
-	               Log.d(TAG, "Connection lost.");
-	            }
-	         });
-	      } catch (WebSocketException e) {
-	 
-	         Log.d(TAG, e.toString());
-	      }
-	   }
- 
- public void pullData(){
-	   
-	//   mConnection.sendTextMessage("{'method':'get','resource':'/feeds/81331/datastreams/0','headers':{'X-ApiKey':'_sG8TKAucC_cY02I8FIjYzkZkv-SAKxWWGZDWVh2eDlJbz0g'},'token':'0xabcdef'}");
- }
- 
- public void updateTextViews(){
-	   
-	   try {
-		Log.d(TAG, String.valueOf(parser.getDataStreamCount()));
-		Log.d(TAG, parser.getStreamId(0));
-		String thisDatastreamId = parser.getStreamId(0);
-		String thisDatastreamId2 = parser.getStreamId(1);
-		datastreamId.setText("Moisture");
-		datastreamId2.setText("Temperature");
-		
-		   
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		   
-	   
-	   currentCount = (int) parser.getStreamCurrVal(0);
-	   String datastreamValue = String.valueOf(parser.getStreamCurrVal(0));
-	   currentValue.setText(datastreamValue);
-	   
-	   String datastreamValue2 = String.valueOf(parser.getStreamCurrVal(1));
-	   currentValue2.setText(datastreamValue2);
-	   
-	   double lat = parser.latitude;
-	   double lon = parser.longitude;
-	   Log.d(TAG, String.valueOf(lat));
-	   Log.d(TAG, String.valueOf(lon));
- }
- 
-	//---- when counter button is pressed
- OnClickListener mCounter = new OnClickListener(){
- 	public void onClick(View v) {
- 		Log.d(TAG,"mCounter.onClick");
- 		
- 		String datastream = "counter";
- 		currentCount++;
- 		sendPress('Y');
- 		
- 		/*********** THIS ONE: *****/
- 		//mConnection.sendTextMessage("{\"method\":\"put\",\"resource\":\"/feeds/"+FEEDID+"\",\"headers\" : {\"X-ApiKey\" : \""+APIKEY+"\"},\"body\":{\"version\":\"1.0.0\",\"datastreams\":[{\"id\":\"counter\",\"current_value\":\""+String.valueOf(currentCount)+"\"},{\"id\":\"streamId2\",\"current_value\":\"22\"}]}}");
- 		}	
- 	};
 	
     @Override
 	public Object onRetainNonConfigurationInstance() {
@@ -272,9 +176,7 @@ public class MainActivity extends Activity implements Runnable{
     
     @Override
     protected void onNewIntent(Intent intent){
-        Log.d(TAG,"onNewIntent");
-
-       
+        Log.d(TAG,"onNewIntent"); 
     } 
 
 	/****** ADK stuff!! *****/
@@ -417,27 +319,44 @@ public class MainActivity extends Activity implements Runnable{
 				
 				one = ((int)buffer[0] & 0x00FF);
 				two = ((int)buffer[1] & 0x00FF);
+				three = ((int)buffer[1] & 0x00FF);
 				
-				/* values need to be final before passing to handler */
 				final int fRet = ret;
 				//final byte[] finalVals1 = sValue1;	//copy array into a final byte[]
 				//final byte[] finalVals2 = sValue2; //copy array into a final byte[]
 				//final byte[] finalVals3 = sValue3; //copy array into a final byte[]
 				
+				/* values need to be final before passing to handler */
 				final int tOne = one;
 				final int tTwo = two;
 				final int tThree = three;
 				final byte fCrc = crc;
-				final String fThisBracelet = thisBracelet;
+				
 				mHandler.post(new Runnable() {
 					
 					public void run() {
+						
+						if(tOne > 0){
+							gardenAV.audioPlayer(1, getApplicationContext());
+							plant1Label.setTextColor(Color.GREEN);
+						} else plant1Label.setTextColor(Color.WHITE);
+						if(tTwo > 0){
+							gardenAV.audioPlayer(2, getApplicationContext());
+							plant2Label.setTextColor(Color.GREEN);
+						} else plant2Label.setTextColor(Color.WHITE);
+						if(tThree > 0){
+							gardenAV.audioPlayer(3, getApplicationContext());
+							plant3Label.setTextColor(Color.GREEN);
+						} else plant3Label.setTextColor(Color.WHITE);
+						
 						String analogInVal = String.valueOf(tOne);
 						String analog2InVal = String.valueOf(tTwo);
-						analogValIn.setText(analogInVal);
-						analog2ValIn.setText(analog2InVal);
-						Log.d(TAG,analogInVal);
-						mConnection.sendTextMessage("{\"method\":\"put\",\"resource\":\"/feeds/81331\",\"headers\" : {\"X-ApiKey\" : \"_sG8TKAucC_cY02I8FIjYzkZkv-SAKxWWGZDWVh2eDlJbz0g\"},\"body\":{\"version\":\"1.0.0\",\"datastreams\":[{\"id\":\"potentiometer\",\"current_value\":\""+analogInVal+"\"},{\"id\":\"streamId2\",\"current_value\":\"22\"}]}}");
+						String analog3InVal = String.valueOf(tThree);
+						plantVal_1.setText(analogInVal);
+						plantVal_2.setText(analog2InVal);
+						plantVal_3.setText(analog3InVal);
+						
+						//mConnection.sendTextMessage("{\"method\":\"put\",\"resource\":\"/feeds/81331\",\"headers\" : {\"X-ApiKey\" : \"_sG8TKAucC_cY02I8FIjYzkZkv-SAKxWWGZDWVh2eDlJbz0g\"},\"body\":{\"version\":\"1.0.0\",\"datastreams\":[{\"id\":\"potentiometer\",\"current_value\":\""+analogInVal+"\"},{\"id\":\"streamId2\",\"current_value\":\"22\"}]}}");
 				 		
 						sendPress('Y');
 					}
@@ -557,7 +476,6 @@ public class MainActivity extends Activity implements Runnable{
 		}
 	    
 //	    private void updateTextViews() {
-//
 //	    	Log.v(TAG, "updated text views");    	
 //	    }
 
@@ -618,6 +536,107 @@ public class MainActivity extends Activity implements Runnable{
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 		//getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 	}
+
+	
+	
+	//------ websocket stuff ------//
+	private void start() {
+		   
+	      final String wsuri = "ws://api.cosm.com:8080";	      
+	      try {
+	         mConnection.connect(wsuri, new WebSocketHandler() {
+	 
+	            @Override
+	            public void onOpen() {
+	               //Log.d(TAG, "Status: Connected to " + wsuri);
+	               
+	               //open subscription to this feed's socket
+	               //mConnection.sendTextMessage("{\"method\" : \"subscribe\",\"resource\" : \"/feeds/"+FEEDID+"\",\"headers\" :{\"X-ApiKey\" : \""+APIKEY+"\"},\"token\" : \"0xabcdef\"}");
+	               
+	               //initial pull of current datastreams
+	               //qamConnection.sendTextMessage("{\"method\":\"get\",\"resource\":\"/feeds/"+FEEDID+"9m  \",\"headers\":{\"X-ApiKey\":\""+APIKEY+"\"},\"token\":\"0xabcdef\"}");       
+	            }
+	 
+	            @Override
+	            public void onTextMessage(String payload) {
+	               Log.d(TAG, "Got echo: " + payload);
+	               try {
+	            	   JSONObject rawIn = new JSONObject(payload);
+	            	   if(rawIn.has("body")){
+		            	   dataIn = new JSONObject();
+		            	   dataIn = rawIn.getJSONObject("body");
+		            	   parser = new CosmParser(dataIn);			
+		            	   updateTextViews();  
+	            	   }
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            }
+	 
+	            @Override
+	            public void onClose(int code, String reason) {
+	               Log.d(TAG, "Connection lost.");
+	            }
+	         });
+	      } catch (WebSocketException e) {
+	         Log.d(TAG, e.toString());
+	      }
+	   }
+
+	public void updateTextViews(){
+		   
+		   try {
+			Log.d(TAG, String.valueOf(parser.getDataStreamCount()));
+			Log.d(TAG, parser.getStreamId(0));
+			String thisDatastreamId = parser.getStreamId(0);
+			String thisDatastreamId2 = parser.getStreamId(1);
+			datastreamId.setText("Moisture");
+			datastreamId2.setText("Temperature");
+			
+			   
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			   
+		   
+		   currentCount = (int) parser.getStreamCurrVal(0);
+		   String datastreamValue = String.valueOf(parser.getStreamCurrVal(0));
+		   currentValue.setText(datastreamValue);
+		   
+		   String datastreamValue2 = String.valueOf(parser.getStreamCurrVal(1));
+		   currentValue2.setText(datastreamValue2);
+		   
+		   double lat = parser.latitude;
+		   double lon = parser.longitude;
+		   Log.d(TAG, String.valueOf(lat));
+		   Log.d(TAG, String.valueOf(lon));
+	}
+
+	 public void pullData(){
+		   
+			//   mConnection.sendTextMessage("{'method':'get','resource':'/feeds/81331/datastreams/0','headers':{'X-ApiKey':'_sG8TKAucC_cY02I8FIjYzkZkv-SAKxWWGZDWVh2eDlJbz0g'},'token':'0xabcdef'}");
+	 }
+	
+	//---- when counter button is pressed
+	OnClickListener mCounter = new OnClickListener(){
+	 	public void onClick(View v) {
+	 		Log.d(TAG,"mCounter.onClick");
+	 		
+	 		String datastream = "counter";
+	 		currentCount++;
+	 		//sendPress('Y');
+	 		
+	 		gardenAV.audioPlayer(1, getApplicationContext());
+	 		
+//			MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.laugh_2);
+//			mp.start();
+	 		
+	 		/*********** THIS ONE: *****/
+	 		//mConnection.sendTextMessage("{\"method\":\"put\",\"resource\":\"/feeds/"+FEEDID+"\",\"headers\" : {\"X-ApiKey\" : \""+APIKEY+"\"},\"body\":{\"version\":\"1.0.0\",\"datastreams\":[{\"id\":\"counter\",\"current_value\":\""+String.valueOf(currentCount)+"\"},{\"id\":\"streamId2\",\"current_value\":\"22\"}]}}");
+ 		}	
+ 	};
 	
 //	@Override
 //	  public boolean onTouchEvent(MotionEvent event){
