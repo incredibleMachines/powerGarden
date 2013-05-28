@@ -1,4 +1,4 @@
-package com.jmsaavedra.cosmadksocket;
+package com.incrediblemachines.powergarden;
 
 import java.io.*;
 import java.util.ArrayList;

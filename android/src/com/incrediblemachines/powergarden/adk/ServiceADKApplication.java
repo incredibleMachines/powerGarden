@@ -3,7 +3,7 @@
 // RobotGrrl.com
 // November 29, 2011
 
-package com.jmsaavedra.cosmadksocket;
+package com.incrediblemachines.powergarden.adk;
 
 
 import java.io.FileInputStream;

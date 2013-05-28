@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.jmsaavedra.cosmadksocket;
+package com.incrediblemachines.powergarden.adk;
 
-import com.jmsaavedra.cosmadksocket.LoginActivity;
+import com.incrediblemachines.powergarden.MainActivity;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -36,7 +36,7 @@ public final class UsbAccessoryActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		//Intent intent = LoginActivity.createIntent(this);
-		Intent intent = new Intent(UsbAccessoryActivity.this, LoginActivity.class);
+		Intent intent = new Intent(UsbAccessoryActivity.this, MainActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
 				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.putExtra("token", "boarded");

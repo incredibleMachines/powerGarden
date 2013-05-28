@@ -3,13 +3,13 @@
 // RobotGrrl.com
 // November 29, 2011
 
-package com.jmsaavedra.cosmadksocket;
+package com.incrediblemachines.powergarden.adk;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.jmsaavedra.cosmadksocket.LoginActivity;
+import com.incrediblemachines.powergarden.MainActivity;
 
 import android.app.Service;
 import android.content.Intent;
@@ -25,7 +25,7 @@ public class ADKService extends Service {
 	
 	FileInputStream mInputStream;
 	FileOutputStream mOutputStream;
-	LoginActivity mHostActivity;
+	MainActivity mHostActivity;
 
 	int CURRENT_TAB = 0;
 	

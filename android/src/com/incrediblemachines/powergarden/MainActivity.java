@@ -3,7 +3,9 @@
 // RobotGrrl.com
 // November 29, 2011
 
-package com.jmsaavedra.cosmadksocket;
+package com.incrediblemachines.powergarden;
+
+import com.incrediblemachines.powergarden.R;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -16,12 +18,10 @@ import org.json.JSONObject;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
-import com.jmsaavedra.cosmadksocket.ADKService;
-import com.jmsaavedra.cosmadksocket.LoginActivity;
-import com.jmsaavedra.cosmadksocket.ServiceADKApplication;
-import com.jmsaavedra.cosmadksocket.CosmParser;
-
-import com.jmsaavedra.cosmadksocket.R;
+import com.incrediblemachines.powergarden.CosmParser;
+import com.incrediblemachines.powergarden.MainActivity;
+import com.incrediblemachines.powergarden.adk.ADKService;
+import com.incrediblemachines.powergarden.adk.ServiceADKApplication;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -56,7 +56,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LoginActivity extends Activity implements Runnable{
+public class MainActivity extends Activity implements Runnable{
     /** Called when the activity is first created. */
     
 	private static final String TAG = "LoginActivity";
@@ -118,8 +118,9 @@ public class LoginActivity extends Activity implements Runnable{
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate");
                 
-        setContentView(R.layout.activity_socket);
-        /******* service stuff ******/
+        setContentView(R.layout.main_activity);
+        
+        /******* ADK service stuff ******/
         mUsbManager = UsbManager.getInstance(this);
 		mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(
 				ACTION_USB_PERMISSION), 0);
