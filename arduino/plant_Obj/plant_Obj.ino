@@ -25,8 +25,13 @@ void loop() {
    plant[i].start = millis();
    plant[i].touch = plant[i].capSense->capacitiveSensor(30);
    plantTouch(&plant[i]);
-   Serial.println(plant[i].diff);
+   Serial.print("Plant");
+   Serial.print(i);
+   Serial.print("   ");
+   Serial.print(plant[i].diff);
+   Serial.print("\t");
  }
+ Serial.println();
  
 }
 
@@ -34,49 +39,7 @@ void loop() {
 void plantTouch(Plant *t){
   
   t->diff = abs(t->touch - t->last_touch);
+  t->diff/=1000;
   t->last_touch = t->touch;
 }
-
-//boolean plantTouch (long touch) {
-//  
-//  t = touch/1000;
-//  diff = t-last_t;
-//  
-//  
-//  if(debug){
-//    Serial.print(" ");
-//    Serial.print(diff);
-//    Serial.print(" ");   
-//    Serial.println(t);
-//    Serial.println("--------------------");    
-//  }
-//  last_t = t;
-//  last_diff = diff;
-//  
-//  Serial.println(diff);
-//  
-//  if (diff>=change) {
-//    if(!bActive){ //if its not active
-//      last_t = last_noTouch;
-//      touch_length = millis();
-//      bActive=true; 
-//      touchCount++;
-//    }
-//    return true;  
-//  }else{ 
-//    if(bActive && ( last_t > last_noTouch ) ) {
-//      if(touch_length-millis()> touch_timeout){ 
-//        return false;
-//      }
-//      touchCount++;
-//      return true;
-//    }
-//    bActive=false;
-//    return false;
-//  }
-//  
-//
-//  
-//}
-
 
