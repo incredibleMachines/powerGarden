@@ -53,7 +53,7 @@ public class MainActivity extends Activity implements Runnable{
     
 	private static final String TAG = "LoginActivity";
 	
-    private final WebSocketConnection mConnection = new WebSocketConnection();
+    //private final WebSocketConnection mConnection = new WebSocketConnection();
     
     private GardenMedia gardenAV = new GardenMedia();
    
@@ -77,6 +77,15 @@ public class MainActivity extends Activity implements Runnable{
     JSONArray datastreams;
    
     CosmParser parser;
+    
+    boolean triggered_1 = false;
+    long trig_1_time = 0;
+    boolean triggered_2 = false;
+    long trig_2_time = 0;
+    boolean triggered_3 = false;
+    long trig_3_time = 0;
+    
+    final long triggerTime = 2000;
    
     public int currentCount;
    
@@ -319,7 +328,7 @@ public class MainActivity extends Activity implements Runnable{
 				
 				one = ((int)buffer[0] & 0x00FF);
 				two = ((int)buffer[1] & 0x00FF);
-				three = ((int)buffer[1] & 0x00FF);
+				three = ((int)buffer[2] & 0x00FF);
 				
 				final int fRet = ret;
 				//final byte[] finalVals1 = sValue1;	//copy array into a final byte[]
@@ -336,22 +345,74 @@ public class MainActivity extends Activity implements Runnable{
 					
 					public void run() {
 						
+						if(System.currentTimeMillis() - trig_1_time > triggerTime){
+							triggered_1 = false;
+						}
+						if(System.currentTimeMillis() - trig_2_time > triggerTime){
+							triggered_2 = false;
+						}
+						if(System.currentTimeMillis() - trig_3_time > triggerTime){
+							triggered_3 = false;
+						}
+						
 						if(tOne > 0){
-							gardenAV.audioPlayer(1, getApplicationContext());
+							if(!triggered_1){ 
+								MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.laugh_1);
+								mp.start();
+								triggered_1 = true;
+								trig_1_time = System.currentTimeMillis();	
+							}
+						} 
+						if(triggered_1){
 							plant1Label.setTextColor(Color.GREEN);
-						} else plant1Label.setTextColor(Color.WHITE);
+							plantVal_1.setTextColor(Color.GREEN);
+						}
+						else{
+							plant1Label.setTextColor(Color.WHITE);
+							plantVal_1.setTextColor(Color.WHITE);
+						}
+						
+						
 						if(tTwo > 0){
-							gardenAV.audioPlayer(2, getApplicationContext());
+							if(!triggered_2){
+								MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.laugh_2);
+								mp.start();
+								triggered_2 = true;
+								trig_2_time = System.currentTimeMillis();
+							}
+						} 
+						if(triggered_2){
 							plant2Label.setTextColor(Color.GREEN);
-						} else plant2Label.setTextColor(Color.WHITE);
+							plantVal_2.setTextColor(Color.GREEN);
+						}
+						else{
+							plant2Label.setTextColor(Color.WHITE);
+							plantVal_2.setTextColor(Color.WHITE);
+						}
+						
+						
 						if(tThree > 0){
-							gardenAV.audioPlayer(3, getApplicationContext());
+							if(!triggered_3){
+								MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.hey_1);
+								mp.start();
+								triggered_3 = true;
+								trig_3_time = System.currentTimeMillis();
+							}
+						} 
+						if(triggered_3){
 							plant3Label.setTextColor(Color.GREEN);
-						} else plant3Label.setTextColor(Color.WHITE);
+							plantVal_3.setTextColor(Color.GREEN);
+						}
+						else{
+							plant3Label.setTextColor(Color.WHITE);
+							plantVal_3.setTextColor(Color.WHITE);
+						}
+						
 						
 						String analogInVal = String.valueOf(tOne);
 						String analog2InVal = String.valueOf(tTwo);
 						String analog3InVal = String.valueOf(tThree);
+						
 						plantVal_1.setText(analogInVal);
 						plantVal_2.setText(analog2InVal);
 						plantVal_3.setText(analog3InVal);
@@ -390,8 +451,7 @@ public class MainActivity extends Activity implements Runnable{
 				mThread = new Thread(null, this, "DemoKit"); // meep
 				mThread.start(); // meep
 				Log.d(TAG, "accessory opened");
-//				setContentView(R.layout.login_page);
-//				if(currPage.equals("login"))sendPress('Y');
+				sendPress('Y');					//tell ADK to start sending !
 				enableControls(true);
 			} else {
 				Log.d(TAG, "accessory open fail");
@@ -539,50 +599,50 @@ public class MainActivity extends Activity implements Runnable{
 
 	
 	
-	//------ websocket stuff ------//
-	private void start() {
-		   
-	      final String wsuri = "ws://api.cosm.com:8080";	      
-	      try {
-	         mConnection.connect(wsuri, new WebSocketHandler() {
-	 
-	            @Override
-	            public void onOpen() {
-	               //Log.d(TAG, "Status: Connected to " + wsuri);
-	               
-	               //open subscription to this feed's socket
-	               //mConnection.sendTextMessage("{\"method\" : \"subscribe\",\"resource\" : \"/feeds/"+FEEDID+"\",\"headers\" :{\"X-ApiKey\" : \""+APIKEY+"\"},\"token\" : \"0xabcdef\"}");
-	               
-	               //initial pull of current datastreams
-	               //qamConnection.sendTextMessage("{\"method\":\"get\",\"resource\":\"/feeds/"+FEEDID+"9m  \",\"headers\":{\"X-ApiKey\":\""+APIKEY+"\"},\"token\":\"0xabcdef\"}");       
-	            }
-	 
-	            @Override
-	            public void onTextMessage(String payload) {
-	               Log.d(TAG, "Got echo: " + payload);
-	               try {
-	            	   JSONObject rawIn = new JSONObject(payload);
-	            	   if(rawIn.has("body")){
-		            	   dataIn = new JSONObject();
-		            	   dataIn = rawIn.getJSONObject("body");
-		            	   parser = new CosmParser(dataIn);			
-		            	   updateTextViews();  
-	            	   }
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	            }
-	 
-	            @Override
-	            public void onClose(int code, String reason) {
-	               Log.d(TAG, "Connection lost.");
-	            }
-	         });
-	      } catch (WebSocketException e) {
-	         Log.d(TAG, e.toString());
-	      }
-	   }
+//	//------ websocket stuff ------//
+//	private void start() {
+//		   
+//	      final String wsuri = "ws://api.cosm.com:8080";	      
+//	      try {
+//	         //mConnection.connect(wsuri, new WebSocketHandler() {
+//	 
+//	            @Override
+//	            public void onOpen() {
+//	               //Log.d(TAG, "Status: Connected to " + wsuri);
+//	               
+//	               //open subscription to this feed's socket
+//	               //mConnection.sendTextMessage("{\"method\" : \"subscribe\",\"resource\" : \"/feeds/"+FEEDID+"\",\"headers\" :{\"X-ApiKey\" : \""+APIKEY+"\"},\"token\" : \"0xabcdef\"}");
+//	               
+//	               //initial pull of current datastreams
+//	               //qamConnection.sendTextMessage("{\"method\":\"get\",\"resource\":\"/feeds/"+FEEDID+"9m  \",\"headers\":{\"X-ApiKey\":\""+APIKEY+"\"},\"token\":\"0xabcdef\"}");       
+//	            }
+//	 
+//	            @Override
+//	            public void onTextMessage(String payload) {
+//	               Log.d(TAG, "Got echo: " + payload);
+//	               try {
+//	            	   JSONObject rawIn = new JSONObject(payload);
+//	            	   if(rawIn.has("body")){
+//		            	   dataIn = new JSONObject();
+//		            	   dataIn = rawIn.getJSONObject("body");
+//		            	   parser = new CosmParser(dataIn);			
+//		            	   updateTextViews();  
+//	            	   }
+//					} catch (JSONException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//	            }
+//	 
+//	            @Override
+//	            public void onClose(int code, String reason) {
+//	               Log.d(TAG, "Connection lost.");
+//	            }
+//	         });
+//	      } catch (WebSocketException e) {
+//	         Log.d(TAG, e.toString());
+//	      }
+//	   }
 
 	public void updateTextViews(){
 		   
@@ -626,12 +686,12 @@ public class MainActivity extends Activity implements Runnable{
 	 		
 	 		String datastream = "counter";
 	 		currentCount++;
-	 		//sendPress('Y');
+	 		sendPress('Y');
 	 		
-	 		gardenAV.audioPlayer(1, getApplicationContext());
+	 		//gardenAV.audioPlayer(3, getApplicationContext());
 	 		
-//			MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.laugh_2);
-//			mp.start();
+			MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.laugh_2);
+			mp.start();
 	 		
 	 		/*********** THIS ONE: *****/
 	 		//mConnection.sendTextMessage("{\"method\":\"put\",\"resource\":\"/feeds/"+FEEDID+"\",\"headers\" : {\"X-ApiKey\" : \""+APIKEY+"\"},\"body\":{\"version\":\"1.0.0\",\"datastreams\":[{\"id\":\"counter\",\"current_value\":\""+String.valueOf(currentCount)+"\"},{\"id\":\"streamId2\",\"current_value\":\"22\"}]}}");

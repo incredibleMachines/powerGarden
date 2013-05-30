@@ -6,7 +6,7 @@ struct Plant{
 
   CapacitiveSensor * capSense;
   long touch,last_touch, diff, start;
-  
+  int dataOut;
   
 };
 

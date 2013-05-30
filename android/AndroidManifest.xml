@@ -14,14 +14,14 @@
  		
  		<uses-library android:name="com.android.future.usb.accessory" />
  			
-        <activity android:name="com.incrediblemachines.powergarden.MainActivity" android:label="Power Garden" android:screenOrientation="portrait" android:launchMode="singleInstance" >
+        <activity android:name="com.incrediblemachines.powergarden.MainActivity" android:label="Power Garden" android:screenOrientation="landscape" android:launchMode="singleInstance" >
 			<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
         </activity>
         
-        <activity android:name="com.incrediblemachines.powergarden.adk.UsbAccessoryActivity" android:label="Power Garden" android:screenOrientation="portrait" android:taskAffinity="" android:launchMode="singleInstance">
+        <activity android:name="com.incrediblemachines.powergarden.adk.UsbAccessoryActivity" android:label="Power Garden" android:screenOrientation="landscape" android:taskAffinity="" android:launchMode="singleInstance">
 			<intent-filter>
 				<action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
 			</intent-filter>

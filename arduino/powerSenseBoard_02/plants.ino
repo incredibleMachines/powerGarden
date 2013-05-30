@@ -19,7 +19,7 @@ void updatePlants(){
    Serial.print("Plant");
    Serial.print(i);
    Serial.print("   ");
-   Serial.print(plant[i].diff);
+   Serial.print(plant[i].touch);
    Serial.print("\t");
  }
  Serial.println();
@@ -29,6 +29,7 @@ void plantTouch(Plant *t){
   
   t->diff = abs(t->touch - t->last_touch);
   t->diff/=1000;
+  t->dataOut = t->diff;
   t->last_touch = t->touch;
 }
 
