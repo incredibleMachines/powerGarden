@@ -6,8 +6,7 @@ var MongoClient = require('mongodb').MongoClient
 	,mongo = new MongoClient(new Server('localhost', 27017))
 	,BSON = require('mongodb').BSONPure;
 
-var db, data,personalities,devices,plants;
-
+var db, dataDb, personalitiesDb, devicesDb, plantsDb;
 var clients={};
 
 //twitter
@@ -93,10 +92,12 @@ function checkType(message, connection){
 
 }
 
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
 
 function routeUpdate(message,connection){
 	
-	if(message.device_id !== connection.device_id) { 
+	if(message.device_id != connection.device_id) { 
 		console.log('[Update Error] message.device_id=%s connection.device_id=%s', message.device_id, connection.device_id );/*error error;*/ 
 	}else{
 		
@@ -173,7 +174,7 @@ function routeConnect(message,connection){
 			var oID = new BSON.ObjectID(message.device_id);
 			var obj = {'_id': oID};
 			//find device by id
-			devices.findOne(obj,function(err,result){
+			devicesDb.findOne(obj,function(err,result){
 				
 				if(!result){
 					console.log("Device Registration Failed");
@@ -183,6 +184,7 @@ function routeConnect(message,connection){
 					
 					var res = { "status": "connected", "device_id": message.device_id, "connection_id": connection.id };
 					console.log("Device Already Registered");
+					connection.device_id = message.device_id;
 					assignPlantData(result,connection);
 					connection.socket.send(JSON.stringify(res));	
 				}
@@ -201,6 +203,9 @@ function routeConnect(message,connection){
 			
 
 }
+
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
 
 function assignPlantData(result,connection){
 	//result is a db document of device
@@ -231,7 +236,7 @@ function assignPlantData(result,connection){
 
 function logDevice(message,connection){
 		var obj = {date: new Date(), plants: []};
-		devices.insert(obj, {safe:true}, function(err,doc){
+		devicesDb.insert(obj, {safe:true}, function(err,doc){
 			if(err)throw err;
 			
 			connection.device_id = doc[0]._id;
@@ -270,7 +275,7 @@ function createPlant(message,connection,plant){
 		
 		var oID = new BSON.ObjectID(message.device_id);
 		var obj = {'_id': oID};
-		devices.findOne(obj,function(err,result){
+		devicesDb.findOne(obj,function(err,result){
 			
 			if(!result){
 			
@@ -286,7 +291,7 @@ function createPlant(message,connection,plant){
 					connection.socket.send(JSON.stringify(res));
 					//update device
 					var json = { $push: { plants: doc[0]._id } };
-					updateDocument(devices,connection.device_id,json);
+					updateDocument(devicesDb,connection.device_id,json);
 					
 				});
 				
@@ -306,7 +311,7 @@ function createPlant(message,connection,plant){
 			   
 			   //var something= "text";
 			   var json={ $push: { plants: { index:doc[0].index, _id:doc[0]._id } } };
-			   updateDocument(devices,connection.device_id, json);
+			   updateDocument(devicesDb,connection.device_id, json);
 			   
 		});
 		
