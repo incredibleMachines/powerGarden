@@ -110,13 +110,43 @@ function routeUpdate(message,connection){
 			for(var i=0; i<message.plants.length;i++){
 				if(message.plants[i].id.length==24){
 					
-					var json = { $inc: {'touch.id':message.plants[i].touch.id , 'touch.length':message.plants[i].touch.length },
-								 $set: {'mood':message.plants[i].mood, 'type':message.plants[i].type } 
-								 };	
+					var json = { $inc: {'touch.count':message.plants[i].touch.count , 'touch.length':message.plants[i].touch.length },
+								 $set: {'mood':message.plants[i].mood, 'type':message.plants[i].type, 'index':message.plants[i].index}
+								 
+								};	
 					updateDocument(plantsDb,message.plants[i].id,json);
 					
 				}//else we need an update to the plant
 			}			 
+			
+		}//end plants
+		
+		if(message.data){
+			
+			var obj = {	'device_id':message.device_id, 
+						'moisture':message.data.moisture, 
+						'temp': message.data.temp, 
+						'humidity':message.data.humidity, 
+						'light': message.data.light,
+						'timestamp': new Date()
+					};
+					
+			if(message.plants){
+				var arr=new Array();
+				for(var i=0; i<message.plants.length;i++){
+					arr[i] = {'_id':message.plants[i].id, 'touch':{ 'count': message.plants[i].touch.count, 'length': message.plants[i].touch.length }};
+				}
+				obj['plants']=arr;
+				
+			}
+			dataDb.insert(obj, {safe:true}, function(err,doc){
+				if(err) throw err;
+				
+				//check the last values and determine mood of plant 
+				//update plants/device if necessary
+			
+			});
+			
 			
 		}
 		
@@ -244,7 +274,7 @@ function createPlant(message,connection,plant){
 			
 			if(!result){
 			
-				var obj = {created: new Date(), device:connection.device_id, index: plant.index, type:plant.type, mood: "born", touch:{ count:0, length:0} };
+				var obj = {created: new Date(), device_id:connection.device_id, index: plant.index, type:plant.type, mood: "born", touch:{ count:0, length:0} };
 				plantsDb.insert(obj,{safe:true},function(err,doc){
 					if(err) throw err;
 					var res = {	"status": "planted", 
@@ -264,7 +294,7 @@ function createPlant(message,connection,plant){
 		});
 		
 	}else{
-		var obj = {created: new Date(), device:connection.device_id, index: plant.index, type:plant.type, mood: "born", touch:{ count:0, length:0} };
+		var obj = {created: new Date(), device_id:connection.device_id, index: plant.index, type:plant.type, mood: "born", touch:{ count:0, length:0} };
 		plantsDb.insert(obj,{safe:true},function(err,doc){
 				if(err) throw err;
 				var res = {	"status": "planted", 
