@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="plant_id_1" type="id"/>
+    <item name="plant_type_1" type="id"/>    
+    <item name="plant_delete_1" type="id"/>
+    <item name="plant_update_1" type="id"/>
+    <item name="plant_touch_1" type="id"/>
+    <item name="plant_mood_1" type="id"/>
+    
+    <item name="plant_id_2" type="id"/>
+    <item name="plant_type_2" type="id"/>
+    <item name="plant_delete_2" type="id"/>
+    <item name="plant_update_2" type="id"/>
+    <item name="plant_touch_2" type="id"/>
+    <item name="plant_mood_2" type="id"/>
+    
+    <item name="plant_id_3" type="id"/>
+    <item name="plant_type_3" type="id"/>    
+    <item name="plant_delete_3" type="id"/>
+    <item name="plant_update_3" type="id"/>
+    <item name="plant_touch_3" type="id"/>
+    <item name="plant_mood_3" type="id"/>
+    
+  	<item name="plant_id_4" type="id"/>
+    <item name="plant_type_4" type="id"/>
+    <item name="plant_delete_4" type="id"/>
+    <item name="plant_update_4" type="id"/>
+    <item name="plant_touch_4" type="id"/>
+    <item name="plant_mood_4" type="id"/>
+    
+    <item name="plant_id_5" type="id"/>
+    <item name="plant_type_5" type="id"/>
+    <item name="plant_delete_5" type="id"/>
+    <item name="plant_update_5" type="id"/>
+    <item name="plant_touch_5" type="id"/>
+    <item name="plant_mood_5" type="id"/>
+    
+    <item name="plant_id_6" type="id"/>
+    <item name="plant_type_6" type="id"/>
+    <item name="plant_delete_6" type="id"/>
+    <item name="plant_update_6" type="id"/>
+    <item name="plant_touch_6" type="id"/>
+    <item name="plant_mood_6" type="id"/>
+        
+    <item name="plant_id_7" type="id"/>
+    <item name="plant_type_7" type="id"/>
+    <item name="plant_delete_7" type="id"/>
+    <item name="plant_update_7" type="id"/>
+    <item name="plant_touch_7" type="id"/>
+    <item name="plant_mood_7" type="id"/>
+    
+    <item name="plant_id_8" type="id"/>
+    <item name="plant_type_8" type="id"/>
+    <item name="plant_delete_8" type="id"/>
+    <item name="plant_update_8" type="id"/>
+    <item name="plant_touch_8" type="id"/>
+    <item name="plant_mood_8" type="id"/>
+    
+    <item name="plant_id_9" type="id"/>
+    <item name="plant_type_9" type="id"/>
+    <item name="plant_delete_9" type="id"/>
+    <item name="plant_update_9" type="id"/>
+    <item name="plant_touch_9" type="id"/>
+    <item name="plant_mood_9" type="id"/>
+    
+    <item name="plant_id_10" type="id"/>
+    <item name="plant_type_10" type="id"/>
+    <item name="plant_delete_10" type="id"/>
+    <item name="plant_update_10" type="id"/>
+    <item name="plant_touch_10" type="id"/>
+    <item name="plant_mood_10" type="id"/>
+    
+</resources>
