@@ -1,4 +1,4 @@
-// ServiceADKActivity.java
+	// ServiceADKActivity.java
 // ---------------------------
 // RobotGrrl.com
 // November 29, 2011
@@ -32,6 +32,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -117,8 +118,25 @@ public class MainActivity extends Activity implements Runnable{
     Typeface Museo300Regular;
     Typeface Museo500Regular;
     Typeface Museo700Regular;
-   
-	@Override
+    
+    private SharedPreferences mSettings;
+    
+    private void loadPrefs() {
+    	if(mSettings.contains("deviceID")){
+//	        mHostname.setText(mSettings.getString("hostname", ""));
+//	        mPort.setText(mSettings.getString("port", "9000"));
+//	        mID.setText(mSettings.getString("deviceID", "set_id"));
+//	        mNumPlants.setText(mSettings.getString("numPlants",""+plantList.size()));
+    		//GET PLANT ID and TYPES
+    		//GOTO Presentation view
+    	}else{
+    		//GOTO Setup view
+    	}
+        
+     }
+	
+    
+    @Override
     public void onCreate(Bundle savedInstanceState) {
 		
 	    super.onCreate(savedInstanceState);
@@ -170,7 +188,9 @@ public class MainActivity extends Activity implements Runnable{
 	    
 		Resources res = getResources();
 		
-		//start();  <--- connect to socket port
+		//loadPrefs();
+		//start();  <--- connect to socket port if returns false run error mode
+		
     }
 
 	
@@ -235,6 +255,7 @@ public class MainActivity extends Activity implements Runnable{
 			}
 			// Let's update the textviews for easy debugging here...
 			//updateTextViews();
+			
 		}
 	    
 	    @Override
@@ -253,6 +274,7 @@ public class MainActivity extends Activity implements Runnable{
 		public void onDestroy() {
 			Log.v(TAG, "onDestroy");
 			unregisterReceiver(mUsbReceiver);
+			//Disconnect from server
 			super.onDestroy();
 		}
 		
@@ -263,6 +285,8 @@ public class MainActivity extends Activity implements Runnable{
 
 		//@Override
 		public void run() {
+			
+			//check isNetworkAvailable and see how long we've been disconnected and run the error view if we're disconnected long enough
 			int ret = 0; //number of bytes returned
 			byte[] buffer = new byte[16384]; //holds all bytes returned
 			int i;
@@ -586,7 +610,9 @@ public class MainActivity extends Activity implements Runnable{
         ConnectivityManager connectivityManager 
               = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        // also check activeNetworkInfo.isConnected();
         return activeNetworkInfo != null;
+        
     }
     
     //----- disable back button
@@ -600,7 +626,7 @@ public class MainActivity extends Activity implements Runnable{
 	
 	
 //	//------ websocket stuff ------//
-//	private void start() {
+//	private void start() {		Return true or false for connection
 //		   
 //	      final String wsuri = "ws://api.cosm.com:8080";	      
 //	      try {
