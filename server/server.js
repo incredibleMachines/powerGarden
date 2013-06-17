@@ -10,7 +10,9 @@ var db, dataDb, personalitiesDb, devicesDb, plantsDb;
 var clients={};
 
 //twitter
-
+/*var app = require('http').createServer(handler)
+  , io = require('socket.io').listen(app)
+  , fs = require('fs')*/
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 

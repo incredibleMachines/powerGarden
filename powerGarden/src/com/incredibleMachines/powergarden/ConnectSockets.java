@@ -3,6 +3,7 @@ package com.incredibleMachines.powergarden;
 import java.util.ArrayList;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 
 public class ConnectSockets extends Activity {
+		private String TAG = "ConnectSocketsView";
 	   private static final String PREFS_NAME = "PowerGarden";
 	   static EditText mHostname;
 	   static EditText mPort;
@@ -29,7 +31,7 @@ public class ConnectSockets extends Activity {
 	   static LinearLayout mLinearLayout;
 	   //final ArrayList<PlantData> plantList = new ArrayList<PlantData>();
 	   
-	   public Websockets WS = new Websockets();
+	   Websockets WS;
 	   
 	   private SharedPreferences mSettings;
 
@@ -71,7 +73,8 @@ public class ConnectSockets extends Activity {
 	      mStart.setText("Connect");
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
-	            WS.start(mHostname.getText().toString(), mPort.getText().toString());
+	        	 Log.d(TAG, "Clicked Connect");
+	            PowerGarden.WS.start(mHostname.getText().toString(), mPort.getText().toString());
 	         }
 	      });
 	   }
@@ -83,7 +86,7 @@ public class ConnectSockets extends Activity {
 	      mType.setText("connect");
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
-	            WS.mConnection.disconnect();
+	            PowerGarden.WS.mConnection.disconnect();
 	         }
 	      });
 	   }
@@ -103,9 +106,13 @@ public class ConnectSockets extends Activity {
 	    mID = (EditText) findViewById(R.id.device_id);
 	    mNumPlants = (EditText) findViewById(R.id.num_plants);
 	    mSendMessage = (Button) findViewById(R.id.sendMsg);
+	    mSendMessage.setEnabled(false);
 	    //mplantsView = (ListView) findViewById(R.id.plants);
 	    //mLinearLayout = (LinearLayout)findViewById(R.id.plants);
 	    mSettings = getSharedPreferences(PREFS_NAME, 0);
+	    WS = new Websockets();
+	    PowerGarden.WS = WS;
+	    setButtonConnect();
 		
 	}
 
