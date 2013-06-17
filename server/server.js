@@ -1,6 +1,8 @@
 var WebSocketServer = require('ws').Server
   , wss = new WebSocketServer({port: 9000});
   
+var io = require('socket.io').listen(9001);
+  
 var MongoClient = require('mongodb').MongoClient
 	,Server = require('mongodb').Server
 	,mongo = new MongoClient(new Server('localhost', 27017))
@@ -9,10 +11,9 @@ var MongoClient = require('mongodb').MongoClient
 var db, dataDb, personalitiesDb, devicesDb, plantsDb;
 var clients={};
 
+
 //twitter
-/*var app = require('http').createServer(handler)
-  , io = require('socket.io').listen(app)
-  , fs = require('fs')*/
+
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
@@ -24,6 +25,31 @@ mongo.open(function(err,mongo){
 	personalitiesDb = db.collection('personalities');
 	dataDb = db.collection('data');
 		
+});
+
+
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+io.sockets.on('connection', function (socket) {
+  io.sockets.emit('this', { will: 'be received by everyone'});
+  	var connection = new Connection( ++clientID, 'set_id', socket);
+	var connectKey = 'client-'+clientID;
+	clients[connectKey]=connection;
+
+	console.log("[NEW CONN] connection.id %s",connection.id);
+	console.log("[NEW CONN] connection.device_id %s",connection.device_id);
+
+  socket.on('message', function (msg) {
+    console.log('I received a message: ', msg);
+    //var json = JSON.parse(msg);
+    //console.log(JSON.stringify(json));
+    //checkType(msg, connection);
+  });
+
+  socket.on('disconnect', function () {
+    io.sockets.emit('user disconnected');
+  });
 });
 
 /* ******************************************************************************************* */

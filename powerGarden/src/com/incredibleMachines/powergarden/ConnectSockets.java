@@ -31,7 +31,7 @@ public class ConnectSockets extends Activity {
 	   static LinearLayout mLinearLayout;
 	   //final ArrayList<PlantData> plantList = new ArrayList<PlantData>();
 	   
-	   Websockets WS;
+	   SocketManager SM;
 	   
 	   private SharedPreferences mSettings;
 
@@ -74,11 +74,20 @@ public class ConnectSockets extends Activity {
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
 	        	 Log.d(TAG, "Clicked Connect");
-	            PowerGarden.WS.start(mHostname.getText().toString(), mPort.getText().toString());
+	            PowerGarden.SM.connectToServer(mHostname.getText().toString(), mPort.getText().toString());
+	            setButtonDisconnect();
+	            mSendMessage.setEnabled(true);
 	         }
 	      });
 	   }
-
+	   
+	   private void setupSendButton(){
+           mSendMessage.setOnClickListener(new Button.OnClickListener() {
+           	public void onClick(View v) {
+           		PowerGarden.SM.getDeviceID();
+           	}
+           });
+	   }
 	   private void setButtonDisconnect() {
 	      mHostname.setEnabled(false);
 	      mPort.setEnabled(false);
@@ -86,7 +95,9 @@ public class ConnectSockets extends Activity {
 	      mType.setText("connect");
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
-	            PowerGarden.WS.mConnection.disconnect();
+	            PowerGarden.SM.closeUpShop();
+	            mSendMessage.setEnabled(false);
+	            setButtonConnect();
 	         }
 	      });
 	   }
@@ -110,9 +121,10 @@ public class ConnectSockets extends Activity {
 	    //mplantsView = (ListView) findViewById(R.id.plants);
 	    //mLinearLayout = (LinearLayout)findViewById(R.id.plants);
 	    mSettings = getSharedPreferences(PREFS_NAME, 0);
-	    WS = new Websockets();
-	    PowerGarden.WS = WS;
+	    SM = new SocketManager();
+	    PowerGarden.SM = SM;
 	    setButtonConnect();
+	    setupSendButton();
 		
 	}
 

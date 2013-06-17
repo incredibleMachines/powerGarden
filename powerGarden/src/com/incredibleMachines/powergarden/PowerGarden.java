@@ -5,6 +5,6 @@ import android.widget.TextView;
 
 public class PowerGarden {
 
-	public static Websockets WS;
+	public static SocketManager SM;
 	
 }

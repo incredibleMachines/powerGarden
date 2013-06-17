@@ -15,7 +15,16 @@ public class SocketManager implements  IOCallback {
 	SocketManager(){
 		//connectToServer();
 	}
-	
+	void getDeviceID (){
+		try {
+			socket.emit("message", 
+					new JSONObject().put("connect", new JSONObject().put("device_id", "set_id"))
+					);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+	}
 	public void connectToServer(String host, String port){
 		
 		try {
@@ -25,7 +34,7 @@ public class SocketManager implements  IOCallback {
 			socket = new SocketIO();
 			//socket.connect("http://thetalkingshoe.com:6090/", this);
 			
-			socket.connect(host+":"+port+"/", this);
+			socket.connect("http://"+host+":"+port+"/", this);
 	
 			// Sends a string to the server.
 			//socket.send("Hello Server");
@@ -74,5 +83,6 @@ public class SocketManager implements  IOCallback {
 	
 	void closeUpShop(){
 		//sendSessionEnd();
+		socket.disconnect();
 	}
 }
