@@ -1,0 +1,40 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
+    tools:context=".ConnectSockets" > 
+   	<LinearLayout 
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="fill_parent"
+   	    android:orientation="vertical"
+   	    android:weightSum="1"
+   	    android:padding="12dip">
+   	    <TextView android:id="@+id/textView1" android:layout_marginLeft="10dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#ffffff" android:textSize="24dip" android:textStyle="bold" android:gravity="center" android:paddingBottom="16dip" android:text="Server Settings"></TextView>
+   	    <TextView android:id="@+id/textView2" android:layout_marginLeft="10dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@color/lightgrey" android:text="Garden Server Hostname / Port"></TextView>
+   	    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout1" android:layout_height="wrap_content">
+        	<EditText android:id="@+id/hostname" android:background="@color/white" android:layout_width="0dp" android:padding="10dp" android:layout_margin="10dp" android:layout_height="wrap_content" android:layout_weight="5" android:textColor="@color/darkgrey"></EditText>
+        	<EditText android:id="@+id/port" android:background="@color/white"  android:layout_width="0dp" android:padding="10dp" android:layout_margin="10dp" android:inputType="number" android:layout_height="wrap_content" android:layout_weight="2" android:textColor="@color/darkgrey"></EditText>
+    		<Button android:layout_width="120dip" android:layout_height="50dip" android:layout_margin="10dip" android:id="@+id/start" android:bufferType="editable" android:text="Connect"></Button>
+    	</LinearLayout>
+    	<LinearLayout
+    	android:layout_width="fill_parent"
+   	    android:layout_height="fill_parent"
+   	    android:orientation="vertical"
+   	    android:weightSum="1"
+   	    android:padding="12dip">
+	    	<TextView  
+		 		   	android:layout_width="fill_parent" 
+		   			android:layout_height="wrap_content" 
+		   			android:textColor="@color/lightgrey" android:id="@+id/statusline" android:text="Ready." android:textSize="14dip" android:layout_marginBottom="24dip"/>
+	   		<TextView android:id="@+id/textView3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@color/lightgrey" android:text="Message to test with server"></TextView>
+	    	<EditText android:id="@+id/type" android:layout_width="match_parent" android:textColor="@color/darkgrey" android:text="connect" android:maxLines="1" android:layout_height="wrap_content"></EditText>
+	    	<TextView android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@color/lightgrey" android:text="Device ID / Number of Plants"></TextView>
+		    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout2" android:layout_height="wrap_content">
+		    	<EditText android:id="@+id/device_id" android:layout_width="match_parent"  android:layout_weight="1" android:textColor="@color/darkgrey" android:text="New Device ID" android:maxLines="1"  android:layout_height="wrap_content"></EditText>
+		    	<EditText android:id="@+id/num_plants" android:layout_width="match_parent" android:layout_weight="3" android:textColor="@color/darkgrey" android:inputType="number" android:maxLines="1" android:layout_height="wrap_content"></EditText>
+			</LinearLayout>
+			<Button android:layout_width="120dip" android:layout_gravity="center" android:layout_height="80dip" android:layout_margin="16dip" android:id="@+id/sendMsg" android:bufferType="editable" android:text="Send"></Button>
+	    </LinearLayout>
+   	</LinearLayout>
+</FrameLayout>
