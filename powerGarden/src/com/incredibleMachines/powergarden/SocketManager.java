@@ -17,10 +17,10 @@ public class SocketManager implements  IOCallback {
 	SocketManager(){
 		//connectToServer();
 	}
-	void getDeviceID (String type){
+	void authDevice (String type, String id){
 		try {
 			socket.emit(type, 
-				 new JSONObject().put("device_id", "set_id")
+				 new JSONObject().put("device_id", id)
 					);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -31,12 +31,13 @@ public class SocketManager implements  IOCallback {
 		
 		try {
 			
-			// todo: read this from a text file
+			//todo: read this from a text file
 			if(!bConnected){
 				socket = new SocketIO();
 				socket.connect("http://"+host+":"+port+"/", this);
 				bConnected = true;
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

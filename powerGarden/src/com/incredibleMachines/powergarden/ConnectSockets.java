@@ -85,7 +85,7 @@ public class ConnectSockets extends Activity {
 	   private void setupSendButton(){
            mSendMessage.setOnClickListener(new Button.OnClickListener() {
            	public void onClick(View v) {
-           		PowerGarden.SM.getDeviceID(mType.getText().toString());
+           		PowerGarden.SM.authDevice(mType.getText().toString(), mID.getText().toString());
            	}
            });
 	   }
