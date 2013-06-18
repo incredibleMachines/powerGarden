@@ -102,6 +102,7 @@ public class ArduinoUsbService extends IntentService {
         public void handleMessage(Message msg) {
         	try {
         	Log.d(TAG, "Service handleMessage: " + msg.what);
+        	Log.d(TAG, "Service handleMessage: " + msg.toString());
         	switch (msg.what) {
         	case MSG_REGISTER_CLIENT:
         		Log.d(TAG, "Service handleMessage: MSG_REGISTER_CLIENT " + msg.replyTo);
@@ -198,7 +199,7 @@ public class ArduinoUsbService extends IntentService {
                 	Bundle bb = msg.getData();
                 	byte[] data = bb.getByteArray(ArduinoUsbService.MSG_KEY);
                 	int length = (data == null) ? -1 : data.length;
-                	Log.d(TAG, "Service handleMessage: MSG_SEND_BYTES_TO_CLIENT " + length);
+                	Log.d(TAG, "Service handleMessage: MSG_SEND_BYTES_TO_CLIENT " + msg.getData());
                     for (int i=mClients.size()-1; i>=0; i--) {
                         try {
                 			Message msgToClient = Message.obtain(null,

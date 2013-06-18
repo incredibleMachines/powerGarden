@@ -31,7 +31,7 @@ public class ConnectSockets extends Activity {
 	   static LinearLayout mLinearLayout;
 	   //final ArrayList<PlantData> plantList = new ArrayList<PlantData>();
 	   
-	   SocketManager SM;
+
 	   
 	   private SharedPreferences mSettings;
 
@@ -105,7 +105,7 @@ public class ConnectSockets extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connect_sockets);
-
+		Log.d(TAG, "ConnectSockets Start");
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
 		
@@ -121,8 +121,6 @@ public class ConnectSockets extends Activity {
 	    //mplantsView = (ListView) findViewById(R.id.plants);
 	    //mLinearLayout = (LinearLayout)findViewById(R.id.plants);
 	    mSettings = getSharedPreferences(PREFS_NAME, 0);
-	    SM = new SocketManager();
-	    PowerGarden.SM = SM;
 	    setButtonConnect();
 	    setupSendButton();
 		

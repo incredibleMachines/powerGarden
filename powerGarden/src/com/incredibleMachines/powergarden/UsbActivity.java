@@ -65,7 +65,7 @@ public abstract class UsbActivity extends Activity implements Connectable {
 	protected Viewable currentViewable_;
 	protected Resources resources_;
 	protected boolean exitOnDetach_ = true;
-	boolean debug_ = false;
+	boolean debug_ = true;
 	
 	/**
 	 * Handler of incoming messages from service.
@@ -227,7 +227,7 @@ public abstract class UsbActivity extends Activity implements Connectable {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        Log.d(TAG,"onCreate");
 		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
 		filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
 		filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
@@ -490,6 +490,8 @@ public abstract class UsbActivity extends Activity implements Connectable {
     public void signalToUi(int type, Object data) {
 		if (currentViewable_ != null) {
 			currentViewable_.signalToUi(type, data);
+		}else{
+			Log.d(TAG, "Viewable NULL");
 		}
 	}
     

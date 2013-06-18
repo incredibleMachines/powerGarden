@@ -1,6 +1,7 @@
 package com.incredibleMachines.powergarden;
 
 import com.incredibleMachines.powergarden.util.SystemUiHider;
+import com.victorint.android.usb.interfaces.Viewable;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +20,7 @@ import android.widget.Button;
  * 
  * @see SystemUiHider
  */
-public class PresentationActivity extends Activity {
+public class PresentationActivity extends UsbActivity {
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -46,16 +48,19 @@ public class PresentationActivity extends Activity {
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
+	
+	private static String TAG = "PresentationActivity";
+	SocketManager SM;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
+	protected void createAndSetViews() {
+		//super.onCreate(savedInstanceState);
+		Log.d(TAG,"!!!START!!!");
 		setContentView(R.layout.activity_presentation);
-
+	    SM = new SocketManager();
+	    PowerGarden.SM = SM;
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
-
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
@@ -127,6 +132,8 @@ public class PresentationActivity extends Activity {
 				PresentationActivity.this.startActivity(setupSockets);
 			}
 		});
+        currentViewable_ = new PresentationViewable();
+        currentViewable_.setActivity(this);
 		
 	}
 

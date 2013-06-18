@@ -65,7 +65,7 @@ public abstract class UsbActivity extends Activity implements Connectable {
 	protected Viewable currentViewable_;
 	protected Resources resources_;
 	protected boolean exitOnDetach_ = true;
-	boolean debug_ = false;
+	boolean debug_ = true;
 	
 	/**
 	 * Handler of incoming messages from service.

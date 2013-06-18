@@ -7,9 +7,12 @@ import io.socket.SocketIOException;
 
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class SocketManager implements  IOCallback {
 
 	private SocketIO socket;
+	private static String TAG = "SocketManager";
 
 	
 	SocketManager(){
@@ -18,7 +21,9 @@ public class SocketManager implements  IOCallback {
 	void getDeviceID (){
 		try {
 			socket.emit("message", 
-					new JSONObject().put("connect", new JSONObject().put("device_id", "set_id"))
+					new JSONObject()
+					.put("type", "connect")
+					.put("device_id", "set_id")
 					);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -73,6 +78,7 @@ public class SocketManager implements  IOCallback {
 	@Override
 	public void onConnect() {
 		//System.out.println("Connection established");
+		Log.d(TAG, "onConnect callback");
 	}
 
 	@Override
