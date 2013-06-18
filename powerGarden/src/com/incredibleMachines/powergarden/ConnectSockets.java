@@ -16,7 +16,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 
 public class ConnectSockets extends Activity {
-		private String TAG = "ConnectSocketsView";
+	   private static final String TAG = "ConnectSocketsView";
 	   private static final String PREFS_NAME = "PowerGarden";
 	   static EditText mHostname;
 	   static EditText mPort;
@@ -43,10 +43,10 @@ public class ConnectSockets extends Activity {
 
 	   private void loadPrefs() {
 
-	      mHostname.setText(mSettings.getString("hostname", ""));
-	      mPort.setText(mSettings.getString("port", "9000"));
+	      mHostname.setText(mSettings.getString("hostname", "192.168.1.0"));
+	      mPort.setText(mSettings.getString("port", "9001"));
 	      mID.setText(mSettings.getString("deviceID", "set_id"));
-	      //mNumPlants.setText(mSettings.getString("numPlants",""+plantList.size()));
+	      mNumPlants.setText(mSettings.getString("numPlants","8"));
 	      
 	   }
 
@@ -57,13 +57,13 @@ public class ConnectSockets extends Activity {
 		   editor.commit();
 	   }
 	 
-	   private void savePrefs() {
+	   private void saveServerPrefs() {
 
 	      SharedPreferences.Editor editor = mSettings.edit();
 	      editor.putString("hostname", mHostname.getText().toString());
 	      editor.putString("port", mPort.getText().toString());
-	      editor.putString("deviceID", mID.getText().toString());
-	      editor.putString("numPlants", mNumPlants.getText().toString());
+	      //editor.putString("deviceID", mID.getText().toString());
+	      //editor.putString("numPlants", mNumPlants.getText().toString());
 	      editor.commit();
 	   }
 
@@ -73,8 +73,9 @@ public class ConnectSockets extends Activity {
 	      mStart.setText("Connect");
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
-	        	 Log.d(TAG, "Clicked Connect");
+	        	Log.d(TAG, "Clicked Connect");
 	            PowerGarden.SM.connectToServer(mHostname.getText().toString(), mPort.getText().toString());
+	            saveServerPrefs();
 	            setButtonDisconnect();
 	            mSendMessage.setEnabled(true);
 	         }
@@ -84,7 +85,7 @@ public class ConnectSockets extends Activity {
 	   private void setupSendButton(){
            mSendMessage.setOnClickListener(new Button.OnClickListener() {
            	public void onClick(View v) {
-           		PowerGarden.SM.getDeviceID();
+           		PowerGarden.SM.authDevice(mType.getText().toString(), mID.getText().toString());
            	}
            });
 	   }
@@ -92,7 +93,7 @@ public class ConnectSockets extends Activity {
 	      mHostname.setEnabled(false);
 	      mPort.setEnabled(false);
 	      mStart.setText("Disconnect");
-	      mType.setText("connect");
+	      mType.setText("register");
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
 	            PowerGarden.SM.closeUpShop();
@@ -121,6 +122,10 @@ public class ConnectSockets extends Activity {
 	    //mplantsView = (ListView) findViewById(R.id.plants);
 	    //mLinearLayout = (LinearLayout)findViewById(R.id.plants);
 	    mSettings = getSharedPreferences(PREFS_NAME, 0);
+
+	    
+	    loadPrefs();
+
 	    setButtonConnect();
 	    setupSendButton();
 		

@@ -5,6 +5,7 @@ import io.socket.IOCallback;
 import io.socket.SocketIO;
 import io.socket.SocketIOException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
@@ -12,18 +13,18 @@ import android.util.Log;
 public class SocketManager implements  IOCallback {
 
 	private SocketIO socket;
+
 	private static String TAG = "SocketManager";
 
 	
 	SocketManager(){
 		//connectToServer();
 	}
-	void getDeviceID (){
+	void authDevice (String type, String id){
 		try {
-			socket.emit("message", 
-					new JSONObject()
-					.put("type", "connect")
-					.put("device_id", "set_id")
+
+			socket.emit(type, 
+				 new JSONObject().put("device_id", id)
 					);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -34,16 +35,11 @@ public class SocketManager implements  IOCallback {
 		
 		try {
 			
-			// todo: read this from a text file
-			
-			socket = new SocketIO();
-			//socket.connect("http://thetalkingshoe.com:6090/", this);
-			
-			socket.connect("http://"+host+":"+port+"/", this);
-	
-			// Sends a string to the server.
-			//socket.send("Hello Server");
-			
+			//todo: read this from a text file
+
+				socket = new SocketIO();
+				socket.connect("http://"+host+":"+port+"/", this);
+
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -52,27 +48,27 @@ public class SocketManager implements  IOCallback {
 	
 	@Override
 	public void onMessage(JSONObject json, IOAcknowledge ack) {
-		//try {
-			//System.out.println("Server said:" + json.toString(2));
-		//} catch (JSONException e) {
-	//		e.printStackTrace();
-	//	}
+		try {
+			System.out.println("Server said:" + json.toString(2));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onMessage(String data, IOAcknowledge ack) {
-		//System.out.println("Server said: " + data);
+		System.out.println("Server said: " + data);
 	}
 
 	@Override
 	public void onError(SocketIOException socketIOException) {
-		//System.out.println("an Error occured");
+		System.out.println("an Error occured");
 		socketIOException.printStackTrace();
 	}
 
 	@Override
 	public void onDisconnect() {
-		//System.out.println("Connection terminated.");
+		System.out.println("Connection terminated.");
 	}
 
 	@Override

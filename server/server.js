@@ -1,5 +1,8 @@
+/*
+//Depreciated
 var WebSocketServer = require('ws').Server
   , wss = new WebSocketServer({port: 9000});
+*/
   
 var io = require('socket.io').listen(9001);
   
@@ -30,9 +33,10 @@ mongo.open(function(err,mongo){
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
+var clientID = 0;
 
 io.sockets.on('connection', function (socket) {
-  io.sockets.emit('this', { will: 'be received by everyone'});
+  //io.sockets.emit('this', { will: 'be received by everyone'});
   	var connection = new Connection( ++clientID, 'set_id', socket);
 	var connectKey = 'client-'+clientID;
 	clients[connectKey]=connection;
@@ -40,23 +44,49 @@ io.sockets.on('connection', function (socket) {
 	console.log("[NEW CONN] connection.id %s",connection.id);
 	console.log("[NEW CONN] connection.device_id %s",connection.device_id);
 
+/* Depreciated
   socket.on('message', function (msg) {
     console.log('I received a message: ', msg);
     //var json = JSON.parse(msg);
     //console.log(JSON.stringify(json));
     //checkType(msg, connection);
+	console.log(msg);
+  
+  });
+*/
+  socket.on('register', function (msg) {
+    console.log('[Device Register Request]: ', msg);
+    
+    routeRegister(msg,connection);
+    //console.log(typeof msg);
+    //var json = JSON.parse(msg);
+    //console.log(JSON.stringify(json));
+    //checkType(msg, connection);
+  
+  });
+  socket.on('update', function (msg) {
+    console.log('[Device Update Request]: ', msg);
+    
+    routeUpdate(msg,connection);
+    //var json = JSON.parse(msg);
+    //console.log(JSON.stringify(json));
+    //checkType(msg, connection);
+  
   });
 
   socket.on('disconnect', function () {
-    io.sockets.emit('user disconnected');
+    /* io.sockets.emit('user disconnected'); */
+    console.log("[DISCONN] connection.id %s",connection.id);
+	console.log("[DISCONN] connection.device_id %s",connection.device_id);
   });
 });
 
 /* ******************************************************************************************* */
+//Depreciated
 /* ******************************************************************************************* */
 
-var clientID = 0;
 
+/*
 wss.on('connection', function(socket) {
 	//Create unique connection OBJECT
 	var connection = new Connection( ++clientID, 'set_id', socket);
@@ -95,10 +125,13 @@ wss.on('connection', function(socket) {
 
     socket.send(JSON.stringify(obj));
 });
+*/
 
 /* ******************************************************************************************* */
+//Depreciated
 /* ******************************************************************************************* */
 
+/*
 function checkType(message, connection){
 
 	//hold
@@ -119,6 +152,7 @@ function checkType(message, connection){
 	
 
 }
+*/
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -186,7 +220,7 @@ function routeUpdate(message,connection){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-function routeConnect(message,connection){
+function routeRegister(message,connection){
 	//check for ID in DB
 	//if ID exists
 	//return ID, status - connected, rejoined
@@ -228,8 +262,6 @@ function routeConnect(message,connection){
 		
 	}
 
-			
-
 }
 
 /* ******************************************************************************************* */
@@ -245,13 +277,13 @@ function assignPlantData(result,connection){
 		var obj = {'_id': result.plants[i]._id };
 		plantsDb.findOne(obj,function(err,result){
 		
-					var res = {	"status": "planted", 
+					var res = {	//"status": "planted", 
 								"device_id": connection.device_id, 
 								"connection_id": connection.id, 
 								"plant":{"id": result._id, "type":result.type, "index":result.index , "mood":result.mood } 
 					};
-					connection.socket.send(JSON.stringify(res));
-			
+					//connection.socket.send(JSON.stringify(res));
+					connection.socket.emit('planted',res);
 		});
 
 		
@@ -270,12 +302,12 @@ function logDevice(message,connection){
 			connection.device_id = doc[0]._id;
 			console.log('Created Record: '+connection.device_id);
 			//console.log("plants.length: "+message.plants.length);
-			for(var i = 0; i<message.plants.length; i++) createPlant(message,connection,message.plants[i]);
+			//for(var i = 0; i<message.plants.length; i++) createPlant(message,connection,message.plants[i]);
 			
 			
-			var res = { "status": "connected", "device_id": connection.device_id, "connection_id": connection.id };
-			connection.socket.send(JSON.stringify(res));
-		
+			var res = { "device_id": connection.device_id, "connection_id": connection.id };
+			//connection.socket.send(JSON.stringify(res));
+			connection.socket.emit('connected',res);
 		});	
 	
 }
@@ -310,13 +342,15 @@ function createPlant(message,connection,plant){
 				var obj = {created: new Date(), device_id:connection.device_id, index: plant.index, type:plant.type, mood: "born", touch:{ count:0, length:0} };
 				plantsDb.insert(obj,{safe:true},function(err,doc){
 					if(err) throw err;
-					var res = {	"status": "planted", 
+					var res = {	//"status": "planted", 
 								"device_id": connection.device_id, 
 								"connection_id": connection.id, 
 								"plant":{"id": doc[0]._id, "type":doc[0].type, "index":doc[0].index , "mood":doc[0].mood } 
 					};
 					
-					connection.socket.send(JSON.stringify(res));
+					connection.socket.emit('planted', res);
+					//connection.socket.send(JSON.stringify(res));
+					
 					//update device
 					var json = { $push: { plants: doc[0]._id } };
 					updateDocument(devicesDb,connection.device_id,json);
@@ -330,12 +364,13 @@ function createPlant(message,connection,plant){
 		var obj = {created: new Date(), device_id:connection.device_id, index: plant.index, type:plant.type, mood: "born", touch:{ count:0, length:0} };
 		plantsDb.insert(obj,{safe:true},function(err,doc){
 				if(err) throw err;
-				var res = {	"status": "planted", 
+				var res = {	//"status": "planted", 
 							"device_id": connection.device_id, 
 							"connection_id": connection.id, 
 							"plant":{"id": doc[0]._id, "type":doc[0].type, "index":doc[0].index , "mood":doc[0].mood } 
 			   };
-			   connection.socket.send(JSON.stringify(res));
+			   connection.socket.emit('planted', res);
+			   //connection.socket.send(JSON.stringify(res));
 			   
 			   //var something= "text";
 			   var json={ $push: { plants: { index:doc[0].index, _id:doc[0]._id } } };
