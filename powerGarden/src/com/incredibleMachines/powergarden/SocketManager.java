@@ -25,18 +25,46 @@ public class SocketManager implements  IOCallback {
 	SocketManager(){
 		//connectToServer();
 	}
-	void authDevice (String type, String id, int num_plants, String plant_type, Connectable _callback){
+	public void authDevice (String type, String device_id, int num_plants, String plant_type, Connectable _callback){
 		callbackActivity = _callback;
 		try {
 
 			socket.emit(type, 
-				 new JSONObject().put("device_id", id).put("plant_type", plant_type).put("num_plants", num_plants)
+				 new JSONObject().put("device_id", device_id).put("plant_type", plant_type).put("num_plants", num_plants)
 					);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		
 	}
+	
+	public void plantTouch(String type, String device_id, int plant_index, Connectable _callback){
+		callbackActivity = _callback;
+		try{
+			socket.emit(type, 
+					new JSONObject().put("device_id", device_id).put("plant_index", plant_index)
+					);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateData(String type, String device_id, JSONObject json, Connectable _callback){
+		callbackActivity = _callback;
+		
+		try{
+			socket.emit(type, 
+					new JSONObject().put("device_id", device_id).put("data", json)
+					);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
 	public void connectToServer(String host, String port){
 		
 		try {
