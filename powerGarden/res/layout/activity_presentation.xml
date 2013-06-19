@@ -32,6 +32,67 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true" >
 
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent" >
+        
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+             <TextView
+                 android:id="@+id/arduino"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_centerInParent="true"
+                 android:text="plant 1 sense: "
+                 android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/arduino_value_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+                 android:layout_centerInParent="true"
+            android:text="0"
+            android:textSize="30dp" />
+    
+       <TextView
+           android:id="@+id/arduino2"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+                 android:layout_centerInParent="true"
+           android:text="plant 2 sense: "
+           android:textSize="30dp" />
+
+    <TextView
+        android:id="@+id/arduino_value_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+                 android:layout_centerInParent="true"
+        android:text="0"
+        android:textSize="30dp" />
+    
+     <TextView
+         android:id="@+id/arduino3"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+                 android:layout_centerInParent="true"
+         android:text="plant 3 sense: "
+         android:textSize="30dp" />
+
+    <TextView
+        android:id="@+id/arduino_value_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+                 android:layout_centerInParent="true"
+        android:text="0"
+        android:textSize="30dp" />
+
+        </LinearLayout>
+        </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
             style="?buttonBarStyle"
@@ -41,6 +102,7 @@
             android:background="@color/black_overlay"
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
+          
 
             <Button
                 android:id="@+id/setup_sockets_button"
