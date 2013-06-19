@@ -29,10 +29,11 @@
 		   			android:textColor="@color/lightgrey" android:id="@+id/statusline" android:text="Ready." android:textSize="14dip" android:layout_marginBottom="24dip"/>
 	   		<TextView android:id="@+id/textView3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@color/lightgrey" android:text="Message to test with server"></TextView>
 	    	<EditText android:id="@+id/type" android:layout_width="match_parent" android:textColor="@color/darkgrey" android:text="connect" android:maxLines="1" android:layout_height="wrap_content"></EditText>
-	    	<TextView android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@color/lightgrey" android:text="Device ID / Number of Plants"></TextView>
+	    	<TextView android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@color/lightgrey" android:text="Device ID / Number of Plants/ Type of Plant"></TextView>
 		    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout2" android:layout_height="wrap_content">
-		    	<EditText android:id="@+id/device_id" android:layout_width="match_parent"  android:layout_weight="1" android:textColor="@color/darkgrey" android:text="New Device ID" android:maxLines="1"  android:layout_height="wrap_content"></EditText>
+		    	<EditText android:id="@+id/device_id" android:layout_width="match_parent"  android:layout_weight="2" android:textColor="@color/darkgrey" android:text="New Device ID" android:maxLines="1"  android:layout_height="wrap_content"></EditText>
 		    	<EditText android:id="@+id/num_plants" android:layout_width="match_parent" android:layout_weight="3" android:textColor="@color/darkgrey" android:inputType="number" android:maxLines="1" android:layout_height="wrap_content"></EditText>
+				<Spinner android:id="@+id/type_plants" android:layout_width="match_parent" android:layout_weight="2" android:textColor="@color/darkgrey" android:maxLines="1" android:layout_height="wrap_content"/>
 			</LinearLayout>
 			<Button android:layout_width="120dip" android:layout_gravity="center" android:layout_height="80dip" android:layout_margin="16dip" android:id="@+id/sendMsg" android:bufferType="editable" android:text="Send"></Button>
 	    </LinearLayout>
