@@ -290,7 +290,8 @@ void loop(){
       }
       //char holder[6];
       //memset(outgoing,0,sizeof(outgoing));
-      sprintf(outgoing, "L, %d.%d,%d,%d",tsl.visible_light,tsl.fullspectrum_light,tsl.infrared_light,tsl.lux);
+      Serial.println("HERE");
+      sprintf(outgoing, "L,%d,%d,%d,%d",tsl.visible_light,tsl.fullspectrum_light,tsl.infrared_light,tsl.lux);
 //      strcpy(outgoing,"L,");
 //      strcat(outgoing, itoa(tsl.visible_light, holder, 10));
 //      strcat(outgoing, ",");
