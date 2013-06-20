@@ -101,10 +101,10 @@ var twitter = require('ntwitter');
 // Set up our ntwitter object
 var twit = new twitter({
 
-  consumer_key: 'bTc9jPplp8SegUtH9EGhTA',
-  consumer_secret: 'Tin9GFVUfqZKVzLCrKRrMAl9Y3TX7IlxiIVRSW0OWU',
-  access_token_key: '1534210819-fSgoQxNsrkY8ORr2t4w6f6jjuQecnY0V8wN5cnm',
-  access_token_secret: 'ZAsYsPhimfghWJZ3xefpGPhEhs5dcUt7G7ylX6k'
+  consumer_key: '',
+  consumer_secret: '',
+  access_token_key: '',
+  access_token_secret: ''
 
 });
 
