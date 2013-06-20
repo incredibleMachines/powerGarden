@@ -85,12 +85,19 @@ var processesStreamData = function(data) {
 
 var postStatus = function(text, options) {
 
+	options.lat = 41.88251;
+	options.long = -87.638771;
+	options.place_id = '1d9a5370a355ab0c';
+	options.display_coordinates = true;
+
 	twit.updateStatus(text, options, function (err, data) {
 		if (err) {
 			console.log('ERROR POSTING STATUS');
 			console.log(err);
 			console.log(data);
 		}
+
+		console.log(JSON.stringify(data));
 	});
 
 }
@@ -101,15 +108,12 @@ var twitter = require('ntwitter');
 // Set up our ntwitter object
 var twit = new twitter({
 
-  consumer_key: '',
-  consumer_secret: '',
-  access_token_key: '',
-  access_token_secret: ''
+
 
 });
 
 // Start stream
-twit.stream('statuses/filter', { track: 'IncMachinesDev', stall_warnings: true }, function(stream) {
+twit.stream('statuses/filter', { track: handle, stall_warnings: true }, function(stream) {
 	console.log('Stream connected');
 
 	stream.on('data', processesStreamData);
@@ -139,3 +143,13 @@ twit.stream('statuses/filter', { track: 'IncMachinesDev', stall_warnings: true }
 // 	}
 // );
 
+// Geo search
+// twit.geoSearch({ lat: 41.88251, long: -87.638771, max_results: 10 }, function(err, data) {
+// 	if (err) throw err;
+// 	console.log(JSON.stringify(data));
+// })
+
+// twit.geoReverseGeocode(41.88251, -87.638771, { granularity: 'neighborhood', max_results: 10 }, function(err, data) {
+// 	if (err) throw err;
+// 	console.log(JSON.stringify(data));
+// })
