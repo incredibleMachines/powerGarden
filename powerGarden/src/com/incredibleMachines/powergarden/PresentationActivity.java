@@ -1,6 +1,7 @@
 package com.incredibleMachines.powergarden;
 
 import com.incredibleMachines.powergarden.util.SystemUiHider;
+import com.victorint.android.usb.interfaces.Connectable;
 import com.victorint.android.usb.interfaces.Viewable;
 
 import android.annotation.TargetApi;
@@ -132,9 +133,23 @@ public class PresentationActivity extends UsbActivity {
 				PresentationActivity.this.startActivity(setupSockets);
 			}
 		});
+		// Upon interacting with UI controls, delay any scheduled hide()
+		// operations to prevent the jarring behavior of controls going away
+		// while interacting with the UI.
+		findViewById(R.id.connect_arduino_button).setOnTouchListener(
+				mDelayHideTouchListener
+				
+				);
+		//set up arduino
+		findViewById(R.id.connect_arduino_button).setOnClickListener(new Button.OnClickListener(){
+			public void onClick(View v){	
+		    	PresentationActivity.super.sendData("setup");
+//				Intent setupSockets = new Intent(getApplicationContext(), ConnectSockets.class);
+//				PresentationActivity.this.startActivity(setupSockets);
+			}
+		});
         currentViewable_ = new PresentationViewable();
         currentViewable_.setActivity(this);
-		
 	}
 
 	@Override

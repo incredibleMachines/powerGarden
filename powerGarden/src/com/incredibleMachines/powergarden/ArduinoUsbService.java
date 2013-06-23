@@ -78,7 +78,7 @@ public class ArduinoUsbService extends IntentService {
 	
 	private boolean startApplication_ = true;
 	private boolean stopApplication_ = true;
-	private Class applicationClass_ = com.incredibleMachines.powergarden.ArduinoTerminalActivity.class;
+	private Class applicationClass_ = com.incredibleMachines.powergarden.PresentationActivity.class;
 	private Intent startApplicationIntent_;
 	private boolean debug_ = false;
 

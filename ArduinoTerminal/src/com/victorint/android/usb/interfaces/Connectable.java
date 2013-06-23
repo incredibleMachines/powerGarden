@@ -26,7 +26,7 @@ public interface Connectable {
     
     void close();
     
-    void sendData(CharSequence data);
+    abstract void sendData(CharSequence data);
     
     void sendData(int type, byte[] data);
     

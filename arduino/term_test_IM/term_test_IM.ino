@@ -55,12 +55,18 @@ void loop()
    if(len > 0) {
      USBTRACE("\r\nData Packet.");
 
-    for( uint8_t i = 0; i < len; i++ ) {
-      Serial.print((char)msg[i]);
+//    for( uint8_t i = 0; i < len; i++ ) {
+//      Serial.print((char)msg[i]);
+//    }
+    
+    Serial.println((char*)msg);
+    //Serial.println(strcasecmp((char * )msg,"setup"));
+    if(strcasecmp((char * )msg,"setup") == 0){
+      Serial.println("GOT Setup");
     }
     /* sending back what was received */    
-    rcode = adk.SndData( strlen( recv ), (uint8_t *)recv );    
-    rcode = adk.SndData( strlen(( char * )msg ), msg );
+    //rcode = adk.SndData( strlen( recv ), (uint8_t *)recv );    
+    //rcode = adk.SndData( strlen(( char * )msg ), msg );
 
    }//if( len > 0 )...
 
@@ -68,8 +74,8 @@ void loop()
    long currentTime = millis();
    if((currentTime - prevTime)> interval){
      randomThing = random(256);
-     rcode = adk.SndData( strlen((sending) ), (uint8_t *)sending );
-     rcode = adk.SndData( strlen( ( char * )randomThing ), (uint8_t *)randomThing );
+    // rcode = adk.SndData( strlen((sending) ), (uint8_t *)sending );
+     //rcode = adk.SndData( strlen( ( char * )randomThing ), (uint8_t *)randomThing );
    }
 }
 
