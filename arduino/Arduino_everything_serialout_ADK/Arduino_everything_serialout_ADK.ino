@@ -33,7 +33,7 @@ ADK adk(&Usb,"IncredibleMachines, Inc.",
 
 
 //*******************
-boolean debug = true;
+boolean debug = false;
 //*******************
 
 
@@ -42,6 +42,7 @@ boolean debug = true;
 //for three plants
 boolean enable_cap_sensor;
 int capRead[3];
+int capDiff[3];
 int capThreshold[3]; //read from pot
 int capThresholdMap[3]; //map to range 100-4000
 int capThresholdPrev[3]; 
@@ -97,7 +98,7 @@ void setup(){
   Serial2.begin(9600);
 
   //turn on/off sensors
-  enable_light_sensor = true;
+  enable_light_sensor = false;
   enable_moisture_sensor = false;
   enable_temphum_sensor = false;
   enable_cap_sensor = true;
@@ -115,7 +116,7 @@ void setup(){
   if(enable_cap_sensor==true){
     for(int i=0;i<3;i++){
       capThreshold[i] = analogRead(potPins[i]); 
-      capThresholdMap[i] = map(capThreshold[i],0,1023,900,2600);
+      capThresholdMap[i] = map(capThreshold[i],0,1023,0,20000);
     }
   }
 
@@ -195,15 +196,15 @@ void loop(){
   if(enable_cap_sensor==true){
     for(int i=0;i<3;i++){
       capThreshold[i] = analogRead(potPins[i]); 
-      capThresholdMap[i] = map(capThreshold[i],0,1023,800,2500);
+      capThresholdMap[i] = map(capThreshold[i],0,1023,0,20000);
       if(abs(capThresholdPrev[i]-capThreshold[i])>2){ //pot value changed
         if(debug==true){
-          int plant_num = i+1;
-          Serial.print("Threshold for plant ");
-          Serial.print(plant_num);
-          Serial.print(" was set to ");
-          Serial.print(capThresholdMap[i]);
-          Serial.println();
+//          int plant_num = i+1;
+//          Serial.print("Threshold for plant ");
+//          Serial.print(plant_num);
+//          Serial.print(" was set to ");
+//          Serial.print(capThresholdMap[i]);
+//          Serial.println();
         }
         else{
           //real serial write  
@@ -236,29 +237,32 @@ void loop(){
       //    Serial.print("|");
       //    Serial.println();
     }  
+     
     // 3. touch trigger of plants
     for(int i=0;i<3;i++){
       int plant_num = i+1;
-      int diff = capRead[i] - capThresholdMap[i];
-      if(diff > 0){
-        if(millis()-capTouchTimer[i] > capTouchDebounce){
-          capTouchTimer[i] = millis();
-          //////SEND TOUCH TO ANDROID
-          if(debug==true){
-            Serial.print("Plant ");
-            Serial.print(plant_num);
-            Serial.print(" was TOUCHED with a val of ");
-            Serial.print(capRead[i]);
-            Serial.print(" (diff = ");
-            Serial.print(diff);
-            Serial.println(")");
-          }
-          else{
-            //real serial write  
-          }
-        }
-      }
+      capDiff[i] = abs(capRead[i] - capThresholdMap[i]);
+//      if(diff > 0){
+//        if(millis()-capTouchTimer[i] > capTouchDebounce){
+//          capTouchTimer[i] = millis();
+//          //////SEND TOUCH TO ANDROID
+//          if(debug==true){
+//            Serial.print("Plant ");
+//            Serial.print(plant_num);
+//            Serial.print(" was TOUCHED with a val of ");
+//            Serial.print(capRead[i]);
+//            Serial.print(" (diff = ");
+//            Serial.print(diff);
+//            Serial.println(")");
+//          }
+//          else{
+//            //real serial write  
+//          }
+//        }
+//      }
     }
+    sprintf(outgoing, "L,%d,%d,%d",capDiff[0],capDiff[1],capDiff[2]);
+     rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
   }
 
 
@@ -291,7 +295,7 @@ void loop(){
       //char holder[6];
       //memset(outgoing,0,sizeof(outgoing));
       Serial.println("HERE");
-      sprintf(outgoing, "L,%d,%d,%d,%d",tsl.visible_light,tsl.fullspectrum_light,tsl.infrared_light,tsl.lux);
+      //sprintf(outgoing, "L,%d,%d,%d,%d",tsl.visible_light,tsl.fullspectrum_light,tsl.infrared_light,tsl.lux);
 //      strcpy(outgoing,"L,");
 //      strcat(outgoing, itoa(tsl.visible_light, holder, 10));
 //      strcat(outgoing, ",");
@@ -300,14 +304,14 @@ void loop(){
 //      strcat(outgoing, itoa(tsl.infrared_light, holder, 10));
 //      strcat(outgoing, ",");
 //      strcat(outgoing, itoa(tsl.lux, holder, 10));
-      const char* lite = "Light Reading";
-      Serial.print(outgoing);
-      Serial.print("\t");
-      rcode = adk.SndData( strlen(lite),(uint8_t *)lite);
-      Serial.print(rcode);
-      Serial.print("\t");
-      rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
-      Serial.println(rcode);
+      //const char* lite = "Light Reading";
+      //Serial.print(outgoing);
+      //Serial.print("\t");
+     // rcode = adk.SndData( strlen(lite),(uint8_t *)lite);
+      //Serial.print(rcode);
+      //Serial.print("\t");
+      //rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
+      //Serial.println(rcode);
       if(millis()-send_light_timer > send_light_every){ //SEND
         send_light_timer = millis();  
         tsl.get_all_avg();
