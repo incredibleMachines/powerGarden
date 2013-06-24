@@ -76,14 +76,25 @@ DHT dht(DHTPIN, DHTTYPE);
 long read_temphum_every, send_temphum_every;
 long read_temphum_timer, send_temphum_timer;
 //___rangefinder (analog)
-Ping ping = Ping(7); //digital pin 7
+#define RANGEPIN A1
 boolean enable_rangefinder;
 int rangefinderVal, rangefinderValPrev;
 int rangefinderTriggerThresholdCm; //in cm units
 long rangefinderTimer;
 int rangerfinderDebounce;
+
+//OUTPUT TO ANDROID
 char outgoing[64];
 
+
+//// SENDING DATA/////////
+/*
+C = CAP DATA
+L = LIGHT DATA
+T = TEMP,HUMIDITY DATA
+
+
+*/
 
 
 
@@ -108,11 +119,11 @@ void setup(){
 
   //read/send durations
   read_light_every = 2000;
-  send_light_every = 10000;
+  send_light_every = 30000;
   read_moisture_every = 2000;
-  send_moisture_every = 10000;  
+  send_moisture_every = 30000;  
   read_temphum_every = 2000;
-  send_temphum_every = 10000; 
+  send_temphum_every = 30000; 
 
   //initial readings for cap sense threshold
   if(enable_cap_sensor==true){
@@ -201,12 +212,12 @@ void loop(){
       capThresholdMap[i] = map(capThreshold[i],0,1023,0,20000);
       if(abs(capThresholdPrev[i]-capThreshold[i])>2){ //pot value changed
         if(debug==true){
-//          int plant_num = i+1;
-//          Serial.print("Threshold for plant ");
-//          Serial.print(plant_num);
-//          Serial.print(" was set to ");
-//          Serial.print(capThresholdMap[i]);
-//          Serial.println();
+          int plant_num = i+1;
+          Serial.print("Threshold for plant ");
+          Serial.print(plant_num);
+          Serial.print(" was set to ");
+          Serial.print(capThresholdMap[i]);
+          Serial.println();
         }
         else{
           //real serial write  
@@ -263,23 +274,22 @@ void loop(){
 //        if(millis()-capTouchTimer[i] > capTouchDebounce){
 //          capTouchTimer[i] = millis();
 //          //////SEND TOUCH TO ANDROID
-//          if(debug==true){
-//            Serial.print("Plant ");
-//            Serial.print(plant_num);
-//            Serial.print(" was TOUCHED with a val of ");
-//            Serial.print(capRead[i]);
-//            Serial.print(" (diff = ");
-//            Serial.print(diff);
-//            Serial.println(")");
-//          }
-//          else{
-//            //real serial write  
-//          }
+          if(debug==true){
+            Serial.print("Plant ");
+            Serial.print(plant_num);
+            Serial.print(" was TOUCHED with a val of ");
+            Serial.print(capRead[i]);
+            Serial.println(")");
+          }
+          else{
+            //real serial write  
+                sprintf(outgoing, "C,%d,%d,%d,%d,%d,%d,%d,%d",capDiff[0],capDiff[1],capDiff[2],capDiff[3],capDiff[4],capDiff[5],capDiff[6],capDiff[7]);
+     rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
+          }
 //        }
 //      }
     }
-    sprintf(outgoing, "C,%d,%d,%d,%d,%d,%d,%d,%d",capDiff[0],capDiff[1],capDiff[2],capDiff[3],capDiff[4],capDiff[5],capDiff[6],capDiff[7]);
-     rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
+
   }
 
 
@@ -309,26 +319,7 @@ void loop(){
       else{
         //do nothing  
       }
-      //char holder[6];
-      //memset(outgoing,0,sizeof(outgoing));
-      Serial.println("HERE");
-      //sprintf(outgoing, "L,%d,%d,%d,%d",tsl.visible_light,tsl.fullspectrum_light,tsl.infrared_light,tsl.lux);
-//      strcpy(outgoing,"L,");
-//      strcat(outgoing, itoa(tsl.visible_light, holder, 10));
-//      strcat(outgoing, ",");
-//      strcat(outgoing, itoa(tsl.fullspectrum_light, holder, 10));
-//      strcat(outgoing, ",");
-//      strcat(outgoing, itoa(tsl.infrared_light, holder, 10));
-//      strcat(outgoing, ",");
-//      strcat(outgoing, itoa(tsl.lux, holder, 10));
-      //const char* lite = "Light Reading";
-      //Serial.print(outgoing);
-      //Serial.print("\t");
-     // rcode = adk.SndData( strlen(lite),(uint8_t *)lite);
-      //Serial.print(rcode);
-      //Serial.print("\t");
-      //rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
-      //Serial.println(rcode);
+
       if(millis()-send_light_timer > send_light_every){ //SEND
         send_light_timer = millis();  
         tsl.get_all_avg();
@@ -351,6 +342,8 @@ void loop(){
         }
         else{
           //real serial write  
+                  sprintf(outgoing, "L,%d",tsl.lux_avg);
+        rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
         }
 
         tsl.counter = 1; //reset counter
@@ -393,7 +386,10 @@ void loop(){
         }
         else{
           //real serial write 
+                  sprintf(outgoing, "M,%d",moisture_avg);
+        rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
         } 
+
         moisture_counter = 1;
         moisture_total = 0;
       }
@@ -439,8 +435,11 @@ void loop(){
           Serial.println();
         }
         else{
-          //real serial write  
+          //real serial write 
+                 sprintf(outgoing, "T,%d,%d",dht.temp_avg,dht.humidity_avg);
+        rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing ); 
         }
+
         dht.counter = 1; //reset counter
       }
       else{
@@ -452,12 +451,11 @@ void loop(){
   //__________________________________________________________
   //rangefinder  
   if(enable_rangefinder == true){
-    ping.fire();
-    rangefinderVal = ping.centimeters();
-    if(abs(rangefinderVal-rangefinderValPrev)>10){ //movement detected (threshold of 10cm)
-      rangefinderValPrev = rangefinderVal;
-      if(millis()-rangefinderTimer > rangerfinderDebounce){
-        rangefinderTimer = millis();
+    rangefinderVal = analogRead(RANGEPIN);
+//    if(abs(rangefinderVal-rangefinderValPrev)>10){ //movement detected (threshold of 10cm)
+//      rangefinderValPrev = rangefinderVal;
+//      if(millis()-rangefinderTimer > rangerfinderDebounce){
+//        rangefinderTimer = millis();
         if(debug==true){
           Serial.print("Rangefinder val ");
           Serial.print(rangefinderVal);
@@ -465,10 +463,13 @@ void loop(){
           Serial.println();
         }
         else{
-          //real serial write  
+          //real serial write
+          sprintf(outgoing, "R,%d",rangefinderVal);
+          rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );  
         } 
-      } 
-    }  
+        
+//      } 
+//    }  
   }
 
 
