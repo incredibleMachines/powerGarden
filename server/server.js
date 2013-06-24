@@ -67,6 +67,8 @@ io.sockets.on('connection', function (socket) {
 	    /* io.sockets.emit('user disconnected'); */
 	  console.log("[DISCONN] connection.id %s",connection.id);
 	  console.log("[DISCONN] connection.device_id %s",connection.device_id);
+
+	  delete clients["client-"+connection.id];
 	});
 });
 
