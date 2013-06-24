@@ -102,12 +102,17 @@ T = TEMP,HUMIDITY DATA
 void setup(){
 
   Serial.begin(115200);
-  Serial.println("\r\nADK demo start");
+  Serial.println("CODE BEGIN");
+  if(!debug){
+  Serial.println("\r\nADK start");
 
   if (Usb.Init() == -1) {
     Serial.println("OSCOKIRQ failed to assert");
     while(1); //halt
   }//if (Usb.Init() == -1...
+  }else{
+   Serial.println("DEBUG START"); 
+  }
   Serial2.begin(9600);
 
   //turn on/off sensors
