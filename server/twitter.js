@@ -13,6 +13,7 @@ for (var i = 0; i < hashtags.length; i++) {
 	hashtagRegexes.push( new RegExp('#'+hashtags[i], 'i') );
 }
 
+var serverRef;
 
 //
 // Set up keywords to respond to
@@ -55,6 +56,11 @@ var twit = new twitter({
 	access_token_secret: 'ZAsYsPhimfghWJZ3xefpGPhEhs5dcUt7G7ylX6k'
 
 });
+
+function setServerRef(_serverRef) {
+	serverRef = _serverRef;
+}
+exports.serverRef = serverRef;
 
 
 //
@@ -126,7 +132,8 @@ var processesStreamData = function(data) {
 
 	// Send out reply
 	console.log('Replying: ' + response);
-	postStatus(response, { in_reply_to_status_id: id });
+	//postStatus(response, { in_reply_to_status_id: id });
+	server.displayMessageOnAllTablets('test string');
 
 }
 
@@ -161,6 +168,7 @@ var postStatus = function(text, options) {
 // Start stream
 //
 var startStream = function() {
+
 	twit.stream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {
 		console.log('Stream connected');
 
@@ -192,6 +200,11 @@ exports.startStream = startStream;
 exports.postStatus = postStatus;
 
 //startStream();
+
+function gotTouched() {
+	postStatus('*giggle* that tickles!!');
+}
+exports.gotTouched = gotTouched;
 
 
 

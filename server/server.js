@@ -14,6 +14,12 @@ var MongoClient = require('mongodb').MongoClient
 var db, dataDb, personalitiesDb, devicesDb, plantsDb, touchesDb;
 var clients={};
 
+var twitterRef;
+
+function setTwitterRef(_twitterRef) {
+	twitterRef = _twitterRef;
+}
+exports.setTwitterRef = setTwitterRef;
 
 //twitter
 
@@ -250,6 +256,8 @@ function plantTouch(message,connection){
 	touchesDb.insert(obj, function(err){
 		if(err) throw err;
 	});
+
+	twitterRef.gotTouched();
 }
 exports.plantTouch = plantTouch;
 
@@ -352,3 +360,10 @@ function generateResponse(id) {
 }
 exports.generateResponse = generateResponse;
 
+function displayMessageOnAllTablets(string) {
+	console.log('displayMessageOnAllTablets()');
+	for (var key in clients) {
+		console.log(clients[key]);
+	}
+}
+exports.displayMessageOnAllTablets = displayMessageOnAllTablets;
