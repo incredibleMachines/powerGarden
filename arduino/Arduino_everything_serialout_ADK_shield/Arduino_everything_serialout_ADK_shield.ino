@@ -35,7 +35,7 @@ ADK adk(&Usb,"IncredibleMachines, Inc.",
 
 
 //*******************
-boolean debug = false;
+boolean debug = true;
 //*******************
 
 
@@ -51,7 +51,7 @@ int capThresholdPrev[NUMCAPS];
 long capTouchTimer[NUMCAPS] = {
   0,0,0,0,0,0,0,0};
 int potPins[NUMCAPS] = {
-  8,9,10,11,12,13,14,15};
+  A8,A9,A10,A11,A12,A13,A14,A15};
 int capTouchDebounce = 500; //set our debounce duration for plant trigger
 
 
@@ -71,8 +71,13 @@ int moisture_counter = 1;
 //___temphum sensor (digital in)
 boolean enable_temphum_sensor;
 #define DHTPIN 2     //what pin we're connected to
-#define DHTTYPE DHT22   //DHT 22 SENSOR  (AM2302)
-DHT dht(DHTPIN, DHTTYPE);
+//#define DHTTYPE DHT22   //DHT 22 SENSOR  (AM2302)
+DHT dht;
+int dhtCounter = 0;
+int dhtTemp;
+int dhtHum;
+int dhtTempAvg;
+int dhtHumAvg;
 long read_temphum_every, send_temphum_every;
 long read_temphum_timer, send_temphum_timer;
 //___rangefinder (analog)
@@ -90,11 +95,13 @@ char outgoing[64];
 //// SENDING DATA/////////
 /*
 C = CAP DATA
-L = LIGHT DATA
-T = TEMP,HUMIDITY DATA
-
-
-*/
+ L = LIGHT DATA
+ M = MOISTURE
+ T = TEMP,HUMIDITY DATA
+ R = RANGE
+ 
+ 
+ */
 
 
 
@@ -104,23 +111,24 @@ void setup(){
   Serial.begin(115200);
   Serial.println("CODE BEGIN");
   if(!debug){
-  Serial.println("\r\nADK start");
+    Serial.println("\r\nADK start");
 
-  if (Usb.Init() == -1) {
-    Serial.println("OSCOKIRQ failed to assert");
-    while(1); //halt
-  }//if (Usb.Init() == -1...
-  }else{
-   Serial.println("DEBUG START"); 
+    if (Usb.Init() == -1) {
+      Serial.println("OSCOKIRQ failed to assert");
+      while(1); //halt
+    }//if (Usb.Init() == -1...
+  }
+  else{
+    Serial.println("DEBUG START"); 
   }
   Serial2.begin(9600);
 
   //turn on/off sensors
-  enable_light_sensor = false;
-  enable_moisture_sensor = false;
-  enable_temphum_sensor = false;
+  enable_light_sensor = true;
+  enable_moisture_sensor = true;
+  enable_temphum_sensor = true;
   enable_cap_sensor = true;
-  enable_rangefinder = false;
+  enable_rangefinder = true;
 
   //read/send durations
   read_light_every = 2000;
@@ -132,7 +140,7 @@ void setup(){
 
   //initial readings for cap sense threshold
   if(enable_cap_sensor==true){
-    for(int i=0;i<3;i++){
+    for(int i=0;i<NUMCAPS;i++){
       capThreshold[i] = analogRead(potPins[i]); 
       capThresholdMap[i] = map(capThreshold[i],0,1023,0,20000);
     }
@@ -162,7 +170,7 @@ void setup(){
   //__________________________________________________________
   //humidity & temp sensor setup
   if(enable_temphum_sensor==true){  
-    dht.begin();
+    dht.setup(DHTPIN); // data pin 2
   }
 
   //__________________________________________________________
@@ -183,27 +191,29 @@ void setup(){
 
 // LOOP *********************************************************************
 void loop(){
-
-  // ADK STUFF
   uint8_t rcode;
-  
-  uint8_t msg[64] = { 
-    0x00   };
-  Usb.Task();
+  // ADK STUFF
+  if(!debug){
 
-  if( adk.isReady() == false ) {
-    return;
-  }
-  uint16_t len = 64;
 
-  rcode = adk.RcvData(&len, msg);
-  if(len > 0) {
-    if(debug){
-      Serial.println((char*)msg); 
+    uint8_t msg[64] = { 
+      0x00       };
+    Usb.Task();
+
+    if( adk.isReady() == false ) {
+      return;
     }
-    if(strcasecmp((char * )msg,"setup") == 0){
+    uint16_t len = 64;
+
+    rcode = adk.RcvData(&len, msg);
+    if(len > 0) {
       if(debug){
-        Serial.println("GOT Setup");
+        Serial.println((char*)msg); 
+      }
+      if(strcasecmp((char * )msg,"setup") == 0){
+        if(debug){
+          Serial.println("GOT Setup");
+        }
       }
     }
   }
@@ -212,7 +222,7 @@ void loop(){
   //cap sensors
   //1. read pot values, to adjust cap-sense threshold
   if(enable_cap_sensor==true){
-    for(int i=0;i<3;i++){
+    for(int i=0;i<NUMCAPS;i++){
       capThreshold[i] = analogRead(potPins[i]); 
       capThresholdMap[i] = map(capThreshold[i],0,1023,0,20000);
       if(abs(capThresholdPrev[i]-capThreshold[i])>2){ //pot value changed
@@ -270,29 +280,29 @@ void loop(){
       //    Serial.print("|");
       //    Serial.println();
     }  
-     
+
     // 3. touch trigger of plants
     for(int i=0;i<NUMCAPS;i++){
       int plant_num = i+1;
       capDiff[i] = abs(capRead[i] - capThresholdMap[i]);
-//      if(diff > 0){
-//        if(millis()-capTouchTimer[i] > capTouchDebounce){
-//          capTouchTimer[i] = millis();
-//          //////SEND TOUCH TO ANDROID
-          if(debug==true){
-            Serial.print("Plant ");
-            Serial.print(plant_num);
-            Serial.print(" was TOUCHED with a val of ");
-            Serial.print(capRead[i]);
-            Serial.println(")");
-          }
-          else{
-            //real serial write  
-                sprintf(outgoing, "C,%d,%d,%d,%d,%d,%d,%d,%d",capDiff[0],capDiff[1],capDiff[2],capDiff[3],capDiff[4],capDiff[5],capDiff[6],capDiff[7]);
-     rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
-          }
-//        }
-//      }
+      //      if(diff > 0){
+      //        if(millis()-capTouchTimer[i] > capTouchDebounce){
+      //          capTouchTimer[i] = millis();
+      //          //////SEND TOUCH TO ANDROID
+      if(debug==true){
+        //            Serial.print("Plant ");
+        //            Serial.print(plant_num);
+        //            Serial.print(" was TOUCHED with a val of ");
+        //            Serial.print(capRead[i]);
+        //            Serial.println(")");
+      }
+      else{
+        //real serial write  
+        sprintf(outgoing, "C,%d,%d,%d,%d,%d,%d,%d,%d",capDiff[0],capDiff[1],capDiff[2],capDiff[3],capDiff[4],capDiff[5],capDiff[6],capDiff[7]);
+        rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
+      }
+      //        }
+      //      }
     }
 
   }
@@ -347,8 +357,8 @@ void loop(){
         }
         else{
           //real serial write  
-                  sprintf(outgoing, "L,%d",tsl.lux_avg);
-        rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
+          sprintf(outgoing, "L,%d",tsl.lux_avg);
+          rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
         }
 
         tsl.counter = 1; //reset counter
@@ -391,8 +401,8 @@ void loop(){
         }
         else{
           //real serial write 
-                  sprintf(outgoing, "M,%d",moisture_avg);
-        rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
+          sprintf(outgoing, "M,%d",moisture_avg);
+          rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
         } 
 
         moisture_counter = 1;
@@ -410,16 +420,20 @@ void loop(){
   if(enable_temphum_sensor == true){
     if(millis()-read_temphum_timer > read_temphum_every){ //READ
       read_temphum_timer = millis();
-      dht.read_all_data();
+      //dht.read_all_data();
+      dhtTemp = dht.getTemperature();
+      dhtHum = dht.getHumidity();
+      dhtTempAvg += dhtTemp;
+      dhtHumAvg += dhtHum;
       if(debug==true){
         Serial.print("<- READING TEMPHUM SENSOR ");
-        Serial.print(dht.counter);
+        Serial.print(dhtCounter);
         Serial.print("\t");
         Serial.print("TEMP:");
-        Serial.print(dht.temp_val);
+        Serial.print(dhtTemp);
         Serial.print("\t");
         Serial.print("HUM:");
-        Serial.print(dht.humidity_val);
+        Serial.print(dhtHum);
         Serial.println();
       }
       else{
@@ -427,28 +441,30 @@ void loop(){
       } 
       if(millis()-send_temphum_timer > send_temphum_every){ //SEND
         send_temphum_timer = millis();  
-        dht.get_all_avg();
+        //dht.get_all_avg();
+        dhtTempAvg = dhtTempAvg/dhtCounter;
+        dhtHumAvg = dhtHumAvg/dhtCounter;
         if(debug==true){
           Serial.print("-> SENDING TEMPHUM SENSOR AVG (total readings, ");
-          Serial.print(dht.counter);
+          Serial.print(dhtCounter);
           Serial.print(")\t");
           Serial.print("TEMP:");
-          Serial.print(dht.temp_avg);
+          Serial.print(dhtTempAvg);
           Serial.print("\t");
           Serial.print("HUM:");
-          Serial.print(dht.humidity_avg);
+          Serial.print(dhtHumAvg);
           Serial.println();
         }
         else{
           //real serial write 
-                 sprintf(outgoing, "T,%d,%d",dht.temp_avg,dht.humidity_avg);
-        rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing ); 
+          sprintf(outgoing, "T,%d,%d",dhtTempAvg,dhtHumAvg);
+          rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing ); 
         }
 
-        dht.counter = 1; //reset counter
+        dhtCounter = 1; //reset counter
       }
       else{
-        dht.counter++; //increase counter
+        dhtCounter++; //increase counter
       }
     }
   }
@@ -457,24 +473,24 @@ void loop(){
   //rangefinder  
   if(enable_rangefinder == true){
     rangefinderVal = analogRead(RANGEPIN);
-//    if(abs(rangefinderVal-rangefinderValPrev)>10){ //movement detected (threshold of 10cm)
-//      rangefinderValPrev = rangefinderVal;
-//      if(millis()-rangefinderTimer > rangerfinderDebounce){
-//        rangefinderTimer = millis();
-        if(debug==true){
-          Serial.print("Rangefinder val ");
-          Serial.print(rangefinderVal);
-          Serial.print(" (cm)");
-          Serial.println();
-        }
-        else{
-          //real serial write
-          sprintf(outgoing, "R,%d",rangefinderVal);
-          rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );  
-        } 
-        
-//      } 
-//    }  
+    //    if(abs(rangefinderVal-rangefinderValPrev)>10){ //movement detected (threshold of 10cm)
+    //      rangefinderValPrev = rangefinderVal;
+    //      if(millis()-rangefinderTimer > rangerfinderDebounce){
+    //        rangefinderTimer = millis();
+    if(debug==true){
+      Serial.print("Rangefinder val ");
+      Serial.print(rangefinderVal);
+      Serial.print(" (cm)");
+      Serial.println();
+    }
+    else{
+      //real serial write
+      sprintf(outgoing, "R,%d",rangefinderVal);
+      rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );  
+    } 
+
+    //      } 
+    //    }  
   }
 
 
@@ -484,6 +500,7 @@ void loop(){
 
 
 }
+
 
 
 
