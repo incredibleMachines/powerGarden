@@ -1,4 +1,6 @@
+//
 // Set up our handle & hashtags to follow
+//
 var handle = 'IncMachinesDev';
 var hashtags = ['IncMachinesDev', 'PowerGarden', 'ThePowerGarden'];
 var trackString = handle + ',' + hashtags.join(',');
@@ -11,6 +13,10 @@ for (var i = 0; i < hashtags.length; i++) {
 	hashtagRegexes.push( new RegExp('#'+hashtags[i], 'i') );
 }
 
+
+//
+// Set up keywords to respond to
+//
 var triggers = [
 	{
 		type: 'sprinklers',
@@ -19,6 +25,10 @@ var triggers = [
 	}
 ]
 
+
+//
+// Set up our handle & hashtags to follow
+//
 var genericResponses = [
 	"Careful, if the tomatoes get too worked-up they're going to fall off their vines! Let's spread the love around a bit.",
 	"It's time for the tomatoes to get their beauty rest. Come back soon!",
@@ -32,6 +42,24 @@ var genericResponses = [
 	"Any more action and these tomatoes are going to turn into sauce!"
 ]
 
+
+//
+// Twitter setup
+//
+var twitter = require('ntwitter');
+var twit = new twitter({
+
+	consumer_key: 'bTc9jPplp8SegUtH9EGhTA',
+	consumer_secret: 'Tin9GFVUfqZKVzLCrKRrMAl9Y3TX7IlxiIVRSW0OWU',
+	access_token_key: '1534210819-fSgoQxNsrkY8ORr2t4w6f6jjuQecnY0V8wN5cnm',
+	access_token_secret: 'ZAsYsPhimfghWJZ3xefpGPhEhs5dcUt7G7ylX6k'
+
+});
+
+
+//
+// Main stream processing handler
+//
 var processesStreamData = function(data) {
 	// console.log(data);
 
@@ -98,12 +126,20 @@ var processesStreamData = function(data) {
 
 	// Send out reply
 	console.log('Replying: ' + response);
-	//postStatus(response, { in_reply_to_status_id: id });
+	postStatus(response, { in_reply_to_status_id: id });
 
 }
 
+
+//
+// Convenience method for posting to twitter
+// Can take a second parameter for options
+//
 var postStatus = function(text, options) {
 
+	var options = options || {};
+
+	// Set location to our plaza in Chicago
 	options.lat = 41.88251;
 	options.long = -87.638771;
 	options.place_id = '1d9a5370a355ab0c';
@@ -121,42 +157,43 @@ var postStatus = function(text, options) {
 
 }
 
-// Pull in ntwitter module
-var twitter = require('ntwitter');
-
-// Set up our ntwitter object
-var twit = new twitter({
-
-	consumer_key: 'bTc9jPplp8SegUtH9EGhTA',
-	consumer_secret: 'Tin9GFVUfqZKVzLCrKRrMAl9Y3TX7IlxiIVRSW0OWU',
-	access_token_key: '1534210819-fSgoQxNsrkY8ORr2t4w6f6jjuQecnY0V8wN5cnm',
-	access_token_secret: 'ZAsYsPhimfghWJZ3xefpGPhEhs5dcUt7G7ylX6k'
-
-});
-
+//
 // Start stream
-twit.stream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {
-	console.log('Stream connected');
+//
+var startStream = function() {
+	twit.stream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {
+		console.log('Stream connected');
 
-	stream.on('data', processesStreamData);
+		// Process with our callback
+		stream.on('data', processesStreamData);
 
-	stream.on('error', function(error, code){
-		console.log('STREAM ERROR: ' + code);
-		console.log(error);
-		throw error;
-	});
-	stream.on('end', function (response) {
-		// Handle a disconnection
-		console.log('STREAM END');
-		console.log(response);
-	});
-	stream.on('destroy', function (response) {
-		// Handle a 'silent' disconnection from Twitter, no end/error event fired
-		console.log('STREAM DESTROY');
-		console.log(response);
-	});
+		// Deal with errors
+		stream.on('error', function(error, code){
+			console.log('STREAM ERROR: ' + code);
+			console.log(error);
+			throw error;
+		});
+		stream.on('end', function (response) {
+			// Handle a disconnection
+			console.log('STREAM END');
+			console.log(response);
+		});
+		stream.on('destroy', function (response) {
+			// Handle a 'silent' disconnection from Twitter, no end/error event fired
+			console.log('STREAM DESTROY');
+			console.log(response);
+		});
 
-});
+	});
+}
+
+// Export public functions
+exports.startStream = startStream;
+exports.postStatus = postStatus;
+
+//startStream();
+
+
 
 // Post a test status
 // twit.updateStatus('Test tweet from ntwitter/' + twitter.VERSION,

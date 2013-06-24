@@ -95,15 +95,11 @@ function routeUpdate(message,connection){
 			//check the last values and determine mood of plant 
 			//update plants/device if necessary
 		
-		});
-			
-			
-	
-		
+		});	
 	}
-	
-	
 }
+exports.routeUpdate = routeUpdate;
+
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
@@ -150,8 +146,8 @@ function routeRegister(message,connection){
 		//check plants and register them
 		
 	}
-
 }
+exports.routeRegister = routeRegister;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -173,33 +169,32 @@ function assignPlantData(result,connection){
 					};
 					//connection.socket.send(JSON.stringify(res));
 					connection.socket.emit('planted',res);
-		});
-
-		
-	}
-	
+		});	
+	}	
 }
+exports.assignPlantData = assignPlantData;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
 function logDevice(message,connection){
-		var obj = {date: new Date(), plants: []};
-		devicesDb.insert(obj, {safe:true}, function(err,doc){
-			if(err)throw err;
-			
-			connection.device_id = doc[0]._id;
-			console.log('Created Record: '+connection.device_id);
-			console.log("plants.length: "+message.num_plants);
-			for(var i = 0; i<message.num_plants; i++) createPlant(message,connection,i);
-			
-			
-			var res = { "device_id": connection.device_id, "connection_id": connection.id };
-			//connection.socket.send(JSON.stringify(res));
-			connection.socket.emit('connected',res);
-		});	
-	
+	var obj = {date: new Date(), plants: []};
+	devicesDb.insert(obj, {safe:true}, function(err,doc){
+		if(err)throw err;
+		
+		connection.device_id = doc[0]._id;
+		console.log('Created Record: '+connection.device_id);
+		console.log("plants.length: "+message.num_plants);
+		for(var i = 0; i<message.num_plants; i++) createPlant(message,connection,i);
+		
+		
+		var res = { "device_id": connection.device_id, "connection_id": connection.id };
+		//connection.socket.send(JSON.stringify(res));
+		connection.socket.emit('connected',res);
+	});	
 }
+exports.logDevice = logDevice;
+
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 //update mongo db document
@@ -212,6 +207,8 @@ function updateDocument(collection,id,json){
 
 //no upsert 
 }
+exports.updateDocument = updateDocument;
+
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
@@ -228,11 +225,8 @@ function createPlant(message,connection,plant_index){
 		   updateDocument(devicesDb,connection.device_id, json);
 		   
 	});
-		
-	
-
-	
 }
+exports.createPlant = createPlant;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -254,10 +248,8 @@ function plantTouch(message,connection){
 	touchesDb.insert(obj, function(err){
 		if(err) throw err;
 	});
-				
-	 
-				
 }
+exports.plantTouch = plantTouch;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -325,6 +317,7 @@ function updatePlantMood(message,connection) {
 		}
 	});
 }
+exports.updatePlantMood = updatePlantMood;
 
 /* ******************************************************************************************* */
 /* Generate a response based on the plant's mood 								 			   */
@@ -353,7 +346,7 @@ function generateResponse(id) {
 			// comment on weather (hot, dry, humid)
 			// provide a factoid
 		}
-
 	});
 }
+exports.generateResponse = generateResponse;
 
