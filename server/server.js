@@ -273,11 +273,11 @@ function Connection(_id, _device_id,_socket){
 /* ******************************************************************************************* */
 /* Update the plant's mood based on interaction & envrionmental data 						   */
 /* ******************************************************************************************* */
-function updatePlantMood(id) {
+function updatePlantMood(message,connection) {
 
 	// fetch data from db for given device id
-	plantsDb.findOne({ '_id': new BSON.ObjectID(id) } ,function(err,result) {
-
+	plantsDb.findOne({ '_id': new BSON.ObjectID(message.device_id) } ,function(err,result) {
+		
 		// environmental data:
 		//
 		// moisture		dried out	|	good	|	wet
