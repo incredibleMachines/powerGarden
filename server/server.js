@@ -11,7 +11,7 @@ var MongoClient = require('mongodb').MongoClient
 	,mongo = new MongoClient(new Server('localhost', 27017))
 	,BSON = require('mongodb').BSONPure;
 
-var db, dataDb, personalitiesDb, devicesDb, plantsDb;
+var db, dataDb, personalitiesDb, devicesDb, plantsDb, touchesDb;
 var clients={};
 
 
@@ -27,6 +27,7 @@ mongo.open(function(err,mongo){
 	plantsDb = db.collection('plants');
 	personalitiesDb = db.collection('personalities');
 	dataDb = db.collection('data');
+	touchesDb = db.collection('touches');
 		
 });
 
@@ -44,115 +45,30 @@ io.sockets.on('connection', function (socket) {
 	console.log("[NEW CONN] connection.id %s",connection.id);
 	console.log("[NEW CONN] connection.device_id %s",connection.device_id);
 
-/* Depreciated
-  socket.on('message', function (msg) {
-    console.log('I received a message: ', msg);
-    //var json = JSON.parse(msg);
-    //console.log(JSON.stringify(json));
-    //checkType(msg, connection);
-	console.log(msg);
-  
-  });
-*/
-  socket.on('register', function (msg) {
-    console.log('[Device Register Request]: ', msg);
-    
-    routeRegister(msg,connection);
-    //console.log(typeof msg);
-    //var json = JSON.parse(msg);
-    //console.log(JSON.stringify(json));
-    //checkType(msg, connection);
-  
-  });
-  socket.on('update', function (msg) {
-    console.log('[Device Update Request]: ', msg);
-    
-    routeUpdate(msg,connection);
-    //var json = JSON.parse(msg);
-    //console.log(JSON.stringify(json));
-    //checkType(msg, connection);
-  
-  });
 
-  socket.on('disconnect', function () {
-    /* io.sockets.emit('user disconnected'); */
-    console.log("[DISCONN] connection.id %s",connection.id);
-	console.log("[DISCONN] connection.device_id %s",connection.device_id);
-  });
-});
-
-/* ******************************************************************************************* */
-//Depreciated
-/* ******************************************************************************************* */
-
-
-/*
-wss.on('connection', function(socket) {
-	//Create unique connection OBJECT
-	var connection = new Connection( ++clientID, 'set_id', socket);
-	var connectKey = 'client-'+clientID;
-	clients[connectKey]=connection;
-
-	console.log("[NEW CONN] connection.id %s",connection.id);
-	console.log("[NEW CONN] connection.device_id %s",connection.device_id);
-	//When socket recieves message
-    socket.on('message', function(message) {
-        
-        var json = JSON.parse(message);
-        console.log(JSON.stringify(json));
-
-    	checkType(json, connection);
-    	
-        //socket.send(JSON.stringify(res));
-    });
-
-    socket.on('close',function(){
-    	console.log("[CLOSE CONN] connection.id=%s",connection.id);
-    	
-    	//need somethign to keep track of indexs within 
-    	//the array splice and removal
-    	delete clients["client-"+connection.id];
-    	//clients.splice(index, 1);
-    });
-    
-    socket.on('error',function(err){
-	    
-	    if(err) throw err;
-	    
-    });
-    
-    var obj = {"status" : "device_connected", "data":{ "connection_num": connection.id }};
-
-    socket.send(JSON.stringify(obj));
-});
-*/
-
-/* ******************************************************************************************* */
-//Depreciated
-/* ******************************************************************************************* */
-
-/*
-function checkType(message, connection){
-
-	//hold
-	switch(message.type){
-		case 'connect':
-			console.log('[Recieved Incoming %s] Connection Request connection.id=%s',message.type, connection.id);
-			routeConnect(message,connection);
-		break;
-		case 'update':
-			//console.log("got update device request");
-			console.log('[Recieved Incoming %s] Device ID: message.device_id=%s ',message.type,message.device_id);
-			routeUpdate(message,connection);		
-		break;
-		case 'touch':
-			return 'recieved';
-		break;
-	}
+	socket.on('register', function (msg) {
+	    console.log('[Device Register Request]: ', msg);
+	    routeRegister(msg,connection);
+	  
+	});
+	socket.on('update', function (msg) {
+	    console.log('[Device Update Request]: ', msg);
+	    routeUpdate(msg,connection);
+	  
+	});
+	  
+	socket.on('touch',function(msg){
+		  console.log('[Plant Touch Signaled]', msg);
+		  plantTouch(msg,connection);
+		  
+	});
 	
-
-}
-*/
+	socket.on('disconnect', function () {
+	    /* io.sockets.emit('user disconnected'); */
+	  console.log("[DISCONN] connection.id %s",connection.id);
+	  console.log("[DISCONN] connection.device_id %s",connection.device_id);
+	});
+});
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -162,56 +78,27 @@ function routeUpdate(message,connection){
 	if(message.device_id != connection.device_id) { 
 		console.log('[Update Error] message.device_id=%s connection.device_id=%s', message.device_id, connection.device_id );/*error error;*/ 
 	}else{
-		
-		if(message.data) console.log("GOT MESSAGE.DATA :: "+JSON.stringify(message.data));
-		
-		if(message.plants){
+		 
+		console.log("GOT MESSAGE.DATA :: "+JSON.stringify(message.data));
 			
-			//check plants id
-			//register plant 
-			//update plant vals
-			for(var i=0; i<message.plants.length;i++){
-				if(message.plants[i].id.length==24){
-					
-					var json = { $inc: {'touch.count':message.plants[i].touch.count , 'touch.length':message.plants[i].touch.length },
-								 $set: {'mood':message.plants[i].mood, 'type':message.plants[i].type, 'index':message.plants[i].index}
-								 
-								};	
-					updateDocument(plantsDb,message.plants[i].id,json);
-					
-				}//else we need an update to the plant
-			}			 
-			
-		}//end plants
-		
-		if(message.data){
-			
-			var obj = {	'device_id':message.device_id, 
-						'moisture':message.data.moisture, 
-						'temp': message.data.temp, 
-						'humidity':message.data.humidity, 
-						'light': message.data.light,
-						'timestamp': new Date()
-					};
-					
-			if(message.plants){
-				var arr=new Array();
-				for(var i=0; i<message.plants.length;i++){
-					arr[i] = {'_id':message.plants[i].id, 'touch':{ 'count': message.plants[i].touch.count, 'length': message.plants[i].touch.length }};
-				}
-				obj['plants']=arr;
+		var obj = {	'device_id': new BSON.ObjectID( String(message.device_id)), 
+					'moisture':message.data.moisture, 
+					'temp': message.data.temp, 
+					'humidity':message.data.humidity, 
+					'light': message.data.light,
+					'timestamp': new Date()
+				};
 				
-			}
-			dataDb.insert(obj, {safe:true}, function(err,doc){
-				if(err) throw err;
-				
-				//check the last values and determine mood of plant 
-				//update plants/device if necessary
+		dataDb.insert(obj, {safe:true}, function(err,doc){
+			if(err) throw err;
 			
-			});
+			//check the last values and determine mood of plant 
+			//update plants/device if necessary
+		
+		});
 			
 			
-		}
+	
 		
 	}
 	
@@ -333,20 +220,10 @@ function createPlant(message,connection,plant_index){
 	
 	//console.log("plant: "+ JSON.stringify(plant));
 	console.log('[CREATING PLANT]');
-	var obj = {created: new Date(), device_id:connection.device_id, index: plant_index, type: message.plant_type, mood: "born", touch:{ count:0, length:0} };
+	var obj = {created: new Date(), device_id:connection.device_id, index: plant_index, type: message.plant_type, mood: "born", touch:0 };
 	plantsDb.insert(obj,{safe:true},function(err,doc){
 			if(err) throw err;
-/*
-			var res = {	//"status": "planted", 
-						"device_id": connection.device_id, 
-						"connection_id": connection.id, 
-						"plant":{"id": doc[0]._id, "type":doc[0].type, "index":doc[0].index , "mood":doc[0].mood } 
-		   };
-		   connection.socket.emit('planted', res);
-*/	
-		   //connection.socket.send(JSON.stringify(res));
-		   
-		   //var something= "text";
+
 		   var json={ $push: { plants: { index:doc[0].index, _id:doc[0]._id } } };
 		   updateDocument(devicesDb,connection.device_id, json);
 		   
@@ -355,6 +232,31 @@ function createPlant(message,connection,plant_index){
 	
 
 	
+}
+
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+function plantTouch(message,connection){
+	
+	//May need to create dual index of device_id & plant index
+
+	var obj = {'device_id': new BSON.ObjectID(String(message.device_id)), 'index': message.plant_index };
+	var json = {$inc : {touch: 1}};
+	plantsDb.update(obj, json,function(err){
+		if(err) throw err;
+		//check & respond w mood update.
+
+	});	
+	
+	obj.timestamp = new Date();
+		
+	touchesDb.insert(obj, function(err){
+		if(err) throw err;
+	});
+				
+	 
+				
 }
 
 /* ******************************************************************************************* */

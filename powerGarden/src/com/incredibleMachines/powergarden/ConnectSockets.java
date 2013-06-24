@@ -2,6 +2,9 @@ package com.incredibleMachines.powergarden;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.victorint.android.usb.interfaces.Connectable;
 
 import android.os.Bundle;
@@ -31,6 +34,8 @@ public class ConnectSockets extends Activity implements Connectable {
 	   static EditText mID;
 	   static EditText mNumPlants;
 	   static Button mSendMessage;
+	   static Button mSendUpdate;
+	   static Button mSendTouch;
 	   static Spinner mplantList;
 	   //static ListView mplantsView;
 	   
@@ -84,6 +89,8 @@ public class ConnectSockets extends Activity implements Connectable {
 	            saveServerPrefs();
 	            setButtonDisconnect();
 	            mSendMessage.setEnabled(true);
+	            mSendTouch.setEnabled(true);
+	            mSendUpdate.setEnabled(true);
 	         }
 	      });
 	   }
@@ -94,6 +101,28 @@ public class ConnectSockets extends Activity implements Connectable {
            		PowerGarden.SM.authDevice(mType.getText().toString(), mID.getText().toString(), Integer.parseInt(mNumPlants.getText().toString()), mplantList.getSelectedItem().toString() , ConnectSockets.this);
            	}
            });
+           
+           mSendTouch.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
+	        	   PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );				
+			}
+           });
+           
+           mSendUpdate.setOnClickListener(new Button.OnClickListener(){
+        	   public void onClick(View r){
+        		   JSONObject j = new JSONObject();
+        		   long time = System.currentTimeMillis() / 1000L;
+        		   	try {
+        		   		j.put("moisture", 2131).put("temp", 89.75).put("humidity", 66.32).put("light", 3324.32).put("timestamp", time );
+        		   	} catch (JSONException e) {
+        		   		e.printStackTrace();
+        		   	}
+        		   
+        		   PowerGarden.SM.updateData("update", mID.getText().toString(), j, ConnectSockets.this);
+        	   }
+        	   
+           });
+           
 	   }
 	   private void setButtonDisconnect() {
 	      mHostname.setEnabled(false);
@@ -104,6 +133,8 @@ public class ConnectSockets extends Activity implements Connectable {
 	         public void onClick(View v) {
 	            PowerGarden.SM.closeUpShop();
 	            mSendMessage.setEnabled(false);
+	            mSendTouch.setEnabled(false);
+	            mSendUpdate.setEnabled(false);
 	            setButtonConnect();
 	         }
 	      });
@@ -124,6 +155,8 @@ public class ConnectSockets extends Activity implements Connectable {
 	    mID = (EditText) findViewById(R.id.device_id);
 	    mNumPlants = (EditText) findViewById(R.id.num_plants);
 	    mSendMessage = (Button) findViewById(R.id.sendMsg);
+	    mSendTouch = (Button) findViewById(R.id.sendTouch);
+	    mSendUpdate=(Button) findViewById(R.id.sendUpdate);
 	    mSendMessage.setEnabled(false);
 	    mplantList = (Spinner) findViewById(R.id.type_plants);
 	    //mplantsView = (ListView) findViewById(R.id.plants);
