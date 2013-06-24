@@ -32,6 +32,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     SeekBar bar1;
     SeekBar bar2;
     SeekBar bar3;
+    PlantObject plants[] = new PlantObject[8];
+    int numPlants = 8;
     int bar1Val;
     MedianFilter MF1 = new MedianFilter();
     MedianFilter MF2 = new MedianFilter();
@@ -49,13 +51,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     final long triggerTime = 2000;
     boolean bHaveData = false;
     String gotData;
-    ArrayList<Integer> medianFilter1 =new ArrayList<Integer>();
-    ArrayList<Integer> medianFilter2 =new ArrayList<Integer>();
-    ArrayList<Integer> medianFilter3 =new ArrayList<Integer>();
     //int [] arrayToSort = {0,0,0,0,0,0,0,0,0,0};
     
-    
-
 	@Override
 	public void signalToUi(int type, Object data) {
 
@@ -189,7 +186,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		}
 
 	}
-
+	
 	@Override
 	public void saveState() {
 		// TODO Auto-generated method stub
@@ -209,6 +206,10 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
         	return;
         }
 		activity_ = activity;
+		for(int i = 0; i<numPlants; i++){
+			PlantObject tempPlant = new PlantObject();
+			plants[i] = tempPlant;
+		}
 
 	}
 

@@ -51,7 +51,7 @@ int capThresholdPrev[NUMCAPS];
 long capTouchTimer[NUMCAPS] = {
   0,0,0,0,0,0,0,0};
 int potPins[NUMCAPS] = {
-  2,3,4};
+  8,9,10,11,12,13,14,15};
 int capTouchDebounce = 500; //set our debounce duration for plant trigger
 
 
@@ -256,7 +256,7 @@ void loop(){
     }  
      
     // 3. touch trigger of plants
-    for(int i=0;i<3;i++){
+    for(int i=0;i<NUMCAPS;i++){
       int plant_num = i+1;
       capDiff[i] = abs(capRead[i] - capThresholdMap[i]);
 //      if(diff > 0){
@@ -278,7 +278,7 @@ void loop(){
 //        }
 //      }
     }
-    sprintf(outgoing, "C,%d,%d,%d",capDiff[0],capDiff[1],capDiff[2]);
+    sprintf(outgoing, "C,%d,%d,%d,%d,%d,%d,%d,%d",capDiff[0],capDiff[1],capDiff[2],capDiff[3],capDiff[4],capDiff[5],capDiff[6],capDiff[7]);
      rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
   }
 

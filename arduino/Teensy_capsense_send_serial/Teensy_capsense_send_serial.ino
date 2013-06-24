@@ -2,9 +2,9 @@
 //need teensyduino to upload to teensy board through arduino
 //download teensyduino from pjrc.com
 
-
-int touchVals[3];
-int touchPins[3] = {0,1,15}; //SET CAP SENSE PINS 
+#define NUMCAPS 8
+int touchVals[NUMCAPS];
+int touchPins[NUMCAPS] = {0,1,15,16,17,18,19,22}; //SET CAP SENSE PINS 
 
 
 void setup(){
@@ -19,7 +19,7 @@ void loop(){
   }
   
   if(flag==true){
-    for(int i=0;i<3;i++){
+    for(int i=0;i<NUMCAPS;i++){
       touchVals[i] = touchRead(touchPins[i]);
       //http://www.instructables.com/id/Sending-a-multi-byte-integer-to-Arduinos-serial/
       unsigned char LSB = touchVals[i] & 0xff;
