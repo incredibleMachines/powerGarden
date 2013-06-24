@@ -1,6 +1,15 @@
-// Set up our handle
+// Set up our handle & hashtags to follow
 var handle = 'IncMachinesDev';
+var hashtags = ['IncMachinesDev', 'PowerGarden', 'ThePowerGarden'];
+var trackString = handle + ',' + hashtags.join(',');
+
 var handleRegex = new RegExp('@'+handle, 'i');
+
+var hashtagRegexes = [];
+hashtagRegexes.push( new RegExp('#'+handle, 'i') );
+for (var i = 0; i < hashtags.length; i++) {
+	hashtagRegexes.push( new RegExp('#'+hashtags[i], 'i') );
+}
 
 var triggers = [
 	{
@@ -37,9 +46,19 @@ var processesStreamData = function(data) {
 	var text = data.text;
 	var user = data.user.screen_name;
 
-	// Make sure there's a user mention before continuing
-	if (handleRegex.test(text) == null)
+	// Make sure there's a user mention or matched hashtag before continuing
+	var hashtagMatched = false;
+	for (var i = 0; i < hashtagRegexes.length; i++) {
+		if (hashtagRegexes[i].test(text)) {
+			console.log("Match on regex: " + hashtagRegexes[i]);
+			hashtagMatched = true;
+			break;
+		}
+	}
+	if (!handleRegex.test(text) && !hashtagMatched) {
+		console.log("No match on handles or hashtags, returning.")
 		return;
+	}
 
 	console.log('@'+user + ' ' + text);
 
@@ -79,7 +98,7 @@ var processesStreamData = function(data) {
 
 	// Send out reply
 	console.log('Replying: ' + response);
-	postStatus(response, { in_reply_to_status_id: id });
+	//postStatus(response, { in_reply_to_status_id: id });
 
 }
 
@@ -97,7 +116,7 @@ var postStatus = function(text, options) {
 			console.log(data);
 		}
 
-		console.log(JSON.stringify(data));
+		//console.log(JSON.stringify(data));
 	});
 
 }
@@ -108,12 +127,15 @@ var twitter = require('ntwitter');
 // Set up our ntwitter object
 var twit = new twitter({
 
-
+	consumer_key: 'bTc9jPplp8SegUtH9EGhTA',
+	consumer_secret: 'Tin9GFVUfqZKVzLCrKRrMAl9Y3TX7IlxiIVRSW0OWU',
+	access_token_key: '1534210819-fSgoQxNsrkY8ORr2t4w6f6jjuQecnY0V8wN5cnm',
+	access_token_secret: 'ZAsYsPhimfghWJZ3xefpGPhEhs5dcUt7G7ylX6k'
 
 });
 
 // Start stream
-twit.stream('statuses/filter', { track: handle, stall_warnings: true }, function(stream) {
+twit.stream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {
 	console.log('Stream connected');
 
 	stream.on('data', processesStreamData);
