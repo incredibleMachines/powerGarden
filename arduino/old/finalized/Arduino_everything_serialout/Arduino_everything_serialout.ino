@@ -2,26 +2,7 @@
 #include "TSL2561.h" //library for light sensor (with edits)
 #include "DHT.h" //library for temp & humidity (with edits)
 #include <Ping.h>
-#include <avrpins.h>
-#include <max3421e.h>
-#include <usbhost.h>
-#include <usb_ch9.h>
-#include <Usb.h>
-#include <usbhub.h>
-#include <avr/pgmspace.h>
-#include <address.h>
 
-#include <adk.h>
-
-USB Usb;
-//USBHub     Hub(&Usb);
-
-ADK adk(&Usb,"IncredibleMachines, Inc.",
-"PowerGardenBoard",
-"Arduino Terminal for Android",
-"1.0",
-"http://www.incrediblemachines.net",
-"0000000000000001");
 
 //connect moisture sensor to A0
 //connect rangefinder to digital 7
@@ -33,7 +14,7 @@ ADK adk(&Usb,"IncredibleMachines, Inc.",
 
 
 //*******************
-boolean debug = false;
+boolean debug = true;
 //*******************
 
 
@@ -42,68 +23,57 @@ boolean debug = false;
 //for three plants
 boolean enable_cap_sensor;
 int capRead[3];
-int capDiff[3];
 int capThreshold[3]; //read from pot
 int capThresholdMap[3]; //map to range 100-4000
 int capThresholdPrev[3]; 
-long capTouchTimer[3] = {
-  0,0,0};
-int potPins[3] = {
-  2,3,4};
+long capTouchTimer[3] = {0,0,0};
+int potPins[3] = {2,3,4};
 int capTouchDebounce = 500; //set our debounce duration for plant trigger
 
 
 //__________________________________________________________
 // INIT OTHER SENSORS
 //___light sensor (i2c)
-boolean enable_light_sensor;
-TSL2561 tsl(TSL2561_ADDR_LOW);  //address pin is low!
-long read_light_every, send_light_every;
-long read_light_timer, send_light_timer;
+  boolean enable_light_sensor;
+  TSL2561 tsl(TSL2561_ADDR_LOW);  //address pin is low!
+  long read_light_every, send_light_every;
+  long read_light_timer, send_light_timer;
 //___moisture sensor (analog)
-boolean enable_moisture_sensor;
-long read_moisture_every, send_moisture_every;
-long read_moisture_timer, send_moisture_timer;
-int moisture_val, moisture_total, moisture_avg;
-int moisture_counter = 1;
+  boolean enable_moisture_sensor;
+  long read_moisture_every, send_moisture_every;
+  long read_moisture_timer, send_moisture_timer;
+  int moisture_val, moisture_total, moisture_avg;
+  int moisture_counter = 1;
 //___temphum sensor (digital in)
-boolean enable_temphum_sensor;
-#define DHTPIN 2     //what pin we're connected to
-#define DHTTYPE DHT22   //DHT 22 SENSOR  (AM2302)
-DHT dht(DHTPIN, DHTTYPE);
-long read_temphum_every, send_temphum_every;
-long read_temphum_timer, send_temphum_timer;
+  boolean enable_temphum_sensor;
+  #define DHTPIN 2     //what pin we're connected to
+  #define DHTTYPE DHT22   //DHT 22 SENSOR  (AM2302)
+  DHT dht(DHTPIN, DHTTYPE);
+  long read_temphum_every, send_temphum_every;
+  long read_temphum_timer, send_temphum_timer;
 //___rangefinder (analog)
-Ping ping = Ping(7); //digital pin 7
-boolean enable_rangefinder;
-int rangefinderVal, rangefinderValPrev;
-int rangefinderTriggerThresholdCm; //in cm units
-long rangefinderTimer;
-int rangerfinderDebounce;
-char outgoing[64];
-
+  Ping ping = Ping(7); //digital pin 7
+  boolean enable_rangefinder;
+  int rangefinderVal, rangefinderValPrev;
+  int rangefinderTriggerThresholdCm; //in cm units
+  long rangefinderTimer;
+  int rangerfinderDebounce;
 
 
 
 // SETUP *********************************************************************
 void setup(){
-
-  Serial.begin(115200);
-  Serial.println("\r\nADK demo start");
-
-  if (Usb.Init() == -1) {
-    Serial.println("OSCOKIRQ failed to assert");
-    while(1); //halt
-  }//if (Usb.Init() == -1...
+  
+  Serial.begin(9600);
   Serial2.begin(9600);
-
+  
   //turn on/off sensors
   enable_light_sensor = false;
   enable_moisture_sensor = false;
   enable_temphum_sensor = false;
-  enable_cap_sensor = false;
+  enable_cap_sensor = true;
   enable_rangefinder = false;
-
+  
   //read/send durations
   read_light_every = 2000;
   send_light_every = 10000;
@@ -111,12 +81,12 @@ void setup(){
   send_moisture_every = 10000;  
   read_temphum_every = 2000;
   send_temphum_every = 10000; 
-
+  
   //initial readings for cap sense threshold
   if(enable_cap_sensor==true){
     for(int i=0;i<3;i++){
       capThreshold[i] = analogRead(potPins[i]); 
-      capThresholdMap[i] = map(capThreshold[i],0,1023,0,20000);
+      capThresholdMap[i] = map(capThreshold[i],0,1023,900,2600);
     }
   }
 
@@ -128,8 +98,7 @@ void setup(){
         Serial.println("FOUND THE LIGHT SENSOR");
         Serial.println();
       }
-    } 
-    else {
+    } else {
       if(debug==true){
         Serial.println("NO LIGHT SENSOR FOUNT");
         Serial.println();
@@ -140,7 +109,7 @@ void setup(){
     tsl.setGain(TSL2561_GAIN_16X);    
     tsl.setTiming(TSL2561_INTEGRATIONTIME_13MS);  
   }
-
+  
   //__________________________________________________________
   //humidity & temp sensor setup
   if(enable_temphum_sensor==true){  
@@ -158,55 +127,31 @@ void setup(){
   //moisture sensor setup  
   //no setup required for moisture sensor (simple analog devices)
 
-
+  
 }
 
 
 
 // LOOP *********************************************************************
 void loop(){
-
-  // ADK STUFF
-  uint8_t rcode;
   
-  uint8_t msg[64] = { 
-    0x00   };
-  Usb.Task();
-
-  if( adk.isReady() == false ) {
-    return;
-  }
-  uint16_t len = 64;
-
-  rcode = adk.RcvData(&len, msg);
-  if(len > 0) {
-    if(debug){
-      Serial.println((char*)msg); 
-    }
-    if(strcasecmp((char * )msg,"setup") == 0){
-      if(debug){
-        Serial.println("GOT Setup");
-      }
-    }
-  }
-
+  
   //__________________________________________________________
   //cap sensors
   //1. read pot values, to adjust cap-sense threshold
   if(enable_cap_sensor==true){
     for(int i=0;i<3;i++){
       capThreshold[i] = analogRead(potPins[i]); 
-      capThresholdMap[i] = map(capThreshold[i],0,1023,0,20000);
+      capThresholdMap[i] = map(capThreshold[i],0,1023,800,2500);
       if(abs(capThresholdPrev[i]-capThreshold[i])>2){ //pot value changed
         if(debug==true){
-//          int plant_num = i+1;
-//          Serial.print("Threshold for plant ");
-//          Serial.print(plant_num);
-//          Serial.print(" was set to ");
-//          Serial.print(capThresholdMap[i]);
-//          Serial.println();
-        }
-        else{
+          int plant_num = i+1;
+          Serial.print("Threshold for plant ");
+          Serial.print(plant_num);
+          Serial.print(" was set to ");
+          Serial.print(capThresholdMap[i]);
+          Serial.println();
+        }else{
           //real serial write  
         }
         capThresholdPrev[i] = capThreshold[i];
@@ -237,35 +182,30 @@ void loop(){
       //    Serial.print("|");
       //    Serial.println();
     }  
-     
     // 3. touch trigger of plants
     for(int i=0;i<3;i++){
       int plant_num = i+1;
-      capDiff[i] = abs(capRead[i] - capThresholdMap[i]);
-//      if(diff > 0){
-//        if(millis()-capTouchTimer[i] > capTouchDebounce){
-//          capTouchTimer[i] = millis();
-//          //////SEND TOUCH TO ANDROID
-//          if(debug==true){
-//            Serial.print("Plant ");
-//            Serial.print(plant_num);
-//            Serial.print(" was TOUCHED with a val of ");
-//            Serial.print(capRead[i]);
-//            Serial.print(" (diff = ");
-//            Serial.print(diff);
-//            Serial.println(")");
-//          }
-//          else{
-//            //real serial write  
-//          }
-//        }
-//      }
+      int diff = capRead[i] - capThresholdMap[i];
+      if(diff > 0){
+        if(millis()-capTouchTimer[i] > capTouchDebounce){
+          capTouchTimer[i] = millis();
+          if(debug==true){
+            Serial.print("Plant ");
+            Serial.print(plant_num);
+            Serial.print(" was TOUCHED with a val of ");
+            Serial.print(capRead[i]);
+            Serial.print(" (diff = ");
+            Serial.print(diff);
+            Serial.println(")");
+          }else{
+            //real serial write  
+          }
+        }
+      }
     }
-    sprintf(outgoing, "L,%d,%d,%d",capDiff[0],capDiff[1],capDiff[2]);
-     rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
   }
-
-
+  
+  
   //__________________________________________________________
   //light sensor
   if(enable_light_sensor == true){
@@ -288,30 +228,9 @@ void loop(){
         Serial.print("LUX:");
         Serial.print(tsl.lux);
         Serial.println();
-      }
-      else{
+      }else{
         //do nothing  
       }
-      //char holder[6];
-      //memset(outgoing,0,sizeof(outgoing));
-      Serial.println("HERE");
-      //sprintf(outgoing, "L,%d,%d,%d,%d",tsl.visible_light,tsl.fullspectrum_light,tsl.infrared_light,tsl.lux);
-//      strcpy(outgoing,"L,");
-//      strcat(outgoing, itoa(tsl.visible_light, holder, 10));
-//      strcat(outgoing, ",");
-//      strcat(outgoing, itoa(tsl.fullspectrum_light, holder, 10));
-//      strcat(outgoing, ",");
-//      strcat(outgoing, itoa(tsl.infrared_light, holder, 10));
-//      strcat(outgoing, ",");
-//      strcat(outgoing, itoa(tsl.lux, holder, 10));
-      //const char* lite = "Light Reading";
-      //Serial.print(outgoing);
-      //Serial.print("\t");
-     // rcode = adk.SndData( strlen(lite),(uint8_t *)lite);
-      //Serial.print(rcode);
-      //Serial.print("\t");
-      //rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
-      //Serial.println(rcode);
       if(millis()-send_light_timer > send_light_every){ //SEND
         send_light_timer = millis();  
         tsl.get_all_avg();
@@ -331,14 +250,11 @@ void loop(){
           Serial.print("LUX:");
           Serial.print(tsl.lux_avg);
           Serial.println();
-        }
-        else{
+        }else{
           //real serial write  
         }
-
         tsl.counter = 1; //reset counter
-      }
-      else{
+      }else{
         tsl.counter++; //increase counter
       }
     }
@@ -359,8 +275,7 @@ void loop(){
         Serial.print("VAL:");
         Serial.print(moisture_val);
         Serial.println();
-      }
-      else{
+      }else{
         //do nothing 
       } 
       if(millis()-send_moisture_timer > send_moisture_every){ //SEND
@@ -373,14 +288,12 @@ void loop(){
           Serial.print("AVG:");
           Serial.print(moisture_avg);
           Serial.println();
-        }
-        else{
+        }else{
           //real serial write 
         } 
         moisture_counter = 1;
         moisture_total = 0;
-      }
-      else{
+      }else{
         moisture_counter++;
       }
     }
@@ -403,8 +316,7 @@ void loop(){
         Serial.print("HUM:");
         Serial.print(dht.humidity_val);
         Serial.println();
-      }
-      else{
+      }else{
         //do nothing 
       } 
       if(millis()-send_temphum_timer > send_temphum_every){ //SEND
@@ -420,13 +332,11 @@ void loop(){
           Serial.print("HUM:");
           Serial.print(dht.humidity_avg);
           Serial.println();
-        }
-        else{
+        }else{
           //real serial write  
         }
         dht.counter = 1; //reset counter
-      }
-      else{
+      }else{
         dht.counter++; //increase counter
       }
     }
@@ -446,8 +356,7 @@ void loop(){
           Serial.print(rangefinderVal);
           Serial.print(" (cm)");
           Serial.println();
-        }
-        else{
+        }else{
           //real serial write  
         } 
       } 
@@ -455,12 +364,10 @@ void loop(){
   }
 
 
-
+  
   delay(50); //this is IMPORTANT!
 
 
-
+  
 }
-
-
 
