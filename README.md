@@ -9,3 +9,7 @@ The app is designed to use this arduino lib - https://github.com/felis/USB_Host_
 	Need to change one file in the Lib to work with the ADK board in avrpins.h
 	/* Uncomment the following if you have Arduino Mega ADK board with MAX3421e built-in */
 	#define BOARD_MEGA_ADK
+
+Twitter Account Setup for @PowerGarden
+	Make sure to turn "Geolocate my tweets" ON
+	
