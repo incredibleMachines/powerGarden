@@ -65,27 +65,28 @@ for (var i = 0; i < twitterHashtags.length; i++) {
 }
 
 // Set up keywords to respond to
-var twitterTriggers = [
+var twitterWaterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', 'sprinkler', 'sprinkers', 'mist', 'misty'];
+var twitterPlantKeywords = [
 	{
-		type: 'sprinklers',
-		keywords: ['rain', 'raining', 'water', 'thirsty', 'drink', 'sprinkler', 'sprinkers'],
-		responses: ["Thanks so much, I was drying out!", "Thanks, I'm dying over here"]
-	}
-]
-
-// Set up responses
-// TODO: update this structure to better suit all of the potential responses we're dealng with
-var genericResponses = [
-	"Careful, if the tomatoes get too worked-up they're going to fall off their vines! Let's spread the love around a bit.",
-	"It's time for the tomatoes to get their beauty rest. Come back soon!",
-	"The tomatoes need to focus on growing right now. Can you play with the other veggies for a bit?",
-	"Tomatoes love attention, but so do the rest of the veggies! Pay the carrots a visit before they get too jealous...",
-	"Looks like you guys are getting along great. I bet the other veggies would love to meet you too!",
-	"All of the hustle and bustle can be overwhelming for tomatoes. They need to relax for a bit… be sure to come back later!",
-	"Sounds like these tomatoes need to calm down a little. Can you give the other veggies some attention?",
-	"The tomatoes are getting tuckered out. Want to play with some other veggies?",
-	"Looks like the tomatoes need to mellow out a little. Can you go say \"hi\" to other veggies in the garden?",
-	"Any more action and these tomatoes are going to turn into sauce!"
+		"type": "tomatoes",
+		"keywords": ["tomato", "tomatoe", "tomatoes"]
+	},
+	{
+		"type": "peppers",
+		"keywords": ["pepper", "peppers", "peper", "pepers"]
+	},
+	{
+		"type": "celery",
+		"keywords": ["celery", "celry"],
+	},
+	{
+		"type": "carrot",
+		"keywords": ["carrot", "carrots", "carot", "carots"],
+	},
+	{
+		"type": "beets",
+		"keywords": ["beet", "beets"],
+	},
 ];
 
 // Connect!
@@ -471,39 +472,76 @@ function processesTwitterStreamData(data) {
 	//console.log('@'+user + ' ' + text);
 
 	// Check for trigger words
-	var foundTriggerWord = false;
-	var response = '';
+	var foundWaterKeyword = false;
+	var foundPlantKeyword = false;
+	var mentionedPlant = '';
 
-	triggerLoop:
-	for (var i = 0; i < twitterTriggers.length; i++) {
-		for (var j = 0; j < twitterTriggers[i].keywords.length; j++) {
+	for (var i = 0; i < twitterWaterKeywords.length; i++) {
+		// Use whole word regex-matching
+		if (new RegExp("\\b" + twitterWaterKeywords[i] + "\\b", "i").test(text)) {
+			foundWaterKeyword = true;
+			console.log('[Twitter Stream] Water match! ' + twitterWaterKeywords[i]);
+			break;
+		}
+	}
+
+	plantKeywordLoop:
+	for (var i = 0; i < twitterPlantKeywords.length; i++) {
+		for (var j = 0; j < twitterPlantKeywords[i].keywords.length; j++) {
 
 			// Use whole word regex-matching
-			if (new RegExp("\\b" + twitterTriggers[i].keywords[j] + "\\b", "i").test(text)) {
-				foundTriggerWord = true;
-				console.log('[Twitter Stream] Match! ' + twitterTriggers[i].type + ': ' + twitterTriggers[i].keywords[j]);
-
-				// Pull a random response and set up the response string
-				var responseIndex = parseInt(Math.random()*twitterTriggers[i].responses.length);
-				response = twitterTriggers[i].responses[responseIndex];
-				response = '@'+user + ', ' + response;
+			if (new RegExp("\\b" + twitterPlantKeywords[i].keywords[j] + "\\b", "i").test(text)) {
+				foundPlantKeyword = true;
+				mentionedPlant = twitterPlantKeywords[i].type;
+				console.log('[Twitter Stream] Plant match! ' + twitterPlantKeywords[i].type + ': ' + twitterPlantKeywords[i].keywords[j]);
 
 				// magic
-				break triggerLoop;
-
+				break plantKeywordLoop;
 			}
 		}
 	}
 
-	// If a trigger word wasn't found, pull from generic responses
-	if (!foundTriggerWord) {
-		var responseIndex = parseInt(Math.random()*genericResponses.length);
-		response = genericResponses[responseIndex];
-		response = '@'+user + ' ' + response;
+	// Let's figure out how we should reply
+	if (!foundWaterKeyword) {
+
+		// Not providing water
+
+		if (!foundPlantKeyword) {
+			// No mention of a specific plant
+			// Send thanks for attention from garden
+			console.log('[Twitter Stream] Thanks for attention from garden');
+
+		} else {
+			// User mentioned a specific plant
+			// Send thanks for attention from the plant
+			console.log('[Twitter Stream] Thanks for attention from ' + mentionedPlant);
+		}
+	} else {
+
+		// User is providing water
+
+		if (!foundPlantKeyword) {
+			// No mention of a specific plant
+			// Send thanks for water from garden
+			console.log('[Twitter Stream] Thanks for water from garden');
+
+		} else {
+			// User mentioned a specific plant
+			// Send thanks for water from the plant
+			console.log('[Twitter Stream] Thanks for water from ' + mentionedPlant);
+		}
+
 	}
 
+	// // If a trigger word wasn't found, pull from generic responses
+	// if (!foundTriggerWord) {
+	// 	var responseIndex = parseInt(Math.random()*genericResponses.length);
+	// 	response = genericResponses[responseIndex];
+	// 	response = '@'+user + ' ' + response;
+	// }
+
 	// Send out reply
-	console.log('[Twitter Stream] Replying: ' + response);
+	// console.log('[Twitter Stream] Replying: ' + response);
 	//postStatus(response, { in_reply_to_status_id: id });
 
 }
