@@ -3,38 +3,115 @@
 var WebSocketServer = require('ws').Server
   , wss = new WebSocketServer({port: 9000});
 */
-  
-var io = require('socket.io').listen(9001);
-  
-var MongoClient = require('mongodb').MongoClient
-	,Server = require('mongodb').Server
-	,mongo = new MongoClient(new Server('localhost', 27017))
-	,BSON = require('mongodb').BSONPure;
-
-var db, dataDb, personalitiesDb, devicesDb, plantsDb, touchesDb;
-var clients={};
-
-var twitterRef;
-
-function setTwitterRef(_twitterRef) {
-	twitterRef = _twitterRef;
-}
-exports.setTwitterRef = setTwitterRef;
-
-//twitter
 
 /* ******************************************************************************************* */
+/* Pull in required modules						 								 			   */
+/* ******************************************************************************************* */
+
+var io = require('socket.io').listen(9001);
+  
+var MongoClient = require('mongodb').MongoClient,
+	Server = require('mongodb').Server,
+	mongo = new MongoClient(new Server('localhost', 27017)),
+	BSON = require('mongodb').BSONPure;
+
+var ntwitter = require('ntwitter');
+
+
+/* ******************************************************************************************* */
+/* Define globals								 								 			   */
+/* ******************************************************************************************* */
+
+var db, dataDb, personalitiesDb, devicesDb, plantsDb, touchesDb;
+var clients = {};
+var twitter;
+
+
+/* ******************************************************************************************* */
+/* Connect to mongo server, store collection references							 			   */
 /* ******************************************************************************************* */
 
 mongo.open(function(err,mongo){
-	
 	db = mongo.db('powergarden');
 	devicesDb = db.collection('devices');
 	plantsDb = db.collection('plants');
 	personalitiesDb = db.collection('personalities');
 	dataDb = db.collection('data');
 	touchesDb = db.collection('touches');
-		
+});
+
+
+/* ******************************************************************************************* */
+/* Configure twitter stream & connect											 			   */
+/* ******************************************************************************************* */
+
+twitter = new ntwitter({
+	consumer_key: 'bTc9jPplp8SegUtH9EGhTA',
+	consumer_secret: 'Tin9GFVUfqZKVzLCrKRrMAl9Y3TX7IlxiIVRSW0OWU',
+	access_token_key: '1534210819-fSgoQxNsrkY8ORr2t4w6f6jjuQecnY0V8wN5cnm',
+	access_token_secret: 'ZAsYsPhimfghWJZ3xefpGPhEhs5dcUt7G7ylX6k'
+});
+
+// Set up our handle & hashtags to follow
+var twitterHandle = 'IncMachinesDev';
+var twitterHashtags = ['IncMachinesDev', 'PowerGarden', 'ThePowerGarden'];
+var twitterTrackString = twitterHandle + ',' + twitterHashtags.join(',');
+
+var twitterHandleRegex = new RegExp('@'+twitterHandle, 'i');
+var twitterHashtagRegexes = [];
+twitterHashtagRegexes.push( new RegExp('#'+twitterHandle, 'i') );
+for (var i = 0; i < twitterHashtags.length; i++) {
+	twitterHashtagRegexes.push( new RegExp('#'+twitterHashtags[i], 'i') );
+}
+
+// Set up keywords to respond to
+var twitterTriggers = [
+	{
+		type: 'sprinklers',
+		keywords: ['rain', 'raining', 'water', 'thirsty', 'drink', 'sprinkler', 'sprinkers'],
+		responses: ["Thanks so much, I was drying out!", "Thanks, I'm dying over here"]
+	}
+]
+
+// Set up responses
+// TODO: update this structure to better suit all of the potential responses we're dealng with
+var genericResponses = [
+	"Careful, if the tomatoes get too worked-up they're going to fall off their vines! Let's spread the love around a bit.",
+	"It's time for the tomatoes to get their beauty rest. Come back soon!",
+	"The tomatoes need to focus on growing right now. Can you play with the other veggies for a bit?",
+	"Tomatoes love attention, but so do the rest of the veggies! Pay the carrots a visit before they get too jealous...",
+	"Looks like you guys are getting along great. I bet the other veggies would love to meet you too!",
+	"All of the hustle and bustle can be overwhelming for tomatoes. They need to relax for a bit… be sure to come back later!",
+	"Sounds like these tomatoes need to calm down a little. Can you give the other veggies some attention?",
+	"The tomatoes are getting tuckered out. Want to play with some other veggies?",
+	"Looks like the tomatoes need to mellow out a little. Can you go say \"hi\" to other veggies in the garden?",
+	"Any more action and these tomatoes are going to turn into sauce!"
+];
+
+// Connect!
+twitter.stream('statuses/filter', { track: twitterTrackString, stall_warnings: true }, function(stream) {
+	console.log('[Twitter Stream] Connected');
+
+	// Process with our callback
+	stream.on('data', processesTwitterStreamData);
+
+	// Deal with errors
+	stream.on('error', function(error, code){
+		console.log('[Twitter Stream] Error: ' + code);
+		console.log(error);
+		throw error;
+	});
+	stream.on('end', function (response) {
+		// Handle a disconnection
+		console.log('[Twitter Stream] End:');
+		console.log(response);
+	});
+	stream.on('destroy', function (response) {
+		// Handle a 'silent' disconnection from Twitter, no end/error event fired
+		console.log('[Twitter Stream] Destroy:');
+		console.log(response);
+	});
+
 });
 
 
@@ -106,7 +183,6 @@ function routeUpdate(message,connection){
 		});	
 	}
 }
-exports.routeUpdate = routeUpdate;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -155,7 +231,6 @@ function routeRegister(message,connection){
 		
 	}
 }
-exports.routeRegister = routeRegister;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -180,7 +255,6 @@ function assignPlantData(result,connection){
 		});	
 	}	
 }
-exports.assignPlantData = assignPlantData;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -201,7 +275,6 @@ function logDevice(message,connection){
 		connection.socket.emit('connected',res);
 	});	
 }
-exports.logDevice = logDevice;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -215,7 +288,6 @@ function updateDocument(collection,id,json){
 
 //no upsert 
 }
-exports.updateDocument = updateDocument;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -234,7 +306,6 @@ function createPlant(message,connection,plant_index){
 		   
 	});
 }
-exports.createPlant = createPlant;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -259,7 +330,6 @@ function plantTouch(message,connection){
 
 	twitterRef.gotTouched();
 }
-exports.plantTouch = plantTouch;
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -275,10 +345,12 @@ function Connection(_id, _device_id,_socket){
 /* ******************************************************************************************* */
 /* Update the plant's mood based on interaction & envrionmental data 						   */
 /* ******************************************************************************************* */
-function updatePlantMood(message,connection) {
+function checkPlantMood(message,connection) {
 
 	// fetch data from db for given device id
 	plantsDb.findOne({ '_id': new BSON.ObjectID(message.device_id) } ,function(err,result) {
+		if (err) throw err;
+		if (!result) { console.log('[Check Plant Mood] No plant found for given id: ' + message.device_id); return; }
 		
 		// environmental data:
 		//
@@ -327,15 +399,16 @@ function updatePlantMood(message,connection) {
 		}
 	});
 }
-exports.updatePlantMood = updatePlantMood;
 
 /* ******************************************************************************************* */
 /* Generate a response based on the plant's mood 								 			   */
 /* ******************************************************************************************* */
-function generateResponse(id) {
+function generateResponse(message,connection) {
 
 	// fetch data from db for given device id
-	plantsDb.findOne({ '_id': new BSON.ObjectID(id) } ,function(err,result) {
+	plantsDb.findOne({ '_id': new BSON.ObjectID(message.device_id) } ,function(err,result) {
+		if (err) throw err;
+		if (!result) { console.log('[Generate Response] No plant found for given id: ' + message.device_id); return; }
 
 		if (result.mood == "lonely") {
 			// lonely response
@@ -358,12 +431,106 @@ function generateResponse(id) {
 		}
 	});
 }
-exports.generateResponse = generateResponse;
 
-function displayMessageOnAllTablets(string) {
-	console.log('displayMessageOnAllTablets()');
-	for (var key in clients) {
-		console.log(clients[key]);
+
+/* ******************************************************************************************* */
+/* Various routines around twitter communication 								 			   */
+/* ******************************************************************************************* */
+
+//
+// Main stream processing handler
+//
+function processesTwitterStreamData(data) {
+	// console.log(data);
+
+	// Make sure necessary data exists before continuing
+	if (!data.id_str) return;
+	if (!data.text) return;
+	if (!data.user) return;
+	if (!data.user.screen_name) return;
+
+	// Pull out the data we care about
+	var id = data.id_str;
+	var text = data.text;
+	var user = data.user.screen_name;
+
+	// Make sure there's a user mention or matched hashtag before continuing
+	var hashtagMatched = false;
+	for (var i = 0; i < twitterHashtagRegexes.length; i++) {
+		if (twitterHashtagRegexes[i].test(text)) {
+			//console.log("[Twitter Stream] Match on regex: " + twitterHashtagRegexes[i]);
+			hashtagMatched = true;
+			break;
+		}
 	}
+	if (!twitterHandleRegex.test(text) && !hashtagMatched) {
+		console.log("[Twitter Stream] No match on handles or hashtags, returning.")
+		return;
+	}
+
+	//console.log('@'+user + ' ' + text);
+
+	// Check for trigger words
+	var foundTriggerWord = false;
+	var response = '';
+
+	triggerLoop:
+	for (var i = 0; i < twitterTriggers.length; i++) {
+		for (var j = 0; j < twitterTriggers[i].keywords.length; j++) {
+
+			// Use whole word regex-matching
+			if (new RegExp("\\b" + twitterTriggers[i].keywords[j] + "\\b", "i").test(text)) {
+				foundTriggerWord = true;
+				console.log('[Twitter Stream] Match! ' + twitterTriggers[i].type + ': ' + twitterTriggers[i].keywords[j]);
+
+				// Pull a random response and set up the response string
+				var responseIndex = parseInt(Math.random()*twitterTriggers[i].responses.length);
+				response = twitterTriggers[i].responses[responseIndex];
+				response = '@'+user + ', ' + response;
+
+				// magic
+				break triggerLoop;
+
+			}
+		}
+	}
+
+	// If a trigger word wasn't found, pull from generic responses
+	if (!foundTriggerWord) {
+		var responseIndex = parseInt(Math.random()*genericResponses.length);
+		response = genericResponses[responseIndex];
+		response = '@'+user + ' ' + response;
+	}
+
+	// Send out reply
+	console.log('[Twitter Stream] Replying: ' + response);
+	//postStatus(response, { in_reply_to_status_id: id });
+
 }
-exports.displayMessageOnAllTablets = displayMessageOnAllTablets;
+
+
+//
+// Convenience method for posting to twitter
+// Can take a second parameter for options
+//
+function postTwitterUpdate(text, options) {
+
+	var options = options || {};
+
+	// Set location to our plaza in Chicago
+	options.lat = 41.88251;
+	options.long = -87.638771;
+	options.place_id = '1d9a5370a355ab0c';
+	options.display_coordinates = true;
+
+	twitter.updateStatus(text, options, function (err, data) {
+		if (err) {
+			console.log('[Post Twitter Update] Error Posting Status:');
+			console.log(err);
+			console.log(data);
+		}
+
+		//console.log(JSON.stringify(data));
+	});
+
+}

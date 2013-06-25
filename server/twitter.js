@@ -1,3 +1,10 @@
+/*
+
+	EVERYTHING IN THIS FILE HAS BEEN MOVED OVER TO THE MAIN SERVER FILE
+	SEE server.js FOR CURRENT CODE
+
+*/
+
 //
 // Set up our handle & hashtags to follow
 //
