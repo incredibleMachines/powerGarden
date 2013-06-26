@@ -199,3 +199,4 @@ var updateStatus = function(text, options) {
 	});
 
 }
+exports.updateStatus = updateStatus;
