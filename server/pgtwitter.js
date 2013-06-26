@@ -12,15 +12,46 @@ var ntwitter = require('ntwitter');
 var twitter;
 var callback;
 
+// Set up our handle & hashtags to follow
+var handle = 'IncMachinesDev';
+var hashtags = ['IncMachinesDev', 'PowerGarden', 'ThePowerGarden'];
+var trackString = handle + ',' + hashtags.join(',');
+
+var handleRegex = new RegExp('@'+handle, 'i');
+var hashtagRegexes = [];
+hashtagRegexes.push( new RegExp('#'+handle, 'i') );
+for (var i = 0; i < hashtags.length; i++) {
+	hashtagRegexes.push( new RegExp('#'+hashtags[i], 'i') );
+}
+
+// Set up keywords to respond to
+var waterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', 'sprinkler', 'sprinkers', 'mist', 'misty'];
+var plantKeywords = [
+	{
+		"type": "tomatoes",
+		"keywords": ["tomato", "tomatoe", "tomatoes"]
+	},
+	{
+		"type": "peppers",
+		"keywords": ["pepper", "peppers", "peper", "pepers"]
+	},
+	{
+		"type": "celery",
+		"keywords": ["celery", "celry"],
+	},
+	{
+		"type": "carrots",
+		"keywords": ["carrot", "carrots", "carot", "carots"],
+	},
+	{
+		"type": "beets",
+		"keywords": ["beet", "beets"],
+	},
+];
+
 /* ******************************************************************************************* */
 /* In the constructor, configure twitter stream & connect 									   */
 /* ******************************************************************************************* */
-// function PGTwitter() {
-
-	//this.processesTwitterStreamData;
-	//this.postTwitterUpdate;
-
-
 
 var start = function(_callback) {
 
@@ -33,46 +64,8 @@ var start = function(_callback) {
 		access_token_secret: 'ZAsYsPhimfghWJZ3xefpGPhEhs5dcUt7G7ylX6k'
 	});
 
-	// Set up our handle & hashtags to follow
-	var twitterHandle = 'IncMachinesDev';
-	var twitterHashtags = ['IncMachinesDev', 'PowerGarden', 'ThePowerGarden'];
-	var twitterTrackString = twitterHandle + ',' + twitterHashtags.join(',');
-
-	var twitterHandleRegex = new RegExp('@'+twitterHandle, 'i');
-	var twitterHashtagRegexes = [];
-	twitterHashtagRegexes.push( new RegExp('#'+twitterHandle, 'i') );
-	for (var i = 0; i < twitterHashtags.length; i++) {
-		twitterHashtagRegexes.push( new RegExp('#'+twitterHashtags[i], 'i') );
-	}
-
-	// Set up keywords to respond to
-	var twitterWaterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', 'sprinkler', 'sprinkers', 'mist', 'misty'];
-	var twitterPlantKeywords = [
-		{
-			"type": "tomatoes",
-			"keywords": ["tomato", "tomatoe", "tomatoes"]
-		},
-		{
-			"type": "peppers",
-			"keywords": ["pepper", "peppers", "peper", "pepers"]
-		},
-		{
-			"type": "celery",
-			"keywords": ["celery", "celry"],
-		},
-		{
-			"type": "carrot",
-			"keywords": ["carrot", "carrots", "carot", "carots"],
-		},
-		{
-			"type": "beets",
-			"keywords": ["beet", "beets"],
-		},
-	];
-
-
 	// Connect!
-	twitter.stream('statuses/filter', { track: twitterTrackString, stall_warnings: true }, function(stream) {
+	twitter.stream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {
 		console.log('[Twitter Stream] Connected');
 
 		// Process with our callback
@@ -99,8 +92,7 @@ var start = function(_callback) {
 
 }
 exports.start = start;
-// }
-// module.exports = PGTwitter;
+
 
 /* ******************************************************************************************* */
 /* Main stream processing handler 												 			   */
@@ -122,14 +114,14 @@ var processesTwitterStreamData = function(data) {
 
 	// Make sure there's a user mention or matched hashtag before continuing
 	var hashtagMatched = false;
-	for (var i = 0; i < twitterHashtagRegexes.length; i++) {
-		if (twitterHashtagRegexes[i].test(text)) {
-			//console.log("[Twitter Stream] Match on regex: " + twitterHashtagRegexes[i]);
+	for (var i = 0; i < hashtagRegexes.length; i++) {
+		if (hashtagRegexes[i].test(text)) {
+			//console.log("[Twitter Stream] Match on regex: " + hashtagRegexes[i]);
 			hashtagMatched = true;
 			break;
 		}
 	}
-	if (!twitterHandleRegex.test(text) && !hashtagMatched) {
+	if (!handleRegex.test(text) && !hashtagMatched) {
 		console.log("[Twitter Stream] No match on handles or hashtags, returning.")
 		return;
 	}
@@ -139,86 +131,45 @@ var processesTwitterStreamData = function(data) {
 	// Check for trigger words
 	var foundWaterKeyword = false;
 	var foundPlantKeyword = false;
-	var mentionedPlant = false;
+	var mentionedPlants = [];
 
-	for (var i = 0; i < twitterWaterKeywords.length; i++) {
+	for (var i = 0; i < waterKeywords.length; i++) {
 		// Use whole word regex-matching
-		if (new RegExp("\\b" + twitterWaterKeywords[i] + "\\b", "i").test(text)) {
+		if (new RegExp("\\b" + waterKeywords[i] + "\\b", "i").test(text)) {
 			foundWaterKeyword = true;
-			console.log('[Twitter Stream] Water match! ' + twitterWaterKeywords[i]);
+			console.log('[Twitter Stream] Water match! ' + waterKeywords[i]);
 			break;
 		}
 	}
 
-	plantKeywordLoop:
-	for (var i = 0; i < twitterPlantKeywords.length; i++) {
-		for (var j = 0; j < twitterPlantKeywords[i].keywords.length; j++) {
+	for (var i = 0; i < plantKeywords.length; i++) {
+		for (var j = 0; j < plantKeywords[i].keywords.length; j++) {
 
 			// Use whole word regex-matching
-			if (new RegExp("\\b" + twitterPlantKeywords[i].keywords[j] + "\\b", "i").test(text)) {
+			if (new RegExp("\\b" + plantKeywords[i].keywords[j] + "\\b", "i").test(text)) {
 				foundPlantKeyword = true;
-				mentionedPlant = twitterPlantKeywords[i].type;
-				console.log('[Twitter Stream] Plant match! ' + twitterPlantKeywords[i].type + ': ' + twitterPlantKeywords[i].keywords[j]);
+				mentionedPlants.push(plantKeywords[i].type);
+				console.log('[Twitter Stream] Plant match! ' + plantKeywords[i].type + ': ' + plantKeywords[i].keywords[j]);
 
-				// magic
-				break plantKeywordLoop;
+				// break out of inner loop and continue searching for plants
+				break;
 			}
 		}
 	}
 
-	var obj = {
+	// Build the data we pass to the callback
+	var result = {
 
 		water: foundWaterKeyword,
-		plants: mentionedPlant || false,
+		plants: mentionedPlants.length ? mentionedPlants : false,
 		id: id,
 		user: user,
 		text: text,
 
 	};
-	callback(obj);
 
-	// Let's figure out how we should reply
-	// if (!foundWaterKeyword) {
-
-	// 	// Not providing water
-
-	// 	if (!foundPlantKeyword) {
-	// 		// No mention of a specific plant
-	// 		// Send thanks for attention from garden
-	// 		console.log('[Twitter Stream] Thanks for attention from garden');
-
-	// 	} else {
-	// 		// User mentioned a specific plant
-	// 		// Send thanks for attention from the plant
-	// 		console.log('[Twitter Stream] Thanks for attention from ' + mentionedPlant);
-	// 	}
-	// } else {
-
-	// 	// User is providing water
-
-	// 	if (!foundPlantKeyword) {
-	// 		// No mention of a specific plant
-	// 		// Send thanks for water from garden
-	// 		console.log('[Twitter Stream] Thanks for water from garden');
-
-	// 	} else {
-	// 		// User mentioned a specific plant
-	// 		// Send thanks for water from the plant
-	// 		console.log('[Twitter Stream] Thanks for water from ' + mentionedPlant);
-	// 	}
-
-	// }
-
-	// // If a trigger word wasn't found, pull from generic responses
-	// if (!foundTriggerWord) {
-	// 	var responseIndex = parseInt(Math.random()*genericResponses.length);
-	// 	response = genericResponses[responseIndex];
-	// 	response = '@'+user + ' ' + response;
-	// }
-
-	// Send out reply
-	// console.log('[Twitter Stream] Replying: ' + response);
-	//postStatus(response, { in_reply_to_status_id: id });
+	// Finally call the callback and pass our data
+	callback(result);
 
 }
 
@@ -227,7 +178,7 @@ var processesTwitterStreamData = function(data) {
 /* Convenience method for posting to twitter									 			   */
 /* ******************************************************************************************* */
 
-var postTwitterUpdate = function(text, options) {
+var updateStatus = function(text, options) {
 
 	var options = options || {};
 
@@ -248,3 +199,4 @@ var postTwitterUpdate = function(text, options) {
 	});
 
 }
+exports.updateStatus = updateStatus;

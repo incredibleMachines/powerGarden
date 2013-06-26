@@ -16,6 +16,7 @@ public class PowerGarden {
 		static String ID;
 		static String connectionID;
 		static String PlantNum;
+		static String plantType = "Cherry Tomatoes"; //should be populated by prefs
 		
 	}
 	
