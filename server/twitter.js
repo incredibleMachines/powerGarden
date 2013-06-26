@@ -232,3 +232,9 @@ exports.gotTouched = gotTouched;
 // 	if (err) throw err;
 // 	console.log(JSON.stringify(data));
 // })
+
+// Check current config for things like length of t.co 
+// twit.get('/help/configuration.json', function(err, data) {
+// 	console.log(err);
+// 	console.log(data);
+// })

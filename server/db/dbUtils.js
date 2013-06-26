@@ -15,9 +15,9 @@ exports.updateDocument = function(collection,id,json){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-exports.logDevice = function(message,connection){
+exports.logDevice = function(collection,message,connection){
 	var obj = {date: new Date(), plants: []};
-	this.devicesDb.insert(obj, {safe:true}, function(err,doc){
+	collection.insert(obj, {safe:true}, function(err,doc){
 		if(err) console.error(err); //throw err;
 		
 		connection.device_id = doc[0]._id;
