@@ -3,7 +3,7 @@ var MongoClient = require('mongodb').MongoClient,
 	mongo = new MongoClient(new Server('localhost', 27017)),
 	BSON = require('mongodb').BSONPure;
 	
-var utils = require('./dbUtils');	
+//var utils = require('./dbUtils');	
 	
 function DB(){
 	
@@ -73,7 +73,7 @@ DB.prototype.routeRegister = function(message,connection){
 	if(message.device_id == "set_id"){
 	
 		console.log("New Device - Logging Now");		
-		utils.logDevice(devicesDb,message,connection);
+		this.logDevice(message,connection,this);
 	
 	}else{
 		console.log("Size of device_id: "+message.device_id.length);
@@ -86,7 +86,7 @@ DB.prototype.routeRegister = function(message,connection){
 				
 				if(!result){
 					console.log("[Device Registration Failed]");
-					utils.logDevice(devicesDb,message,connection);
+					this.logDevice(message,connection,this);
 					
 				}else{
 					
@@ -103,7 +103,7 @@ DB.prototype.routeRegister = function(message,connection){
 			
 		}else{
 			
-			utils.logDevice(devicesDb,message,connection);
+			this.logDevice(message,connection,this);
 
 		}
 		//check plants and register them
@@ -136,26 +136,6 @@ DB.prototype.assignPlantData = function(result,connection){
 }
 
 
-
-
-/* ******************************************************************************************* */
-/* ******************************************************************************************* */
-
-DB.prototype.createPlant = function(message,connection,plant_index){
-	//blocking or non-blocking function?
-	
-	//console.log("plant: "+ JSON.stringify(plant));
-	console.log('[CREATING PLANT]');
-	var obj = {created: new Date(), device_id:connection.device_id, index: plant_index, type: message.plant_type, mood: "born", touch:0 };
-	plantsDb.insert(obj,{safe:true},function(err,doc){
-			if(err) console.error(err); //throw err;
-
-		   var json={ $push: { plants: { index:doc[0].index, _id:doc[0]._id } } };
-		   utils.updateDocument(devicesDb,connection.device_id, json);
-		   
-	});
-}
-
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
@@ -179,3 +159,52 @@ DB.prototype.plantTouch = function(message,connection){
 
 	//this.twitter.twitterRef.gotTouched();
 }
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+DB.prototype.createPlant = function(message,connection,plant_index,self){
+	//blocking or non-blocking function?
+	
+	//console.log("plant: "+ JSON.stringify(plant));
+	console.log('[CREATING PLANT]');
+	var obj = {created: new Date(), device_id:connection.device_id, index: plant_index, type: message.plant_type, mood: "born", touch:0 };
+	plantsDb.insert(obj,{safe:true},function(err,doc){
+		  if(err) console.error(err); //throw err;
+
+		   var json={ $push: { plants: { index:doc[0].index, _id:doc[0]._id } } };
+		   self.updateDocument(devicesDb,connection.device_id, json);
+		   
+	});
+}
+
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+DB.prototype.logDevice = function(message,connection,self){
+	var obj = {date: new Date(), plants: []};
+	devicesDb.insert(obj, {safe:true}, function(err,doc){
+		if(err) console.error(err); //throw err;
+		
+		connection.device_id = doc[0]._id;
+		console.log('Created Record: '+connection.device_id);
+		console.log("plants.length: "+message.num_plants);
+		for(var i = 0; i<message.num_plants; i++) self.createPlant(message,connection,i,self);
+		
+		
+		var res = { "device_id": connection.device_id, "connection_id": connection.id };
+		//connection.socket.send(JSON.stringify(res));
+		connection.socket.emit('connected',res);
+	});	
+}
+
+DB.prototype.updateDocument = function(collection,id,json){
+	console.log("[Updating Document] Collection: "+collection+" id: "+id);
+	var obj = { _id : new BSON.ObjectID( String(id) ) };
+	collection.update(obj,json,function(err){
+		if(err) console.error(err); //throw err;
+	});
+
+//no upsert 
+}
+
+
