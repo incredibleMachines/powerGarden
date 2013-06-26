@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import java.lang.reflect.Field;
 import java.util.*;
 
 import com.victorint.android.usb.interfaces.Viewable;
@@ -35,6 +38,13 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     TextView plantVal_6;
     TextView plantVal_7;
     TextView plantVal_8;
+    
+    TextView lightval;
+    TextView rangeval;
+    TextView tempval;
+    TextView humval;
+    TextView moistval;
+    
     SeekBar bar1;
     SeekBar bar2;
     SeekBar bar3;
@@ -86,6 +96,13 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 	    plantVal_6 = (TextView) activity_.findViewById(R.id.arduino_value_6);
 	    plantVal_7 = (TextView) activity_.findViewById(R.id.arduino_value_7);
 	    plantVal_8 = (TextView) activity_.findViewById(R.id.arduino_value_8);
+	    
+	    lightval = (TextView) activity_.findViewById(R.id.lightval);
+	    rangeval = (TextView) activity_.findViewById(R.id.rangeval);
+	    tempval = (TextView) activity_.findViewById(R.id.tempval);
+	    humval = (TextView) activity_.findViewById(R.id.humval);
+	    moistval = (TextView) activity_.findViewById(R.id.moistval);
+	    
 //	    plantVal_2 = (TextView) activity_.findViewById(R.id.arduino_value_2);
 //	    plantVal_3 = (TextView) activity_.findViewById(R.id.arduino_value_3);
 //	    
@@ -141,8 +158,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		String dataType = new String(parseData[0]);
 		//MF1.medianFilterAddValue(Integer.parseInt(parseData[1]));
 		//int tOne_;
-		Log.d(TAG, "GOT DATA MODE = "+dataType);
-		Log.d(TAG, "Is is equal? "+(dataType.equalsIgnoreCase("c")));
+		//Log.d(TAG, "GOT DATA MODE = "+dataType);
+		//Log.d(TAG, "Is is equal? "+(dataType.equalsIgnoreCase("c")));
 		if(dataType.equalsIgnoreCase("c")){
 			//tOne_ = 5;
 			for(int i = 0; i<parseData.length-1; i++){
@@ -156,9 +173,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		    final int plantDisplay6 = plants[5].getFilteredValue();
 		    final int plantDisplay7 = plants[6].getFilteredValue();
 		    final int plantDisplay8 = plants[7].getFilteredValue();
-		    Log.d(TAG, "before debug");
+		    //Log.d(TAG, "before debug");
 		    if(debug){
-		    	Log.d(TAG, "Should be debug");
+		    	//Log.d(TAG, "Should be debug");
 				Runnable runner = new Runnable(){
 					public void run() {
 						for(int i =0;i<plants.length;i++){
@@ -225,31 +242,41 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			if(debug){
 				Runnable runner = new Runnable(){
 					public void run() {
-						
+						String lightStr = String.valueOf(light);
+						lightval.setText(lightStr);
 					}
 				};
 				if(runner != null){
 					activity_.runOnUiThread(runner);
 				}
 		    }
-		}else if(dataType.equalsIgnoreCase("m")){
+		}else if(dataType.equalsIgnoreCase("M")){
 			PowerGarden.moisture = Integer.parseInt(parseData[1]);
+			final int moisture = PowerGarden.moisture;
 			if(debug){
 				Runnable runner = new Runnable(){
 					public void run() {
-						
+						String moistStr = String.valueOf(moisture);
+						moistval.setText(moistStr);
 					}
 				};
 				if(runner != null){
 					activity_.runOnUiThread(runner);
 				}
 		    }
-		}else if(dataType.equalsIgnoreCase("t")){
+		}else if(dataType.equalsIgnoreCase("T")){
+			Log.d(TAG, "GOT DATA MODE = "+dataType);
 			PowerGarden.temp = Integer.parseInt(parseData[1]);
 			PowerGarden.hum = Integer.parseInt(parseData[2]);
+			final int temp = PowerGarden.temp;
+			final int hum = PowerGarden.hum;
 			if(debug){
 				Runnable runner = new Runnable(){
 					public void run() {
+						String tempStr = String.valueOf(temp);
+						String humStr = String.valueOf(hum);
+						tempval.setText(tempStr);
+						humval.setText(humStr);
 						
 					}
 				};
@@ -259,10 +286,12 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		    }
 		}else if(dataType.equalsIgnoreCase("R")){
 			PowerGarden.distance = Integer.parseInt(parseData[1]);
+			final int distance = PowerGarden.distance;
 			if(debug){
 				Runnable runner = new Runnable(){
 					public void run() {
-						
+						String distanceStr = String.valueOf(distance);
+						rangeval.setText(distanceStr);
 					}
 				};
 				if(runner != null){
@@ -411,6 +440,16 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 
 	}
 
+	public static int getResId(String variableName, Context context, Class<?> c) {
+
+	    try {
+	        Field idField = c.getDeclaredField(variableName);
+	        return idField.getInt(idField);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return -1;
+	    } 
+	}
 
 	@Override
 	public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {

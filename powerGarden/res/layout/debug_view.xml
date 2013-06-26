@@ -430,7 +430,7 @@
                     android:textSize="26dp" />
 
                 <TextView
-                    android:id="@+id/lightval"
+                    android:id="@+id/moistval"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="10000"
@@ -450,7 +450,7 @@
                     android:textSize="26dp" />
 
                 <TextView
-                    android:id="@+id/lightval"
+                    android:id="@+id/rangeval"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="10000"

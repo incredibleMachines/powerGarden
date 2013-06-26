@@ -124,12 +124,12 @@ void setup(){
   Serial2.begin(9600);
 
   //turn on/off sensors
-  enable_light_sensor = false;
-  enable_moisture_sensor = false;
-  enable_temphum_sensor = false  ;
+  enable_light_sensor = true;
+  enable_moisture_sensor = true;
+  enable_temphum_sensor = true  ;
   enable_cap_sensor = true;
-  enable_rangefinder = false;
-
+  enable_rangefinder = true;
+  
   //read/send durations
   read_light_every = 2000;
   send_light_every = 30000;
