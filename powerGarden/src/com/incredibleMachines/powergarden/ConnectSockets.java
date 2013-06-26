@@ -2,20 +2,27 @@ package com.incredibleMachines.powergarden;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.victorint.android.usb.interfaces.Connectable;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
-public class ConnectSockets extends Activity {
+public class ConnectSockets extends Activity implements Connectable {
 	   private static final String TAG = "ConnectSocketsView";
 	   private static final String PREFS_NAME = "PowerGarden";
 	   static EditText mHostname;
@@ -27,7 +34,11 @@ public class ConnectSockets extends Activity {
 	   static EditText mID;
 	   static EditText mNumPlants;
 	   static Button mSendMessage;
-	   static ListView mplantsView;
+	   static Button mSendUpdate;
+	   static Button mSendTouch;
+	   static Spinner mplantList;
+	   //static ListView mplantsView;
+	   
 	   static LinearLayout mLinearLayout;
 	   //final ArrayList<PlantData> plantList = new ArrayList<PlantData>();
 	   
@@ -78,6 +89,8 @@ public class ConnectSockets extends Activity {
 	            saveServerPrefs();
 	            setButtonDisconnect();
 	            mSendMessage.setEnabled(true);
+	            mSendTouch.setEnabled(true);
+	            mSendUpdate.setEnabled(true);
 	         }
 	      });
 	   }
@@ -85,9 +98,31 @@ public class ConnectSockets extends Activity {
 	   private void setupSendButton(){
            mSendMessage.setOnClickListener(new Button.OnClickListener() {
            	public void onClick(View v) {
-           		PowerGarden.SM.authDevice(mType.getText().toString(), mID.getText().toString());
+           		PowerGarden.SM.authDevice(mType.getText().toString(), mID.getText().toString(), Integer.parseInt(mNumPlants.getText().toString()), mplantList.getSelectedItem().toString() , ConnectSockets.this);
            	}
            });
+           
+           mSendTouch.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
+	        	   PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );				
+			}
+           });
+           
+           mSendUpdate.setOnClickListener(new Button.OnClickListener(){
+        	   public void onClick(View r){
+        		   JSONObject j = new JSONObject();
+        		   long time = System.currentTimeMillis() / 1000L;
+        		   	try {
+        		   		j.put("moisture", 2131).put("temp", 89.75).put("humidity", 66.32).put("light", 3324.32).put("timestamp", time );
+        		   	} catch (JSONException e) {
+        		   		e.printStackTrace();
+        		   	}
+        		   
+        		   PowerGarden.SM.updateData("update", mID.getText().toString(), j, ConnectSockets.this);
+        	   }
+        	   
+           });
+           
 	   }
 	   private void setButtonDisconnect() {
 	      mHostname.setEnabled(false);
@@ -98,6 +133,8 @@ public class ConnectSockets extends Activity {
 	         public void onClick(View v) {
 	            PowerGarden.SM.closeUpShop();
 	            mSendMessage.setEnabled(false);
+	            mSendTouch.setEnabled(false);
+	            mSendUpdate.setEnabled(false);
 	            setButtonConnect();
 	         }
 	      });
@@ -118,16 +155,76 @@ public class ConnectSockets extends Activity {
 	    mID = (EditText) findViewById(R.id.device_id);
 	    mNumPlants = (EditText) findViewById(R.id.num_plants);
 	    mSendMessage = (Button) findViewById(R.id.sendMsg);
+	    mSendTouch = (Button) findViewById(R.id.sendTouch);
+	    mSendUpdate=(Button) findViewById(R.id.sendUpdate);
 	    mSendMessage.setEnabled(false);
+	    mplantList = (Spinner) findViewById(R.id.type_plants);
 	    //mplantsView = (ListView) findViewById(R.id.plants);
 	    //mLinearLayout = (LinearLayout)findViewById(R.id.plants);
 	    mSettings = getSharedPreferences(PREFS_NAME, 0);
-
+	    
+	    ArrayAdapter <CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.plants_array, android.R.layout.simple_spinner_item);
+	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	    mplantList.setAdapter(adapter);
 	    
 	    loadPrefs();
 
 	    setButtonConnect();
 	    setupSendButton();
+		
+	}
+
+	@Override
+	public boolean isConnected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void connect() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disconnect() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendData(CharSequence data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendData(int type, byte[] data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void signalToUi(int type, Object data) {
+		// TODO Auto-generated method stub
+		Runnable myrun = null;
+		if(type == PowerGarden.Connected){
+			myrun = new Runnable(){
+				public void run(){
+					mID.setText(PowerGarden.Device.ID);
+					saveDevicePrefs();
+				}
+			};
+			
+		}
+		Log.d(TAG, "Got type: " + type);
+		this.runOnUiThread(myrun);
 		
 	}
 
