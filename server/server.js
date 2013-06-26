@@ -182,12 +182,12 @@ function twitterCallback(data) {
 			// No mention of a specific plant
 			// Send thanks for attention from garden
 			console.log('[Twitter Stream] Thanks for attention from garden');
-			// twitter.updateStatus('message here')
+			// pgtwitter.updateStatus('Thanks for hanging out @' + data.user + '! Watch us grow at http://ustre.am/10WaX', { in_reply_to_status_id: data.id });
 		} else {
 			// User mentioned a specific plant
 			// Send thanks for attention from the plant
 			console.log('[Twitter Stream] Thanks for attention from ' + data.plants.join(' & '));
-			// twitter.updateStatus('message here')
+			// pgtwitter.updateStatus('Thanks for the good vibes @' + data.user + '! The ' + data.plants.join(' & ') + ' are loving it!', { in_reply_to_status_id: data.id });
 		}
 
 	} else {
@@ -198,12 +198,12 @@ function twitterCallback(data) {
 			// No mention of a specific plant
 			// Send thanks for water from garden
 			console.log('[Twitter Stream] Thanks for water from garden');
-			// twitter.updateStatus('message here')
+			// pgtwitter.updateStatus('message here')
 		} else {
 			// User mentioned a specific plant
 			// Send thanks for water from the plant
 			console.log('[Twitter Stream] Thanks for water from ' + data.plants.join(' & '));
-			// twitter.updateStatus('message here')
+			// pgtwitter.updateStatus('message here')
 		}
 	}
 }
