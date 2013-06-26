@@ -99,6 +99,7 @@ public class ConnectSockets extends Activity implements Connectable {
            mSendMessage.setOnClickListener(new Button.OnClickListener() {
            	public void onClick(View v) {
            		PowerGarden.SM.authDevice(mType.getText().toString(), mID.getText().toString(), Integer.parseInt(mNumPlants.getText().toString()), mplantList.getSelectedItem().toString() , ConnectSockets.this);
+           		PowerGarden.Device.plantType = mplantList.getSelectedItem().toString();
            	}
            });
            
@@ -110,14 +111,16 @@ public class ConnectSockets extends Activity implements Connectable {
            
            mSendUpdate.setOnClickListener(new Button.OnClickListener(){
         	   public void onClick(View r){
+        		   Log.d(TAG, "Update clicked !");
         		   JSONObject j = new JSONObject();
         		   long time = System.currentTimeMillis() / 1000L;
         		   	try {
-        		   		j.put("moisture", 2131).put("temp", 89.75).put("humidity", 66.32).put("light", 3324.32).put("timestamp", time );
+        		   		//j.put("moisture", 2131).put("temp", 89.75).put("humidity", 66.32).put("light", 3324.32).put("timestamp", time );
+        		   		j.put("moisture", PowerGarden.moisture).put("temp", PowerGarden.temp).put("humidity", PowerGarden.hum).put("light", PowerGarden.light).put("timestamp", time );
         		   	} catch (JSONException e) {
         		   		e.printStackTrace();
         		   	}
-        		   
+        		   PowerGarden.Device.plantType = mplantList.getSelectedItem().toString();
         		   PowerGarden.SM.updateData("update", mID.getText().toString(), j, ConnectSockets.this);
         	   }
         	   

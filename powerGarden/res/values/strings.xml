@@ -68,8 +68,8 @@
     <string name="pref_show_messages_summary">Show application messages on the display</string>
     <string name="pref_show_messages_default">22</string>
     <string name="setup_sockets_button">Setup Sockets</string>
-    <string name="connect_arduino_button">Connect Arduino</string>
-    <string name="dummy_content">Welcome to the Power Garden</string>
+    <string name="connect_arduino_button">Config Sensors</string>
+    <string name="dummy_content">Cherry Tomatoes</string>
     <string name="connect_socket_header">Connect Web Sockets</string>
     <string name="socket_details">Garden Server Hostname / Port</string>
     <string-array name="plants_array">

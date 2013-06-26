@@ -7,19 +7,23 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.webkit.WebView.FindListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
+import com.incredibleMachines.powergarden.R.color;
 import com.victorint.android.usb.interfaces.Connectable;
 import com.victorint.android.usb.interfaces.Viewable;
 
@@ -28,6 +32,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 	//private Activity activity_;
 	private PresentationActivity activity_;
 	private int messageLevel_			= 22;
+	
+	
     TextView plant1Label;
     TextView plant2Label;
     TextView plant3Label;
@@ -47,6 +53,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     TextView humval;
     TextView moistval;
     
+    TextView plantCopy;
+    
     SeekBar bar1;
     SeekBar bar2;
     SeekBar bar3;
@@ -55,6 +63,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     SeekBar bar6;
     SeekBar bar7;
     SeekBar bar8;
+    
+    Typeface italiaBook;
+    Typeface interstateBold;
     
     PlantObject plants[] = new PlantObject[8];
     int numPlants = 8;
@@ -204,18 +215,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 						else{
 							plantVal_8.setTextColor(Color.WHITE);
 						}
-					
-//						triggered_1 = false;
-//					}
-					
-//				if(triggered_1){
-//					//plant1Label.setTextColor(Color.GREEN);
-//					plantVal_1.setTextColor(Color.GREEN);
-//				}
-//				else{
-//					//plant1Label.setTextColor(Color.WHITE);
-//					
-//				}
+
 						String val1 = String.valueOf(plantDisplay1);
 						String val2 = String.valueOf(plantDisplay2);
 						String val3 = String.valueOf(plantDisplay3);
@@ -308,93 +308,6 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			
 		}
 
-//		for(int i = 0; i<plants.length; i++){
-//			
-//		}
-//		final int tOne = MF1.medianFilterGetMedian();
-//		final int tTwo = Integer.parseInt(parseData[2]);
-//		final int tThree = Integer.parseInt(parseData[3]);
-//		if(debug){
-//		Runnable runner = new Runnable(){
-//		public void run() {
-//			
-//			if(System.currentTimeMillis() - trig_1_time > triggerTime){
-//				triggered_1 = false;
-//			}
-//			if(System.currentTimeMillis() - trig_2_time > triggerTime){
-//				triggered_2 = false;
-//			}
-//			if(System.currentTimeMillis() - trig_3_time > triggerTime){
-//				triggered_3 = false;
-//			}
-//			
-////			if(tOne > bar1Val){
-////				if(!triggered_1){ 
-////					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
-////					mp.start();
-////					triggered_1 = true;
-////					trig_1_time = System.currentTimeMillis();	
-////				}
-////			} 
-////			if(triggered_1){
-////				plant1Label.setTextColor(Color.GREEN);
-////				plantVal_1.setTextColor(Color.GREEN);
-////			}
-////			else{
-////				plant1Label.setTextColor(Color.WHITE);
-////				plantVal_1.setTextColor(Color.WHITE);
-////			}
-//			
-//			
-////			if(tTwo > 0){
-////				if(!triggered_2){
-//////					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_2);
-//////					mp.start();
-////					triggered_2 = true;
-////					trig_2_time = System.currentTimeMillis();
-////				}
-////			} 
-////			if(triggered_2){
-////				plant2Label.setTextColor(Color.GREEN);
-////				plantVal_2.setTextColor(Color.GREEN);
-////			}
-////			else{
-////				plant2Label.setTextColor(Color.WHITE);
-////				plantVal_2.setTextColor(Color.WHITE);
-////			}
-////			
-////			
-////			if(tThree > 0){
-////				if(!triggered_3){
-//////					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.hey_1);
-//////					mp.start();
-////					triggered_3 = true;
-////					trig_3_time = System.currentTimeMillis();
-////				}
-////			} 
-////			if(triggered_3){
-////				plant3Label.setTextColor(Color.GREEN);
-////				plantVal_3.setTextColor(Color.GREEN);
-////			}
-////			else{
-////				plant3Label.setTextColor(Color.WHITE);
-////				plantVal_3.setTextColor(Color.WHITE);
-////			}
-//			
-//			
-////			String analogInVal = String.valueOf(tOne);
-////			String analog2InVal = String.valueOf(tTwo);
-////			String analog3InVal = String.valueOf(tThree);
-////			
-////			plantVal_1.setText(analogInVal);
-////			plantVal_2.setText(analog2InVal);
-////			plantVal_3.setText(analog3InVal);
-//		}
-//		};
-//		if(runner != null){
-//			activity_.runOnUiThread(runner);
-//		}
-//		}
 		}
 
 	}
@@ -455,7 +368,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 	@Override
 	public void setActivity(Activity activity) {
 		// TODO Auto-generated method stub
+		Log.d(TAG, "setActivity");
         if (activity_ == activity) {
+        	Log.d(TAG, "activty_ == activity, returning --");
         	return;
         }
 		activity_ = (PresentationActivity) activity;
@@ -463,7 +378,14 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			PlantObject tempPlant = new PlantObject();
 			plants[i] = tempPlant;
 		}
-
+		italiaBook = Typeface.createFromAsset(activity_.getAssets(),"fonts/italiaBook.ttf");
+		interstateBold = Typeface.createFromAsset(activity_.getAssets(), "fonts/Interstate-BoldCondensed.ttf");
+		
+		plantCopy = (TextView) activity_.findViewById(R.id.fullscreen_content);
+		setTextViewFont(italiaBook, plantCopy);
+		
+		//for 'factoids'
+		//setTextViewFont(interstateBold, plantCopy);
 	}
 
 	@Override
@@ -580,5 +502,10 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+    public static void setTextViewFont(Typeface tf, TextView...params) {
+        for (TextView tv : params) {
+            tv.setTypeface(tf);
+        }
+    }
 }

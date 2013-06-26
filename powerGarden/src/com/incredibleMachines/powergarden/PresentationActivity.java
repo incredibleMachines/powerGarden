@@ -1,5 +1,6 @@
 package com.incredibleMachines.powergarden;
 
+import com.incredibleMachines.powergarden.R.color;
 import com.incredibleMachines.powergarden.util.SystemUiHider;
 import com.victorint.android.usb.interfaces.Connectable;
 import com.victorint.android.usb.interfaces.Viewable;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -52,6 +55,39 @@ public class PresentationActivity extends UsbActivity {
 	
 	private static String TAG = "PresentationActivity";
 	SocketManager SM;
+	
+	FrameLayout wrapper;
+	TextView plantCopy;
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		wrapper = (FrameLayout) findViewById(R.id.wrapper);
+		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
+		
+		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+		
+		if(PowerGarden.Device.plantType.contains("Cherry")){
+			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
+		} else if(PowerGarden.Device.plantType.contains("Beets")){
+			wrapper.setBackgroundResource(R.drawable.beet_bg);
+		} else if(PowerGarden.Device.plantType.contains("Celery")){
+			wrapper.setBackgroundResource(R.drawable.celery_bg);
+		} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
+			wrapper.setBackgroundResource(R.drawable.tomato_bg);
+		} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
+			wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
+		} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
+			wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
+		} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
+			wrapper.setBackgroundResource(R.drawable.pepper_bg);
+		}  else if(PowerGarden.Device.plantType == null){
+			wrapper.setBackgroundColor(color.default_background);
+		} else {
+			wrapper.setBackgroundColor(color.default_background);
+		}
+		
+	}
 
 	@Override
 	protected void createAndSetViews() {
