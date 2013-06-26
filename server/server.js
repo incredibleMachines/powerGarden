@@ -17,7 +17,7 @@ var MongoClient = require('mongodb').MongoClient,
 	BSON = require('mongodb').BSONPure;
 */
 
-var ntwitter = require('ntwitter');
+//var ntwitter = require('ntwitter');
 
 
 /* ******************************************************************************************* */
@@ -26,7 +26,7 @@ var ntwitter = require('ntwitter');
 
 //var db, dataDb, personalitiesDb, devicesDb, plantsDb, touchesDb;
 var clients = {};
-var twitter;
+//var twitter;
 
 
 /* ******************************************************************************************* */
@@ -47,10 +47,51 @@ mongo.open(function(err,mongo){
 var DB = require('./db/dbInterface');
 var database = new DB();
 
+// var PGTwitter = require('./pgtwitter');
+// var pgtwitter = new PGTwitter();
+var pgtwitter = require('./pgtwitter').start(twitterCallback);
+
+function twitterCallback(data) {
+
+	if (!data.water) {
+
+		// Not providing water
+
+		if (!data.plants) {
+			// No mention of a specific plant
+			// Send thanks for attention from garden
+			console.log('[Twitter Stream] Thanks for attention from garden');
+
+		} else {
+			// User mentioned a specific plant
+			// Send thanks for attention from the plant
+			console.log('[Twitter Stream] Thanks for attention from ' + mentionedPlant);
+		}
+	} else {
+
+		// User is providing water
+
+		if (!data.plants) {
+			// No mention of a specific plant
+			// Send thanks for water from garden
+			console.log('[Twitter Stream] Thanks for water from garden');
+
+		} else {
+			// User mentioned a specific plant
+			// Send thanks for water from the plant
+			console.log('[Twitter Stream] Thanks for water from ' + mentionedPlant);
+		}
+
+	}
+
+}
+
+
 /* ******************************************************************************************* */
 /* Configure twitter stream & connect											 			   */
 /* ******************************************************************************************* */
 
+/*
 twitter = new ntwitter({
 	consumer_key: 'bTc9jPplp8SegUtH9EGhTA',
 	consumer_secret: 'Tin9GFVUfqZKVzLCrKRrMAl9Y3TX7IlxiIVRSW0OWU',
@@ -120,6 +161,7 @@ twitter.stream('statuses/filter', { track: twitterTrackString, stall_warnings: t
 	});
 
 });
+*/
 
 
 /* ******************************************************************************************* */
@@ -269,7 +311,7 @@ function generateResponse(message,connection) {
 /* ******************************************************************************************* */
 /* Various routines around twitter communication 								 			   */
 /* ******************************************************************************************* */
-
+/*
 //
 // Main stream processing handler
 //
@@ -404,3 +446,5 @@ function postTwitterUpdate(text, options) {
 	});
 
 }
+
+*/
