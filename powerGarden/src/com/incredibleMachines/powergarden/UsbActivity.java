@@ -44,6 +44,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 /**
@@ -68,6 +69,7 @@ public abstract class UsbActivity extends Activity implements Connectable {
 	protected boolean exitOnDetach_ = true;
 	boolean debug_ = true;
 	protected PowerManager.WakeLock mWakeLock;
+	protected WindowManager winManager;
 	
 	/**
 	 * Handler of incoming messages from service.
@@ -246,6 +248,7 @@ public abstract class UsbActivity extends Activity implements Connectable {
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
+
 		
 		doBindService();
 
@@ -265,6 +268,15 @@ public abstract class UsbActivity extends Activity implements Connectable {
 		this.mWakeLock.release();
 		super.onDestroy();
 	}
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus){
+            final WindowManager.LayoutParams layout = getWindow().getAttributes();
+            layout.screenBrightness = 1F;
+            getWindow().setAttributes(layout);
+        }
+    }
 
 	@Override
 	public void onResume() {
