@@ -3,7 +3,7 @@ var MongoClient = require('mongodb').MongoClient,
 	mongo = new MongoClient(new Server('localhost', 27017)),
 	BSON = require('mongodb').BSONPure;
 	
-var util = require('./dbUtils');	
+var utils = require('./dbUtils');	
 	
 function DB(){
 	
@@ -73,7 +73,7 @@ DB.prototype.routeRegister = function(message,connection){
 	if(message.device_id == "set_id"){
 	
 		console.log("New Device - Logging Now");		
-		utils.logDevice(message,connection);
+		utils.logDevice(devicesDb,message,connection);
 	
 	}else{
 		console.log("Size of device_id: "+message.device_id.length);
@@ -86,7 +86,7 @@ DB.prototype.routeRegister = function(message,connection){
 				
 				if(!result){
 					console.log("[Device Registration Failed]");
-					utils.logDevice(message,connection);
+					utils.logDevice(devicesDb,message,connection);
 					
 				}else{
 					
@@ -103,7 +103,7 @@ DB.prototype.routeRegister = function(message,connection){
 			
 		}else{
 			
-			utils.logDevice(message,connection);
+			utils.logDevice(devicesDb,message,connection);
 
 		}
 		//check plants and register them
