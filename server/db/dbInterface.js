@@ -3,7 +3,7 @@ var MongoClient = require('mongodb').MongoClient,
 	mongo = new MongoClient(new Server('localhost', 27017)),
 	BSON = require('mongodb').BSONPure;
 	
-var util = require('./dbUtils');	
+var utils = require('./dbutils');	
 	
 function DB(){
 	

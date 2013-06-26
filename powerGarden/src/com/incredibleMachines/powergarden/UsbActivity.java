@@ -37,6 +37,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
@@ -66,6 +67,7 @@ public abstract class UsbActivity extends Activity implements Connectable {
 	protected Resources resources_;
 	protected boolean exitOnDetach_ = true;
 	boolean debug_ = true;
+	protected PowerManager.WakeLock mWakeLock;
 	
 	/**
 	 * Handler of incoming messages from service.
@@ -239,6 +241,11 @@ public abstract class UsbActivity extends Activity implements Connectable {
         createAndSetViews();
         logMessage("before register receiver");
 		//registerReceiver(usbReceiver_, filter);
+        /* This code together with the one in onDestroy() 
+         * will make the screen be always on until this Activity gets destroyed. */
+        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock.acquire();
 		
 		doBindService();
 
@@ -255,6 +262,7 @@ public abstract class UsbActivity extends Activity implements Connectable {
 		close();
 		//unregisterReceiver(usbReceiver_);
 		doUnbindService();
+		this.mWakeLock.release();
 		super.onDestroy();
 	}
 
