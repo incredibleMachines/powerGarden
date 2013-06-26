@@ -446,11 +446,11 @@
                     android:id="@+id/TextView14"
                     android:layout_width="261dp"
                     android:layout_height="wrap_content"
-                    android:text="Range: "
+                    android:text="Distance: "
                     android:textSize="26dp" />
 
                 <TextView
-                    android:id="@+id/rangeval"
+                    android:id="@+id/distanceval"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="10000"
