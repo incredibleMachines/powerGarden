@@ -7,7 +7,12 @@ import io.socket.SocketIOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
+import com.victorint.android.usb.interfaces.Connectable;
+
+
+import android.app.Activity;
 import android.util.Log;
 
 public class SocketManager implements  IOCallback {
@@ -15,22 +20,51 @@ public class SocketManager implements  IOCallback {
 	private SocketIO socket;
 
 	private static String TAG = "SocketManager";
-
+	private Connectable callbackActivity;
 	
 	SocketManager(){
 		//connectToServer();
 	}
-	void authDevice (String type, String id){
+	public void authDevice (String type, String device_id, int num_plants, String plant_type, Connectable _callback){
+		callbackActivity = _callback;
 		try {
 
 			socket.emit(type, 
-				 new JSONObject().put("device_id", id)
+				 new JSONObject().put("device_id", device_id).put("plant_type", plant_type).put("num_plants", num_plants)
 					);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		
 	}
+	
+	public void plantTouch(String type, String device_id, int plant_index, Connectable _callback){
+		callbackActivity = _callback;
+		try{
+			socket.emit(type, 
+					new JSONObject().put("device_id", device_id).put("plant_index", plant_index)
+					);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateData(String type, String device_id, JSONObject json, Connectable _callback){
+		callbackActivity = _callback;
+		
+		try{
+			socket.emit(type, 
+					new JSONObject().put("device_id", device_id).put("data", json)
+					);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
 	public void connectToServer(String host, String port){
 		
 		try {
@@ -79,7 +113,31 @@ public class SocketManager implements  IOCallback {
 
 	@Override
 	public void on(String event, IOAcknowledge ack, Object... args) {
-		//System.out.println("Server triggered event '" + event + "'");
+		
+		System.out.println("Server triggered event '" + event + "'");
+
+		if(event.equals("connected")){
+			System.out.println("HERE");
+			
+			try {
+				JSONObject j = new JSONObject(args[0].toString() );
+				PowerGarden.Device.ID = j.getString("device_id");
+				System.out.println(PowerGarden.Device.ID);
+				callbackActivity.signalToUi(PowerGarden.Connected, null);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//System.out.println(args[0]);
+			
+			
+			//System.out.println(String.valueOf(args));
+			
+			//System.out.println(args.toString());
+		}else if(event.equals("planted")){
+			System.out.println(args.toString());
+		}
+		
 	}
 
 	
