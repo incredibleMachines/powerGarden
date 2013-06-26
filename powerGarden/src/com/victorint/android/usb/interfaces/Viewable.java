@@ -46,6 +46,11 @@ public interface Viewable {
 	void signalToUi(int type, Object data);
 	
 	/**
+	 * Sets internal state of Viewable to application's preferences
+	 */
+	void setState(String state);
+	
+	/**
 	 * Saves internal state of Viewable to application's preferences
 	 */
 	void saveState();

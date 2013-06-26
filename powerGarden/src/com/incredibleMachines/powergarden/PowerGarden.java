@@ -6,9 +6,9 @@ import android.widget.TextView;
 public class PowerGarden {
 	
 	public static SocketManager SM;
-	public int temp;
-	public int hum;
-	public int light;
-	public int moisture;
-	public int distance;
+	public static int temp;
+	public static int hum;
+	public static int light;
+	public static int moisture;
+	public static int distance;
 }

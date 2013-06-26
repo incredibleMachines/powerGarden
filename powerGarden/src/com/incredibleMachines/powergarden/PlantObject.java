@@ -2,9 +2,9 @@ package com.incredibleMachines.powergarden;
 
 public class PlantObject {
 	MedianFilter MF = new MedianFilter();
-	boolean triggered = false;
-    long trig_time = 0;
-    int threshold = 0;
+	public boolean triggered = false;
+    public long trig_timestamp = 0;
+    public int threshold = 10000;
     
     public void addValue(int value){
     	MF.medianFilterAddValue(value);

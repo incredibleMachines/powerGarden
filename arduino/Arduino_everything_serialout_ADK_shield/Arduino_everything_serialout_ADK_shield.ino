@@ -35,7 +35,7 @@ ADK adk(&Usb,"IncredibleMachines, Inc.",
 
 
 //*******************
-boolean debug = true;
+boolean debug = false;
 //*******************
 
 
@@ -124,11 +124,11 @@ void setup(){
   Serial2.begin(9600);
 
   //turn on/off sensors
-  enable_light_sensor = true;
-  enable_moisture_sensor = true;
-  enable_temphum_sensor = true;
+  enable_light_sensor = false;
+  enable_moisture_sensor = false;
+  enable_temphum_sensor = false  ;
   enable_cap_sensor = true;
-  enable_rangefinder = true;
+  enable_rangefinder = false;
 
   //read/send durations
   read_light_every = 2000;

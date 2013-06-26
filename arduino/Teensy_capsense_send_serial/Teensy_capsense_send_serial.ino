@@ -9,6 +9,8 @@ int touchPins[NUMCAPS] = {0,1,15,16,17,18,19,22}; //SET CAP SENSE PINS
 
 void setup(){
   Serial2.begin(9600); 
+  pinMode(13,OUTPUT);
+  digitalWrite(13,HIGH);
 }
 
 boolean flag = false;
