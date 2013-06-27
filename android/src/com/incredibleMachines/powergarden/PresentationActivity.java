@@ -25,7 +25,7 @@ import android.widget.TextView;
  * 
  * @see SystemUiHider
  */
-public class PresentationActivity extends UsbActivity {
+public class PresentationActivity extends UsbActivity implements Connectable {
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -63,6 +63,7 @@ public class PresentationActivity extends UsbActivity {
 	@Override
 	public void onResume(){
 		super.onResume();
+		//setContentView(R.layout.activity_presentation);
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
 		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
 		
@@ -108,8 +109,16 @@ public class PresentationActivity extends UsbActivity {
 	    SM = new SocketManager();
 	    PowerGarden.SM = SM;
 	    PowerGarden.loadPrefs(getApplicationContext());
+	    if(PowerGarden.getPrefString("deviceID", null) == null){
+	    	//offline/unregistered
+	    }else{
+	    	PowerGarden.Device.host = PowerGarden.getPrefString("hostname", null);
+	    	PowerGarden.Device.port = PowerGarden.getPrefString("port", null);
+	    	PowerGarden.SM.connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,this);
+	    }
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
+		
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
@@ -240,10 +249,46 @@ public class PresentationActivity extends UsbActivity {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
+	@Override
+	public void signalToUi(int type, Object data){
+		if(type == PowerGarden.SocketConnected){
+			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, this);
+		}else if(type == PowerGarden.Connected){
+			//ONLINE AND EVERYTHING IS GOOD
+			PowerGarden.bConnected = true;
+			if(!data.equals(PowerGarden.Device.ID )){
+				PowerGarden.Device.ID = data.toString();
+			}
+		}
+	}
 	public void resetView(){
 		setContentView(R.layout.activity_presentation);
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
+		wrapper = (FrameLayout) findViewById(R.id.wrapper);
+		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
+		
+		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+		
+		if(PowerGarden.Device.plantType.contains("Cherry")){
+			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
+		} else if(PowerGarden.Device.plantType.contains("Beets")){
+			wrapper.setBackgroundResource(R.drawable.beet_bg);
+		} else if(PowerGarden.Device.plantType.contains("Celery")){
+			wrapper.setBackgroundResource(R.drawable.celery_bg);
+		} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
+			wrapper.setBackgroundResource(R.drawable.tomato_bg);
+		} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
+			wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
+		} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
+			wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
+		} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
+			wrapper.setBackgroundResource(R.drawable.pepper_bg);
+		}  else if(PowerGarden.Device.plantType == null){
+			wrapper.setBackgroundColor(color.default_background);
+		} else {
+			wrapper.setBackgroundColor(color.default_background);
+		}
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,

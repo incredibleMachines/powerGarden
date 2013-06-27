@@ -67,12 +67,12 @@ public class ConnectSockets extends Activity implements Connectable {
 	 
 	   private void saveServerPrefs() {
 
-	      SharedPreferences.Editor editor = PowerGarden.mSettings.edit();
+	      //SharedPreferences.Editor editor = PowerGarden.mSettings.edit();
 	      PowerGarden.savePref("hostname", mHostname.getText().toString());
 	      PowerGarden.savePref("port", mPort.getText().toString());
 	      //editor.putString("deviceID", mID.getText().toString());
 	      //editor.putString("numPlants", mNumPlants.getText().toString());
-	      editor.commit();
+	      //editor.commit();
 	   }
 
 	   private void setButtonConnect() {
@@ -82,7 +82,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
 	        	Log.d(TAG, "Clicked Connect");
-	            PowerGarden.SM.connectToServer(mHostname.getText().toString(), mPort.getText().toString());
+	            PowerGarden.SM.connectToServer(mHostname.getText().toString(), mPort.getText().toString(),ConnectSockets.this);
 	            saveServerPrefs();
 	            setButtonDisconnect();
 	            mSendMessage.setEnabled(true);
