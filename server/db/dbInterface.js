@@ -144,8 +144,9 @@ DB.prototype.assignPlantData = function(result,connection){
 DB.prototype.plantTouch = function(message,connection){
 	
 	//May need to create dual index of device_id & plant index
+	var obj = {device_id: new BSON.ObjectID(String(message.device_id)), index: message.plant_index };
+	console.log("[PLANT TOUCH] " +JSON.stringify(obj));
 
-	var obj = {'device_id': new BSON.ObjectID(String(message.device_id)), 'index': message.plant_index };
 	var json = {$inc : {touch: 1}};
 	plantsDb.update(obj, json,function(err){
 		if(err) console.error(err);//throw err; 
@@ -154,9 +155,40 @@ DB.prototype.plantTouch = function(message,connection){
 	});	
 	
 	obj.timestamp = new Date();
-		
+	
+	console.log(obj.timestamp);
+	
+	var TouchThreshold =10;
+	var minutes =1;
+	var time = new Date();
+	time.setMinutes( time.getMinutes()-minutes );
+	console.log(time);
 	touchesDb.insert(obj, function(err){
-		if(err) console.error(err) //throw err;
+				if(err) console.error(err) //throw err;
+				touchesDb.count({ device_id: obj.device_id, index: obj.index , timestamp:{ $gt : time}}, function(err,count){
+					
+					if(err) console.error(err);
+					console.log(count);
+					
+					var json;
+					if(count == 0){
+						console.log("[PLANT STATE] Lonely "+count);
+						json.mood = "lonely";
+					}else if(count != 0 && count < TouchThreshold){
+						console.log("[PLANT STATE] Content "+count);
+						json.mood = "content";
+					}else if(count > TouchThreshold){
+						console.log("[PLANT STATE] Worked Up "+count);
+						json.mood = "worked_up";
+					}				
+					
+					json.mood=mood;
+					json.plant_index=obj.index;
+					
+					connection.socket.emit('touch', json);
+					
+				});
+		
 	});
 
 	//this.twitter.twitterRef.gotTouched();
