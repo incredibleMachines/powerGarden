@@ -11,7 +11,7 @@ public class PowerGarden {
 		static String connectionID;
 		static String PlantNum;
 		static String plantType = "Cherry Tomatoes"; //should be populated by prefs	
-		//thresholdValues[]
+		static PlantObject plants[] = new PlantObject[8];
 	}
 	
 	//--- global socket vars

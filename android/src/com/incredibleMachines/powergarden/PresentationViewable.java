@@ -34,19 +34,14 @@ public class PresentationViewable extends Activity implements Viewable, SeekBar.
 	private PresentationActivity activity_;
 	private int messageLevel_			= 22;
 	
-	
     TextView plant1Label;
     TextView plant2Label;
     TextView plant3Label;
    
-    TextView plantVal_1;
-    TextView plantVal_2;
-    TextView plantVal_3;
-    TextView plantVal_4;
-    TextView plantVal_5;
-    TextView plantVal_6;
-    TextView plantVal_7;
-    TextView plantVal_8;
+    TextView plantValView[] = new TextView[8];
+    
+    SeekBar threshBar[] = new SeekBar[8];    
+    int threshVal[] = new int[8];
     
     TextView lightval;
     TextView distanceval;
@@ -55,30 +50,11 @@ public class PresentationViewable extends Activity implements Viewable, SeekBar.
     TextView moistval;
     
     TextView plantCopy;
-    
-    SeekBar bar1;
-    SeekBar bar2;
-    SeekBar bar3;
-    SeekBar bar4;
-    SeekBar bar5;
-    SeekBar bar6;
-    SeekBar bar7;
-    SeekBar bar8;
-    
+
     Typeface italiaBook;
     Typeface interstateBold;
     
-    PlantObject plants[] = new PlantObject[8];
     int numPlants = 8;
-    
-    int bar1Val = 1000;
-    int bar2Val = 1000;
-    int bar3Val = 1000;
-    int bar4Val = 1000;
-    int bar5Val = 1000;
-    int bar6Val = 1000;
-    int bar7Val = 1000;
-    int bar8Val = 1000;
     
     public boolean debug = false;
     
@@ -95,53 +71,39 @@ public class PresentationViewable extends Activity implements Viewable, SeekBar.
     boolean bHaveData = false;
     String gotData;
     MediaPlayer mp;
-    //int [] arrayToSort = {0,0,0,0,0,0,0,0,0,0};
     
 	@Override
 	public void signalToUi(int type, Object data) {
 
-		int temp1;
-		int temp2;
-		int temp3;
 		if(debug){
-	    plantVal_1 = (TextView) activity_.findViewById(R.id.arduino_value_1);
-	    plantVal_2 = (TextView) activity_.findViewById(R.id.arduino_value_2);
-	    plantVal_3 = (TextView) activity_.findViewById(R.id.arduino_value_3);
-	    plantVal_4 = (TextView) activity_.findViewById(R.id.arduino_value_4);
-	    plantVal_5 = (TextView) activity_.findViewById(R.id.arduino_value_5);
-	    plantVal_6 = (TextView) activity_.findViewById(R.id.arduino_value_6);
-	    plantVal_7 = (TextView) activity_.findViewById(R.id.arduino_value_7);
-	    plantVal_8 = (TextView) activity_.findViewById(R.id.arduino_value_8);
-	    
-	    lightval = (TextView) activity_.findViewById(R.id.lightval);
-	    distanceval = (TextView) activity_.findViewById(R.id.distanceval);
-	    tempval = (TextView) activity_.findViewById(R.id.tempval);
-	    humval = (TextView) activity_.findViewById(R.id.humval);
-	    moistval = (TextView) activity_.findViewById(R.id.moistval);
-	    
-//	    plantVal_2 = (TextView) activity_.findViewById(R.id.arduino_value_2);
-//	    plantVal_3 = (TextView) activity_.findViewById(R.id.arduino_value_3);
-//	    
-//	    plant1Label = (TextView) activity_.findViewById(R.id.arduino);
-//	    plant2Label = (TextView) activity_.findViewById(R.id.arduino2);
-//	    plant3Label = (TextView) activity_.findViewById(R.id.arduino3);
-	    bar1 = (SeekBar) activity_.findViewById(R.id.seekBar1);
-	    bar2 = (SeekBar) activity_.findViewById(R.id.seekBar2);
-	    bar3 = (SeekBar) activity_.findViewById(R.id.seekBar3);
-	    bar4 = (SeekBar) activity_.findViewById(R.id.seekBar4);
-	    bar5 = (SeekBar) activity_.findViewById(R.id.seekBar5);
-	    bar6 = (SeekBar) activity_.findViewById(R.id.seekBar6);
-	    bar7 = (SeekBar) activity_.findViewById(R.id.seekBar7);
-	    bar8 = (SeekBar) activity_.findViewById(R.id.seekBar8);
-//	    
-	    bar1.setOnSeekBarChangeListener(this);
-	    bar2.setOnSeekBarChangeListener(this);
-	    bar3.setOnSeekBarChangeListener(this);
-	    bar4.setOnSeekBarChangeListener(this);
-	    bar5.setOnSeekBarChangeListener(this);
-	    bar6.setOnSeekBarChangeListener(this);
-	    bar7.setOnSeekBarChangeListener(this);
-	    bar8.setOnSeekBarChangeListener(this);
+		    plantValView[0] = (TextView) activity_.findViewById(R.id.arduino_value_1);
+		    plantValView[1] = (TextView) activity_.findViewById(R.id.arduino_value_2);
+		    plantValView[2] = (TextView) activity_.findViewById(R.id.arduino_value_3);
+		    plantValView[3] = (TextView) activity_.findViewById(R.id.arduino_value_4);
+		    plantValView[4] = (TextView) activity_.findViewById(R.id.arduino_value_5);
+		    plantValView[5] = (TextView) activity_.findViewById(R.id.arduino_value_6);
+		    plantValView[6] = (TextView) activity_.findViewById(R.id.arduino_value_7);
+		    plantValView[7] = (TextView) activity_.findViewById(R.id.arduino_value_8);
+		    
+		    lightval = (TextView) activity_.findViewById(R.id.lightval);
+		    distanceval = (TextView) activity_.findViewById(R.id.distanceval);
+		    tempval = (TextView) activity_.findViewById(R.id.tempval);
+		    humval = (TextView) activity_.findViewById(R.id.humval);
+		    moistval = (TextView) activity_.findViewById(R.id.moistval);
+		    
+		    for (int i=0; i<threshBar.length; i++){
+		    	try {
+		    		Class res = R.id.class;
+		    		String id = "seekBar"+Integer.toString(i+1);
+		    		Field field = res.getField(id);
+					int resId = field.getInt(null);
+					threshBar[i] = (SeekBar) activity_.findViewById(resId);
+					threshBar[i].setOnSeekBarChangeListener(this);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+		    }
 		} 
 	    
 		// TODO Auto-generated method stub
@@ -172,69 +134,51 @@ public class PresentationViewable extends Activity implements Viewable, SeekBar.
 		if(bHaveData){
 		String[] parseData = gotData.split(",");
 		String dataType = new String(parseData[0]);
-		//MF1.medianFilterAddValue(Integer.parseInt(parseData[1]));
-		//int tOne_;
 		//Log.d(TAG, "GOT DATA MODE = "+dataType);
 		//Log.d(TAG, "Is is equal? "+(dataType.equalsIgnoreCase("c")));
 		if(dataType.equalsIgnoreCase("c")){
-			//tOne_ = 5;
+
+			final int plantDisplay[] = new int [8];
+			
 			for(int i = 0; i<parseData.length-1; i++){
-				plants[i].addValue(Integer.parseInt(parseData[i+1]));
+				PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
+				plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
 			}
-			final int plantDisplay1 = plants[0].getFilteredValue();
-			final int plantDisplay2 = plants[1].getFilteredValue();
-			final int plantDisplay3 = plants[2].getFilteredValue();
-			final int plantDisplay4 = plants[3].getFilteredValue();
-			final int plantDisplay5 = plants[4].getFilteredValue();
-		    final int plantDisplay6 = plants[5].getFilteredValue();
-		    final int plantDisplay7 = plants[6].getFilteredValue();
-		    final int plantDisplay8 = plants[7].getFilteredValue();
+
 		    //Log.d(TAG, "before debug");
 		    if(debug){
 		    	//Log.d(TAG, "Should be debug");
 				Runnable runner = new Runnable(){
 					public void run() {
-						for(int i =0;i<plants.length;i++){
-							if(System.currentTimeMillis() - plants[i].trig_timestamp > triggerTime){
-								plants[i].triggered = false;
+						for(int i =0;i<PowerGarden.Device.plants.length;i++){
+							if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){
+								PowerGarden.Device.plants[i].triggered = false;
 							}
-							if((plants[i].getFilteredValue() > plants[i].threshold) && !plants[i].triggered){
-								//if(!plants[i].triggered){ 
-									plants[i].triggered = true;
+							if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
+									!PowerGarden.Device.plants[i].triggered){
+									//if(!plants[i].triggered){ 
+									PowerGarden.Device.plants[i].triggered = true;
 									if(i==7){
 									MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
 									mp.start();
 									}
-									plants[i].trig_timestamp = System.currentTimeMillis();	
+									PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
 //									if(i == 7){
 //										plantVal_8.setTextColor(Color.GREEN);
 //									}
 								//}
 							}
 						}
-						if(plants[7].triggered){
-							plantVal_8.setTextColor(Color.GREEN);
+						if(PowerGarden.Device.plants[7].triggered){
+							plantValView[7].setTextColor(Color.GREEN);
 						}
 						else{
-							plantVal_8.setTextColor(Color.WHITE);
+							plantValView[7].setTextColor(Color.WHITE);
 						}
-
-						String val1 = String.valueOf(plantDisplay1);
-						String val2 = String.valueOf(plantDisplay2);
-						String val3 = String.valueOf(plantDisplay3);
-						String val4 = String.valueOf(plantDisplay4);
-						String val5 = String.valueOf(plantDisplay5);
-						String val6 = String.valueOf(plantDisplay6);
-						String val7 = String.valueOf(plantDisplay7);
-						String val8 = String.valueOf(plantDisplay8);
-						plantVal_1.setText(val1);
-						plantVal_2.setText(val2);
-						plantVal_3.setText(val3);
-						plantVal_4.setText(val4);
-						plantVal_5.setText(val5);
-						plantVal_6.setText(val6);
-						plantVal_7.setText(val7);
-						plantVal_8.setText(val8);
+						
+						for(int i=0; i<8; i++){
+							plantValView[i].setText(String.valueOf(plantDisplay[i]));
+						}
 					}
 				};
 				if(runner != null){
@@ -402,7 +346,7 @@ public class PresentationViewable extends Activity implements Viewable, SeekBar.
 		activity_ = (PresentationActivity) activity;
 		for(int i = 0; i<numPlants; i++){
 			PlantObject tempPlant = new PlantObject();
-			plants[i] = tempPlant;
+			PowerGarden.Device.plants[i] = tempPlant;
 		}
 		italiaBook = Typeface.createFromAsset(activity_.getAssets(),"fonts/italiaBook.ttf");
 		interstateBold = Typeface.createFromAsset(activity_.getAssets(), "fonts/Interstate-BoldCondensed.ttf");
@@ -477,66 +421,38 @@ public class PresentationViewable extends Activity implements Viewable, SeekBar.
 	}
 
 	@Override
-	public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+	public void onProgressChanged(SeekBar seekBar, int arg1, boolean arg2) {
 		// TODO Auto-generated method stub
-		if(arg0 == bar1){
-			bar1Val = arg1;
-			plants[0].threshold = bar1Val;
-			TextView bar1text = (TextView)activity_.findViewById(R.id.bar1text);
-			bar1text.setText(Integer.toString(bar1Val));
-		}else if(arg0 == bar2){
-			bar2Val = arg1;
-			plants[1].threshold = bar2Val;
-			TextView bar2text = (TextView)activity_.findViewById(R.id.bar2text);
-			bar2text.setText(Integer.toString(bar2Val));
-		}else if(arg0 == bar4){
-			bar3Val = arg1;
-			plants[2].threshold = bar3Val;
-			TextView bar3text = (TextView)activity_.findViewById(R.id.bar3text);
-			bar3text.setText(Integer.toString(bar3Val));
-		}else if(arg0 == bar4){
-			bar4Val = arg1;
-			plants[3].threshold = bar4Val;
-			TextView bar4text = (TextView)activity_.findViewById(R.id.bar4text);
-			bar4text.setText(Integer.toString(bar4Val));
-		}else if(arg0 == bar5){
-			bar5Val = arg1;
-			plants[4].threshold = bar5Val;
-			TextView bar5text = (TextView)activity_.findViewById(R.id.bar5text);
-			bar5text.setText(Integer.toString(bar5Val));
-		}else if(arg0 == bar6){
-			plants[5].threshold = bar6Val;
-			bar6Val = arg1;
-			TextView bar6text = (TextView)activity_.findViewById(R.id.bar6text);
-			bar6text.setText(Integer.toString(bar6Val));
-		}else if(arg0 == bar7){
-			bar7Val = arg1;
-			plants[6].threshold = bar7Val;
-			TextView bar7text = (TextView)activity_.findViewById(R.id.bar7text);
-			bar7text.setText(Integer.toString(bar7Val));
-		}else if(arg0 == bar8){
-			bar8Val = arg1;
-			plants[7].threshold = bar8Val;
-			TextView bar8text = (TextView)activity_.findViewById(R.id.bar8text);
-			bar8text.setText(Integer.toString(bar8Val));
+		for (int i=0; i<8; i++){
+			if(seekBar == threshBar[i]){
+				threshVal[i] = arg1;
+				PowerGarden.Device.plants[i].threshold = threshVal[i];
+		    	try {
+		    		Class res = R.id.class;
+		    		String id = "bar"+Integer.toString(i+1)+"text";
+		    		Field field = res.getField(id);
+					int resId = field.getInt(null);
+					TextView threshBarText = (TextView)activity_.findViewById(resId);
+					threshBarText.setText(Integer.toString(threshVal[i]));
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+			}
 		}
 	}
 
 	@Override
 	public void onStartTrackingTouch(SeekBar arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onStopTrackingTouch(SeekBar arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void setState(String state) {
-		// TODO Auto-generated method stub
 		if(state == "debug"){
 			activity_.setContentView(R.layout.debug_view);
 			debug = true;
