@@ -5,6 +5,8 @@ public class PlantObject {
 	public boolean triggered = false;
     public long trig_timestamp = 0;
     public int threshold = 10000;
+    public int mood;
+	private static final String PREFS_NAME = "PowerGarden";
     
     public void addValue(int value){
     	MF.medianFilterAddValue(value);

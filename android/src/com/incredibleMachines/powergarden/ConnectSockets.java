@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 
 public class ConnectSockets extends Activity implements Connectable {
 	   private static final String TAG = "ConnectSocketsView";
-	   private static final String PREFS_NAME = "PowerGarden";
 	   static EditText mHostname;
 	   static EditText mPort;
 	   static TextView mStatusline;
@@ -44,7 +43,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	   
 
 	   
-	   private SharedPreferences mSettings;
+	  
 
 	   private void alert(String message) {
 	      Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
@@ -54,25 +53,23 @@ public class ConnectSockets extends Activity implements Connectable {
 
 	   private void loadPrefs() {
 
-	      mHostname.setText(mSettings.getString("hostname", "192.168.1.0"));
-	      mPort.setText(mSettings.getString("port", "9001"));
-	      mID.setText(mSettings.getString("deviceID", "set_id"));
-	      mNumPlants.setText(mSettings.getString("numPlants","8"));
+	      mHostname.setText(PowerGarden.getPrefString("hostname", "192.168.1.0"));
+	      mPort.setText(PowerGarden.getPrefString("port", "9001"));
+	      mID.setText(PowerGarden.getPrefString("deviceID", "set_id"));
+	      mNumPlants.setText(PowerGarden.getPrefString("numPlants","8"));
 	      
 	   }
 
 	   private void saveDevicePrefs(){
-		   SharedPreferences.Editor editor = mSettings.edit();
-		   editor.putString("deviceID", mID.getText().toString());
-		   editor.putString("numPlants", mNumPlants.getText().toString());
-		   editor.commit();
+		   PowerGarden.savePref("deviceID", mID.getText().toString());
+		   PowerGarden.savePref("numPlants", mNumPlants.getText().toString());
 	   }
 	 
 	   private void saveServerPrefs() {
 
-	      SharedPreferences.Editor editor = mSettings.edit();
-	      editor.putString("hostname", mHostname.getText().toString());
-	      editor.putString("port", mPort.getText().toString());
+	      SharedPreferences.Editor editor = PowerGarden.mSettings.edit();
+	      PowerGarden.savePref("hostname", mHostname.getText().toString());
+	      PowerGarden.savePref("port", mPort.getText().toString());
 	      //editor.putString("deviceID", mID.getText().toString());
 	      //editor.putString("numPlants", mNumPlants.getText().toString());
 	      editor.commit();
@@ -164,7 +161,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	    mplantList = (Spinner) findViewById(R.id.type_plants);
 	    //mplantsView = (ListView) findViewById(R.id.plants);
 	    //mLinearLayout = (LinearLayout)findViewById(R.id.plants);
-	    mSettings = getSharedPreferences(PREFS_NAME, 0);
+	    //PowerGarden.mSettings = getSharedPreferences(PREFS_NAME, 0);
 	    
 	    ArrayAdapter <CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.plants_array, android.R.layout.simple_spinner_item);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

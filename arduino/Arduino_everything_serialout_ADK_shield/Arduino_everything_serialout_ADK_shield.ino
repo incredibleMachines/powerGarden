@@ -88,6 +88,8 @@ int rangefinderTriggerThresholdCm; //in cm units
 long rangefinderTimer;
 int rangerfinderDebounce;
 
+long timeNow;
+
 //OUTPUT TO ANDROID
 char outgoing[64];
 
@@ -132,11 +134,11 @@ void setup(){
   
   //read/send durations
   read_light_every = 2000;
-  send_light_every = 30000;
+  send_light_every = 60000;
   read_moisture_every = 2000;
-  send_moisture_every = 30000;  
+  send_moisture_every = 60000;  
   read_temphum_every = 2000;
-  send_temphum_every = 30000; 
+  send_temphum_every = 60000; 
 
   //initial readings for cap sense threshold
   if(enable_cap_sensor==true){
@@ -218,6 +220,7 @@ void loop(){
     }
   }
 
+  timeNow = millis();
   //__________________________________________________________
   //cap sensors
   //1. read pot values, to adjust cap-sense threshold
@@ -311,8 +314,8 @@ void loop(){
   //__________________________________________________________
   //light sensor
   if(enable_light_sensor == true){
-    if(millis()-read_light_timer > read_light_every){ //READ
-      read_light_timer = millis();
+    if(timeNow-read_light_timer > read_light_every){ //READ
+      read_light_timer = timeNow;
       tsl.read_all_data();
       if(debug==true){
         Serial.print("<- READING LIGHT SENSOR ");
@@ -335,8 +338,8 @@ void loop(){
         //do nothing  
       }
 
-      if(millis()-send_light_timer > send_light_every){ //SEND
-        send_light_timer = millis();  
+      if(timeNow-send_light_timer > send_light_every){ //SEND
+        send_light_timer = timeNow;  
         tsl.get_all_avg();
         if(debug==true){
           Serial.print("-> SENDING LIGHT SENSOR AVG (total readings, ");
@@ -373,8 +376,8 @@ void loop(){
   //__________________________________________________________
   //moisture sensor
   if(enable_moisture_sensor == true){
-    if(millis()-read_moisture_timer > read_moisture_every){ // READ
-      read_moisture_timer = millis();
+    if(timeNow-read_moisture_timer > read_moisture_every){ // READ
+      read_moisture_timer = timeNow;
       moisture_val = analogRead(A0);
       moisture_total += moisture_val;
       if(debug==true){
@@ -388,8 +391,8 @@ void loop(){
       else{
         //do nothing 
       } 
-      if(millis()-send_moisture_timer > send_moisture_every){ //SEND
-        send_moisture_timer = millis();
+      if(timeNow-send_moisture_timer > send_moisture_every){ //SEND
+        send_moisture_timer = timeNow;
         moisture_avg = int(moisture_total/moisture_counter);
         if(debug==true){
           Serial.print("-> SENDING MOISTURE SENSOR AVG (total readings, ");
@@ -418,8 +421,8 @@ void loop(){
   //__________________________________________________________
   //temp-hum sensor
   if(enable_temphum_sensor == true){
-    if(millis()-read_temphum_timer > read_temphum_every){ //READ
-      read_temphum_timer = millis();
+    if(timeNow-read_temphum_timer > read_temphum_every){ //READ
+      read_temphum_timer = timeNow;
       //dht.read_all_data();
       dhtTemp = dht.getTemperature();
       dhtHum = dht.getHumidity();
@@ -439,8 +442,8 @@ void loop(){
       else{
         //do nothing 
       } 
-      if(millis()-send_temphum_timer > send_temphum_every){ //SEND
-        send_temphum_timer = millis();  
+      if(timeNow-send_temphum_timer > send_temphum_every){ //SEND
+        send_temphum_timer = timeNow;  
         //dht.get_all_avg();
         dhtTempAvg = dhtTempAvg/dhtCounter;
         dhtHumAvg = dhtHumAvg/dhtCounter;
@@ -485,14 +488,15 @@ void loop(){
     }
     else{
       //real serial write
-      sprintf(outgoing, "R,%d",rangefinderVal);
-      rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );  
+//      sprintf(outgoing, "R,%d",rangefinderVal);
+//      rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );  
     } 
 
     //      } 
     //    }  
   }
-
+  
+  sprintf(outgoing, "D,%d,%d,%d,%d,%d",rangefinderVal);
 
 
   delay(50); //this is IMPORTANT!
