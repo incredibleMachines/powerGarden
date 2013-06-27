@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -87,8 +88,16 @@ public class PresentationActivity extends UsbActivity {
 			wrapper.setBackgroundColor(color.default_background);
 		}
 		
-		
-		
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
+	        //do your stuff
+	    	Log.d(TAG,"BACK CLICKED");
+	    	//activity_.resetView();
+	    	//currentViewable_.debug = false;
+	    }
+	    return true;
 	}
 
 	@Override
@@ -98,6 +107,7 @@ public class PresentationActivity extends UsbActivity {
 		setContentView(R.layout.activity_presentation);
 	    SM = new SocketManager();
 	    PowerGarden.SM = SM;
+	    PowerGarden.loadPrefs(getApplicationContext());
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
 		// Set up an instance of SystemUiHider to control the system UI for
