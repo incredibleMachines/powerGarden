@@ -4,12 +4,26 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="@color/default_background"
-    tools:context=".PresentationActivity" >
+    tools:context=".PresentationActivity" 
+    android:scrollbars="vertical">
+
+    <Button
+        android:id="@+id/audiotest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="play sound" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
    <LinearLayout
        android:layout_width="match_parent"
        android:layout_height="match_parent"
        android:layout_marginTop="55dp"
+       android:scrollbarSize="10dp"
+       android:scrollbars="vertical"
        android:orientation="vertical" >
 
         <LinearLayout
@@ -47,9 +61,8 @@
 
                 <SeekBar
                     android:id="@+id/seekBar1"
-                    android:layout_width="500dp"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
-                    
                     android:max="20000" />
 
                 <TextView
@@ -92,7 +105,7 @@
 
                 <SeekBar
                     android:id="@+id/seekBar2"
-                    android:layout_width="500dp"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
                     
                     android:max="20000" />
@@ -137,7 +150,7 @@
 
                 <SeekBar
                     android:id="@+id/seekBar3"
-                    android:layout_width="500dp"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
                     
                     android:max="20000" />
@@ -182,7 +195,7 @@
 
                 <SeekBar
                     android:id="@+id/seekBar4"
-                    android:layout_width="500dp"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
                     
                     android:max="20000" />
@@ -227,7 +240,7 @@
 
                 <SeekBar
                     android:id="@+id/seekBar5"
-                    android:layout_width="500dp"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
                     
                     android:max="20000" />
@@ -272,7 +285,7 @@
 
                 <SeekBar
                     android:id="@+id/seekBar6"
-                    android:layout_width="500dp"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
                     
                     android:max="20000" />
@@ -317,7 +330,7 @@
 
                 <SeekBar
                     android:id="@+id/seekBar7"
-                    android:layout_width="500dp"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
                     
                     android:max="20000" />
@@ -362,7 +375,7 @@
 
                 <SeekBar
                     android:id="@+id/seekBar8"
-                    android:layout_width="500dp"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
                     
                     android:max="20000" />
@@ -483,8 +496,15 @@
                 android:layout_height="wrap_content"
                 android:text="Close Debug" />
 
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+
         </LinearLayout>
         
     </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

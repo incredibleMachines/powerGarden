@@ -82,6 +82,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     public boolean debug = false;
     
     Button closeDebug;
+    Button audioTest;
     
     boolean triggered_1 = false;
     long trig_1_time = 0;
@@ -363,7 +364,53 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			}
 			
 		});
+		audioTest = (Button) activity_.findViewById(R.id.audiotest);
+		audioTest.setOnClickListener(new Button.OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				//activity_.setContentView(R.layout.activity_presentation);
+				//debug = false;
+				if(PowerGarden.Device.plantType.contains("Cherry")){
+					audioTest.setText("Play "+PowerGarden.Device.plantType);
+					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.cherrytomatoes_audiotest);
+					mp.start();
+				} else if(PowerGarden.Device.plantType.contains("Beets")){
+					audioTest.setText("Play "+PowerGarden.Device.plantType);
+					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.beets_audiotest);
+					mp.start();
+				} else if(PowerGarden.Device.plantType.contains("Celery")){
+					audioTest.setText("Play "+PowerGarden.Device.plantType);
+					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
+					mp.start();
+				} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
+					audioTest.setText("Play "+PowerGarden.Device.plantType);
+					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
+					mp.start();
+				} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
+					audioTest.setText("Play "+PowerGarden.Device.plantType);
+					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.orangecarrot_audiotest);
+					mp.start();
+				} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
+					audioTest.setText("Play "+PowerGarden.Device.plantType);
+					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.purplecarrot_audiotest);
+					mp.start();
+				} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
+					audioTest.setText("Play "+PowerGarden.Device.plantType);
+					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.bellpeppers_audiotest);
+					mp.start();
+				}  else if(PowerGarden.Device.plantType == null){
+
+				} else {
+
+				}
+
+			}
+			
+		});
 	}
+	
 
 	@Override
 	public void setActivity(Activity activity) {

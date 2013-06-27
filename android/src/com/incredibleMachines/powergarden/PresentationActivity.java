@@ -87,6 +87,8 @@ public class PresentationActivity extends UsbActivity {
 			wrapper.setBackgroundColor(color.default_background);
 		}
 		
+		
+		
 	}
 
 	@Override
