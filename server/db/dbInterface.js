@@ -114,6 +114,7 @@ DB.prototype.routeRegister = function(message,connection){
 }
 
 /* ******************************************************************************************* */
+// Depricated
 /* ******************************************************************************************* */
 
 DB.prototype.assignPlantData = function(result,connection){
@@ -129,7 +130,7 @@ DB.prototype.assignPlantData = function(result,connection){
 					var res = {	//"status": "planted", 
 								"device_id": connection.device_id, 
 								"connection_id": connection.id, 
-								"plant":{"id": result._id, "type":result.type, "index":result.index , "mood":result.mood } 
+								"plant":{"id": result._id, "index":result.index , "mood":result.mood } 
 					};
 					//connection.socket.send(JSON.stringify(res));
 					connection.socket.emit('planted',res);
@@ -215,7 +216,7 @@ DB.prototype.createPlant = function(message,connection,plant_index,self){
 /* ******************************************************************************************* */
 
 DB.prototype.logDevice = function(message,connection,self){
-	var obj = {date: new Date(), plants: []};
+	var obj = {date: new Date(), plants: [], type: message.plant_type};
 	devicesDb.insert(obj, {safe:true}, function(err,doc){
 		if(err) console.error(err); //throw err;
 		
@@ -227,7 +228,7 @@ DB.prototype.logDevice = function(message,connection,self){
 		
 		var res = { "device_id": connection.device_id, "connection_id": connection.id };
 		//connection.socket.send(JSON.stringify(res));
-		connection.socket.emit('connected',res);
+		connection.socket.emit('register',res);
 	});	
 }
 
