@@ -28,7 +28,7 @@ import com.incredibleMachines.powergarden.R.color;
 import com.victorint.android.usb.interfaces.Connectable;
 import com.victorint.android.usb.interfaces.Viewable;
 
-public class PresentationViewable extends Activity implements Viewable, SeekBar.OnSeekBarChangeListener, Connectable {
+public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeListener, Connectable {
 	private static String TAG = "PresentationViewable";
 	//private Activity activity_;
 	private PresentationActivity activity_;
@@ -315,16 +315,6 @@ public class PresentationViewable extends Activity implements Viewable, SeekBar.
 
 	}
 	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
-	        //do your stuff
-	    	activity_.resetView();
-	    	debug = false;
-	    }
-	    return true;
-	}
-	
 	private void createJson(String name1, int value1){
 		if(PowerGarden.Device.ID != null){
 		 JSONObject j = new JSONObject();
@@ -372,7 +362,7 @@ public class PresentationViewable extends Activity implements Viewable, SeekBar.
 				// TODO Auto-generated method stub
 				//activity_.setContentView(R.layout.activity_presentation);
 			    debug = false;
-				activity_.resetView();
+				activity_.onResume();
 			}
 			
 		});
