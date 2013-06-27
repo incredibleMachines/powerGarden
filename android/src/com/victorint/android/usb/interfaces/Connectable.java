@@ -16,6 +16,8 @@ e-mail   :  support@circuitsathome.com
 */
 package com.victorint.android.usb.interfaces;
 
+import android.view.KeyEvent;
+
 public interface Connectable {
 
     boolean isConnected();
@@ -31,5 +33,6 @@ public interface Connectable {
     void sendData(int type, byte[] data);
     
     void signalToUi(int type, Object data);
+
     
 }
