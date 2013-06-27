@@ -52,6 +52,7 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('disconnect', function () {
 	  /* io.sockets.emit('user disconnected'); */
+  	  database.setActive(connection, false);
 	  delete clients["client-"+connection.id];
 	  console.log("[DISCONN] connection.id %s",connection.id);
 	  console.log("[DISCONN] connection.device_id %s",connection.device_id);
