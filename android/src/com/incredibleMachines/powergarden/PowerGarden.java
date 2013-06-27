@@ -35,13 +35,19 @@ public class PowerGarden {
 		static String PlantNum;
 		static String plantType = "Cherry Tomatoes"; //should be populated by prefs	
 		static PlantObject plants[] = new PlantObject[8];
+		static String host;
+		static String port;
+		static String deviceMood;
+		static String messageCopy;
 	}
 	
 	//--- global socket vars
 	public static SocketManager SM;
+	public static int SocketConnected = 0;
 	public static int Connected = 1;
 	public static int Disconnected = 2;
 	public static int Planted = 3;
+	public static int Updated = 4;
 
 	//--- global sensors
 	public static int temp;
@@ -52,4 +58,5 @@ public class PowerGarden {
 	
 	//--- app status
 	public static boolean bAudioPlaying = false;
+	public static boolean bConnected = false;
 }

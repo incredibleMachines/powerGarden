@@ -187,7 +187,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		    }
 		}else if(dataType.equalsIgnoreCase("L")){
 			PowerGarden.light = Integer.parseInt(parseData[1]);
-			createJson("light",PowerGarden.light);
+			//createJson("light",PowerGarden.light);
 			final int light = PowerGarden.light;
 			if(debug){
 				Runnable runner = new Runnable(){
@@ -202,7 +202,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		    }
 		}else if(dataType.equalsIgnoreCase("M")){
 			PowerGarden.moisture = Integer.parseInt(parseData[1]);
-			createJson("moisture",PowerGarden.moisture);
+			//createJson("moisture",PowerGarden.moisture);
 			final int moisture = PowerGarden.moisture;
 			if(debug){
 				Runnable runner = new Runnable(){
@@ -219,7 +219,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			Log.d(TAG, "GOT DATA MODE = "+dataType);
 			PowerGarden.temp = Integer.parseInt(parseData[1]);
 			PowerGarden.hum = Integer.parseInt(parseData[2]);
-			createJson("temperature",PowerGarden.temp, "humidity", PowerGarden.hum);
+			//createJson("temperature",PowerGarden.temp, "humidity", PowerGarden.hum);
 			final int temp = PowerGarden.temp;
 			final int hum = PowerGarden.hum;
 			if(debug){
@@ -238,7 +238,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		    }
 		}else if(dataType.equalsIgnoreCase("R")){
 			PowerGarden.distance = Integer.parseInt(parseData[1]);
-			createJson("distance",PowerGarden.distance);
+			//createJson("distance",PowerGarden.distance);
 			final int distance = PowerGarden.distance;
 			if(debug){
 				Runnable runner = new Runnable(){
@@ -251,7 +251,28 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 					activity_.runOnUiThread(runner);
 				}
 		    }
-		}else{
+		}else if(dataType.equalsIgnoreCase("D")){
+			//LIGHT, TEMP, HUM, MOIST, RANGE
+			PowerGarden.light = Integer.parseInt(parseData[1]);
+			PowerGarden.temp = Integer.parseInt(parseData[2]);
+			PowerGarden.hum = Integer.parseInt(parseData[3]);
+			PowerGarden.moisture = Integer.parseInt(parseData[4]);
+			PowerGarden.distance = Integer.parseInt(parseData[5]);
+			createJson("light",PowerGarden.light,"temperature",PowerGarden.temp,"humidity",PowerGarden.hum,"moisture",PowerGarden.moisture);
+			final int distance = PowerGarden.distance;
+			if(debug){
+				Runnable runner = new Runnable(){
+					public void run() {
+						String distanceStr = String.valueOf(distance);
+						distanceval.setText(distanceStr);
+					}
+				};
+				if(runner != null){
+					activity_.runOnUiThread(runner);
+				}
+		    }
+		}
+		else{
 			
 		}
 
@@ -259,29 +280,29 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 
 	}
 	
-	private void createJson(String name1, int value1){
-		if(PowerGarden.Device.ID != null){
-		 JSONObject j = new JSONObject();
-		   long time = System.currentTimeMillis() / 1000L;
-		   	try {
-		   		j.put(name1, value1).put("timestamp", time );
-		   	} catch (JSONException e) {
-		   		e.printStackTrace();
-		   	}
-		   
-		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID.toString(), j, this);
-		}
-	}
-	private void createJson(String name1, int value1, String name2, int value2){
+//	private void createJson(String name1, int value1){
+//		if(PowerGarden.Device.ID != null){
+//		 JSONObject j = new JSONObject();
+//		   long time = System.currentTimeMillis() / 1000L;
+//		   	try {
+//		   		j.put(name1, value1).put("timestamp", time );
+//		   	} catch (JSONException e) {
+//		   		e.printStackTrace();
+//		   	}
+//		   
+//		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID.toString(), j, this);
+//		}
+//	}
+	private void createJson(String name, int value, String name2, int value2, String name3, int value3, String name4, int value4 ){
 		if(PowerGarden.Device.ID != null){
 		JSONObject j = new JSONObject();
 		   long time = System.currentTimeMillis() / 1000L;
 		   	try {
-		   		j.put(name1, value1).put(name2, value2).put("timestamp", time );
+		   		j.put(name, value).put(name2, value2).put(name3, value3).put(name4, value4);
 		   	} catch (JSONException e) {
 		   		e.printStackTrace();
 		   	}
-		   
+		   if(PowerGarden.bConnected)
 		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID.toString(), j, this);
 		}
 	}
@@ -306,7 +327,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 				// TODO Auto-generated method stub
 				//activity_.setContentView(R.layout.activity_presentation);
 			    debug = false;
-				activity_.onResume();
+				activity_.resetView();
 			}
 			
 		});

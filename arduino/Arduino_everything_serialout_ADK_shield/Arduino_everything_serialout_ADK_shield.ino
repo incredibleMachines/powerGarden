@@ -88,7 +88,11 @@ int rangefinderTriggerThresholdCm; //in cm units
 long rangefinderTimer;
 int rangerfinderDebounce;
 
+int lightVal;
+
 long timeNow;
+long timeDataOut;
+long send_out_every;
 
 //OUTPUT TO ANDROID
 char outgoing[64];
@@ -132,6 +136,20 @@ void setup(){
   enable_cap_sensor = true;
   enable_rangefinder = true;
   
+  if(!enable_light_sensor){
+    lightVal = -99;
+  }
+    if(!enable_moisture_sensor){
+    moisture_avg = -99;
+  }
+    if(!enable_temphum_sensor){
+    dhtTempAvg = -99;
+    dhtHumAvg = -99;
+  }
+    if(!enable_light_sensor){
+    rangefinderVal = -99;
+  }
+  
   //read/send durations
   read_light_every = 2000;
   send_light_every = 60000;
@@ -139,6 +157,7 @@ void setup(){
   send_moisture_every = 60000;  
   read_temphum_every = 2000;
   send_temphum_every = 60000; 
+  send_out_every = 60000; 
 
   //initial readings for cap sense threshold
   if(enable_cap_sensor==true){
@@ -360,8 +379,9 @@ void loop(){
         }
         else{
           //real serial write  
-          sprintf(outgoing, "L,%d",tsl.lux_avg);
-          rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
+          lightVal = tsl.lux_avg;
+          //sprintf(outgoing, "L,%d",tsl.lux_avg);
+          //rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
         }
 
         tsl.counter = 1; //reset counter
@@ -404,8 +424,8 @@ void loop(){
         }
         else{
           //real serial write 
-          sprintf(outgoing, "M,%d",moisture_avg);
-          rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
+          //sprintf(outgoing, "M,%d",moisture_avg);
+          //rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing );
         } 
 
         moisture_counter = 1;
@@ -460,8 +480,8 @@ void loop(){
         }
         else{
           //real serial write 
-          sprintf(outgoing, "T,%d,%d",dhtTempAvg,dhtHumAvg);
-          rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing ); 
+          //sprintf(outgoing, "T,%d,%d",dhtTempAvg,dhtHumAvg);
+         // rcode = adk.SndData( strlen( outgoing ), (uint8_t *)outgoing ); 
         }
 
         dhtCounter = 1; //reset counter
@@ -495,8 +515,11 @@ void loop(){
     //      } 
     //    }  
   }
+  if(timeNow-timeDataOut > send_out_every){
+    //LIGHT, TEMP, HUM, MOIST, RANGE
+    sprintf(outgoing, "D,%d,%d,%d,%d,%d",lightVal,dhtTempAvg,dhtHumAvg,moisture_avg,rangefinderVal);
+  }
   
-  sprintf(outgoing, "D,%d,%d,%d,%d,%d",rangefinderVal);
 
 
   delay(50); //this is IMPORTANT!

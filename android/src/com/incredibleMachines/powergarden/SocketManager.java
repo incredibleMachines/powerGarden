@@ -37,6 +37,17 @@ public class SocketManager implements  IOCallback {
 			}
 		
 	}
+	public void authDevice(String type, String device_id, Connectable _callback){
+		callbackActivity = _callback;
+		try {
+
+			socket.emit(type, 
+				 new JSONObject().put("device_id", device_id)
+					);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	}
 	
 	public void plantTouch(String type, String device_id, int plant_index, Connectable _callback){
 		callbackActivity = _callback;
@@ -65,7 +76,7 @@ public class SocketManager implements  IOCallback {
 		
 	}
 	
-	public void connectToServer(String host, String port){
+	public void connectToServer(String host, String port, Connectable _callback){
 		
 		try {
 			
@@ -109,21 +120,24 @@ public class SocketManager implements  IOCallback {
 	public void onConnect() {
 		//System.out.println("Connection established");
 		Log.d(TAG, "onConnect callback");
+		callbackActivity.signalToUi(PowerGarden.SocketConnected, null);
 	}
 
 	@Override
 	public void on(String event, IOAcknowledge ack, Object... args) {
 		
 		System.out.println("Server triggered event '" + event + "'");
+		Log.d(TAG, "INCOMING MESSAGE: "+args[0].toString());
 
-		if(event.equals("connected")){
-			System.out.println("HERE");
+		if(event.equals("register")){
+			//System.out.println("HERE");
 			
 			try {
 				JSONObject j = new JSONObject(args[0].toString() );
 				PowerGarden.Device.ID = j.getString("device_id");
+				PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
 				System.out.println(PowerGarden.Device.ID);
-				callbackActivity.signalToUi(PowerGarden.Connected, null);
+				callbackActivity.signalToUi(PowerGarden.Connected, PowerGarden.Device.ID);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -136,6 +150,22 @@ public class SocketManager implements  IOCallback {
 			//System.out.println(args.toString());
 		}else if(event.equals("planted")){
 			System.out.println(args.toString());
+		}else if(event.equals("update")){
+			try {
+				JSONObject j = new JSONObject(args[0].toString() );
+				if(PowerGarden.Device.ID != j.getString("device_id")){
+					Log.e(TAG, "DEVICE ID MISMACTCH");
+				}
+				//PowerGarden.Device.ID = j.getString("device_id");
+				PowerGarden.Device.deviceMood = j.getString("mood");
+				PowerGarden.Device.messageCopy = j.getString("message");
+//				PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
+//				System.out.println(PowerGarden.Device.ID);
+				callbackActivity.signalToUi(PowerGarden.Updated, PowerGarden.Device.ID);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
