@@ -2,7 +2,7 @@
 /* Pull in required modules						 								 			   */
 /* ******************************************************************************************* */
 
-var io = require('socket.io').listen(9001);
+var io = require('socket.io').listen(9001).set('log level', 2);
 var DB = require('./db/dbInterface');
 var pgtwitter = require('./pgtwitter')
 
@@ -52,10 +52,12 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('disconnect', function () {
 	  /* io.sockets.emit('user disconnected'); */
-  	  database.setActive(connection, false);
-	  delete clients["client-"+connection.id];
+  	  
 	  console.log("[DISCONN] connection.id %s",connection.id);
 	  console.log("[DISCONN] connection.device_id %s",connection.device_id);
+	  
+	  if(connection.device_id != 'set_id') database.setActive(connection, false);
+	  delete clients["client-"+connection.id];
 	  //set device to inactive
 
 	});
