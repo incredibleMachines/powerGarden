@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,7 +28,7 @@ import com.incredibleMachines.powergarden.R.color;
 import com.victorint.android.usb.interfaces.Connectable;
 import com.victorint.android.usb.interfaces.Viewable;
 
-public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeListener, Connectable {
+public class PresentationViewable extends Activity implements Viewable, SeekBar.OnSeekBarChangeListener, Connectable {
 	private static String TAG = "PresentationViewable";
 	//private Activity activity_;
 	private PresentationActivity activity_;
@@ -93,6 +94,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     final long triggerTime = 2500;
     boolean bHaveData = false;
     String gotData;
+    MediaPlayer mp;
     //int [] arrayToSort = {0,0,0,0,0,0,0,0,0,0};
     
 	@Override
@@ -313,6 +315,16 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 
 	}
 	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
+	        //do your stuff
+	    	activity_.resetView();
+	    	debug = false;
+	    }
+	    return true;
+	}
+	
 	private void createJson(String name1, int value1){
 		if(PowerGarden.Device.ID != null){
 		 JSONObject j = new JSONObject();
@@ -359,7 +371,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				//activity_.setContentView(R.layout.activity_presentation);
-				//debug = false;
+			    debug = false;
 				activity_.resetView();
 			}
 			
@@ -369,46 +381,13 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//activity_.setContentView(R.layout.activity_presentation);
-				//debug = false;
-				if(PowerGarden.Device.plantType.contains("Cherry")){
-					audioTest.setText("Play "+PowerGarden.Device.plantType);
-					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.cherrytomatoes_audiotest);
-					mp.start();
-				} else if(PowerGarden.Device.plantType.contains("Beets")){
-					audioTest.setText("Play "+PowerGarden.Device.plantType);
-					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.beets_audiotest);
-					mp.start();
-				} else if(PowerGarden.Device.plantType.contains("Celery")){
-					audioTest.setText("Play "+PowerGarden.Device.plantType);
-					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
-					mp.start();
-				} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
-					audioTest.setText("Play "+PowerGarden.Device.plantType);
-					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
-					mp.start();
-				} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
-					audioTest.setText("Play "+PowerGarden.Device.plantType);
-					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.orangecarrot_audiotest);
-					mp.start();
-				} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
-					audioTest.setText("Play "+PowerGarden.Device.plantType);
-					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.purplecarrot_audiotest);
-					mp.start();
-				} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
-					audioTest.setText("Play "+PowerGarden.Device.plantType);
-					MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.bellpeppers_audiotest);
-					mp.start();
-				}  else if(PowerGarden.Device.plantType == null){
-
-				} else {
-
-				}
-
+				//audioSetup();
+				playAudio();
 			}
 			
 		});
+		
+		//audioSetup();
 	}
 	
 
@@ -433,6 +412,51 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		
 		//for 'factoids'
 		//setTextViewFont(interstateBold, plantCopy);
+	}
+	
+	private void playAudio(){
+		// TODO Auto-generated method stub
+		//activity_.setContentView(R.layout.activity_presentation);
+		//debug = false;
+		if(!PowerGarden.bAudioPlaying){
+		PowerGarden.bAudioPlaying = true;
+		
+		if(PowerGarden.Device.plantType.contains("Cherry")){
+			audioTest.setText("Stop "+PowerGarden.Device.plantType +" audio");
+			mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.cherrytomatoes_audiotest);
+			mp.start();
+		} else if(PowerGarden.Device.plantType.contains("Beets")){
+			audioTest.setText("Stop "+PowerGarden.Device.plantType +" audio");
+			mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.beets_audiotest);
+			mp.start();
+//		} else if(PowerGarden.Device.plantType.contains("Celery")){
+//			audioTest.setText("Play "+PowerGarden.Device.plantType);
+//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
+//			mp.start();
+//		} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
+//			audioTest.setText("Play "+PowerGarden.Device.plantType);
+//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
+//			mp.start();
+//		} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
+//			audioTest.setText("Play "+PowerGarden.Device.plantType);
+//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.orangecarrot_audiotest);
+//			mp.start();
+//		} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
+//			audioTest.setText("Play "+PowerGarden.Device.plantType);
+//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.purplecarrot_audiotest);
+//			mp.start();
+//		} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
+//			audioTest.setText("Play "+PowerGarden.Device.plantType);
+//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.bellpeppers_audiotest);
+//			mp.start();
+//		}  else if(PowerGarden.Device.plantType == null){
+
+		} else {
+			audioTest.setText("no audio available");
+		}
+		}else{
+			mp.stop();
+		}
 	}
 
 	@Override
