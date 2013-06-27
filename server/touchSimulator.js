@@ -33,8 +33,11 @@ function simulateTouch(){
 	
 	var obj ={};
 	var randDevice = devices[Math.round(Math.random()*devices.length)];
-	obj.device_id = new BSON.ObjectID(randDevice);
-	obj.index = Math.round(Math.random()*8);
+	//obj.device_id = new BSON.ObjectID(randDevice);
+	obj.device_id = new BSON.ObjectID("51cb6279f8f5b226b7000013");
+	//obj.index = Math.round(Math.random()*8);
+	obj.index =2;
+
 	obj.timestamp = new Date();
 	touchesDb.insert(obj, {safe:true}, function(err,res){ if(err)console.error(err); });
 	console.log(obj);

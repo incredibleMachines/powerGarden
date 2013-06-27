@@ -12,11 +12,10 @@ var pgtwitter = require('./pgtwitter')
 /* ******************************************************************************************* */
 
 var clients = {};
-
-// Connect to mongo server, store collection references
+//Connect to mongo server, store collection references
 var database = new DB();
 
-// Connect to twitter, pass callback for responding to tweets
+//Connect to twitter, pass callback for responding to tweets
 pgtwitter.start(twitterCallback);
 
 
@@ -78,6 +77,7 @@ function Connection(_id, _device_id,_socket){
 /* Update the plant's mood based on interaction & envrionmental data 						   */
 /* ******************************************************************************************* */
 
+/*
 function checkPlantMood(message,connection) {
 
 	// fetch data from db for given device id
@@ -132,6 +132,7 @@ function checkPlantMood(message,connection) {
 		}
 	});
 }
+*/
 
 
 /* ******************************************************************************************* */
@@ -207,3 +208,4 @@ function twitterCallback(data) {
 		}
 	}
 }
+
