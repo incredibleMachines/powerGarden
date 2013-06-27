@@ -83,12 +83,13 @@ DB.prototype.routeRegister = function(message,connection){
 		if(message.device_id.length == 24){
 			var oID = new BSON.ObjectID(message.device_id);
 			var obj = {'_id': oID};
+			var self = this;
 			//find device by id
 			devicesDb.findOne(obj,function(err,result){
 				
 				if(!result){
 					console.log("[Device Registration Failed]");
-					this.logDevice(message,connection,this);
+					self.logDevice(message,connection,self);
 					
 				}else{
 					
@@ -96,8 +97,9 @@ DB.prototype.routeRegister = function(message,connection){
 					console.log("[Device Already Registered]");
 					connection.device_id = message.device_id;
 					//assignPlantData(result,connection);
+					self.setActive(connection, true);
 					
-					connection.socket.emit('connected', res);
+					connection.socket.emit('register', res);
 					//connection.socket.send(JSON.stringify(res));	
 				}
 				
@@ -113,7 +115,13 @@ DB.prototype.routeRegister = function(message,connection){
 	}
 }
 
+DB.prototype.setActive = function(connection,state){
+	var json = { $set:{active:state} };
+	this.updateDocument(devicesDb,connection.device_id, json);
+}
+
 /* ******************************************************************************************* */
+// Depricated
 /* ******************************************************************************************* */
 
 DB.prototype.assignPlantData = function(result,connection){
@@ -129,7 +137,7 @@ DB.prototype.assignPlantData = function(result,connection){
 					var res = {	//"status": "planted", 
 								"device_id": connection.device_id, 
 								"connection_id": connection.id, 
-								"plant":{"id": result._id, "type":result.type, "index":result.index , "mood":result.mood } 
+								"plant":{"id": result._id, "index":result.index , "mood":result.mood } 
 					};
 					//connection.socket.send(JSON.stringify(res));
 					connection.socket.emit('planted',res);
@@ -156,13 +164,14 @@ DB.prototype.plantTouch = function(message,connection){
 	
 	obj.timestamp = new Date();
 	
-	console.log(obj.timestamp);
+	// console.log(obj.timestamp);
 	
 	var TouchThreshold =10;
 	var minutes =1;
 	var time = new Date();
+	var self = this;
 	time.setMinutes( time.getMinutes()-minutes );
-	console.log(time);
+	// console.log(time);
 	touchesDb.insert(obj, function(err){
 				if(err) console.error(err) //throw err;
 				touchesDb.count({ device_id: obj.device_id, index: obj.index , timestamp:{ $gt : time}}, function(err,count){
@@ -170,7 +179,7 @@ DB.prototype.plantTouch = function(message,connection){
 					if(err) console.error(err);
 					console.log(count);
 					
-					var json;
+					var json = {};
 					if(count == 0){
 						console.log("[PLANT STATE] Lonely "+count);
 						json.mood = "lonely";
@@ -182,9 +191,12 @@ DB.prototype.plantTouch = function(message,connection){
 						json.mood = "worked_up";
 					}				
 					
-					json.mood=mood;
+					// json.mood=mood;
 					json.plant_index=obj.index;
-					
+					plantsDb.update({ device_id: obj.device_id, index: obj.index }, {$set:json}, function(err, res) {
+						if (err) console.error(err);
+					});
+
 					connection.socket.emit('touch', json);
 					
 				});
@@ -215,7 +227,7 @@ DB.prototype.createPlant = function(message,connection,plant_index,self){
 /* ******************************************************************************************* */
 
 DB.prototype.logDevice = function(message,connection,self){
-	var obj = {date: new Date(), plants: []};
+	var obj = {date: new Date(), plants: [], type: message.plant_type, active: true};
 	devicesDb.insert(obj, {safe:true}, function(err,doc){
 		if(err) console.error(err); //throw err;
 		
@@ -227,7 +239,7 @@ DB.prototype.logDevice = function(message,connection,self){
 		
 		var res = { "device_id": connection.device_id, "connection_id": connection.id };
 		//connection.socket.send(JSON.stringify(res));
-		connection.socket.emit('connected',res);
+		connection.socket.emit('register',res);
 	});	
 }
 
@@ -240,5 +252,3 @@ DB.prototype.updateDocument = function(collection,id,json){
 
 //no upsert 
 }
-
-
