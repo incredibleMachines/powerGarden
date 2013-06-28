@@ -3,8 +3,8 @@
 /* ******************************************************************************************* */
 
 var io = require('socket.io').listen(9001).set('log level', 2);
-var DB = require('./db/dbInterface');
-var pgtwitter = require('./pgtwitter')
+var DB = require('./db/index');
+var pgtwitter = require('./pgtwitter/index')
 
 
 /* ******************************************************************************************* */
