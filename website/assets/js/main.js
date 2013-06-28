@@ -116,7 +116,7 @@ $('input[type=text]').live('change', function() {
 		val: $(this).val()
 	}
 
-	console.log(data);
+	// console.log(data);
 
 	$.get('/update', data);
 })
@@ -131,7 +131,7 @@ $('.toggle-device-active').live('click', function() {
 		active: !active
 	};
 
-	console.log(data);
+	// console.log(data);
 	
 	if (active) {
 		$.get('/update', data, function(data) {
@@ -165,7 +165,7 @@ $('.toggle-sensor-active').live('click', function() {
 		active: !active
 	};
 
-	console.log(data);
+	// console.log(data);
 	
 	if (active) {
 		$.get('/update', data, function(data) {
