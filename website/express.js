@@ -13,6 +13,7 @@ mongo.open(function(err,mongo){
 	personalitiesDb = db.collection('personalities');
 	dataDb = db.collection('data');
 	touchesDb = db.collection('touches');
+	settingsDb = db.collection('settings');
 });
 
 
@@ -32,7 +33,7 @@ app.get('/devices', function(req, res) {
 
 });
 
-// return devices for a given plant
+// return plants for a given device
 app.get('/plants', function(req, res) {
 
 	var device_id = BSON.ObjectID(req.query.device_id);
@@ -42,5 +43,55 @@ app.get('/plants', function(req, res) {
 	});
 
 });
+
+// return settings for a for a given device
+app.get('/settings', function(req, res) {
+
+	var device_id = BSON.ObjectID(req.query.device_id);
+
+	settingsDb.find({ device_id: device_id }).toArray(function(err, result) {
+		res.send(result);
+	});
+
+});
+
+// make changes to db
+app.get('/update', function(req, res) {
+
+	// console.log('[Update Request] ' + JSON.stringify(req.query));
+
+	var device_id = BSON.ObjectID(req.query.device_id);
+	var set = {};
+
+	if (!req.query.sensor) {
+		// if there's no sensor, then we're just toggling whether a device is active
+		// { device_id: "51ccbb988bce5acc05000001", active: false }
+		set['active'] = req.query.active == 'true' ? true : false;
+	} else {
+
+		// otherwise we're setting a sensor property. check if it's whether we're toggling
+		// the active state vs. setting a property value
+		if (req.query.active) {
+			// { device_id: "51ccbb988bce5acc05000001", sensor: "distance", active: false }
+			// assemble the key want to set, e.g. humidity.active
+			var setKey = req.query.sensor+'.active';
+			set[setKey] = req.query.active == 'true' ? true : false;
+		} else {
+			// { device_id: "51ccbb988bce5acc05000001", sensor: "distance", property: "low", val: "35" }
+			// assemble the key want to set, e.g. distance.low or distance.high
+			var setKey = req.query.sensor+'.'+req.query.property;
+			set[setKey] = req.query.val;
+		}
+
+	}
+	
+	var obj = { $set: set }
+	console.log(obj);
+
+	settingsDb.update({ device_id: device_id }, obj, function(err, result) {
+		if (err) console.error(err);
+		res.send(obj);
+	})
+})
 
 app.listen(8080);

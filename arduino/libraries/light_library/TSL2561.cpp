@@ -56,7 +56,7 @@ boolean TSL2561::begin(void) {
   Wire.begin();
 
   //fw stuffs
-  counter = 1;
+  counter = 0;
 
  // Initialise I2C
   Wire.beginTransmission(_addr);
