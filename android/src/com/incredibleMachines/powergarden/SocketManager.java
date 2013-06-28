@@ -72,19 +72,16 @@ public class SocketManager implements  IOCallback {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
-		
 	}
 	
 	public void connectToServer(String host, String port, Connectable _callback){
 		
 		try {
-			
+			Log.d(TAG, "connectToServer");
+			Log.d(TAG, _callback.toString());
 			//todo: read this from a text file
-
 				socket = new SocketIO();
 				socket.connect("http://"+host+":"+port+"/", this);
-
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -120,7 +117,7 @@ public class SocketManager implements  IOCallback {
 	public void onConnect() {
 		//System.out.println("Connection established");
 		Log.d(TAG, "onConnect callback");
-		callbackActivity.signalToUi(PowerGarden.SocketConnected, null);
+		//callbackActivity.signalToUi(PowerGarden.SocketConnected, null);
 	}
 
 	@Override

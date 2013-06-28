@@ -67,7 +67,7 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
 		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
 		
-		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+//		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
 		
 		if(PowerGarden.Device.plantType.contains("Cherry")){
 			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
@@ -88,8 +88,8 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 		} else {
 			wrapper.setBackgroundColor(color.default_background);
 		}
-		
 	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
@@ -249,18 +249,8 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
-	@Override
-	public void signalToUi(int type, Object data){
-		if(type == PowerGarden.SocketConnected){
-			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, this);
-		}else if(type == PowerGarden.Connected){
-			//ONLINE AND EVERYTHING IS GOOD
-			PowerGarden.bConnected = true;
-			if(!data.equals(PowerGarden.Device.ID )){
-				PowerGarden.Device.ID = data.toString();
-			}
-		}
-	}
+
+	
 	public void resetView(){
 		setContentView(R.layout.activity_presentation);
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
@@ -369,7 +359,8 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 				);
 		//set up arduino
 		findViewById(R.id.connect_arduino_button).setOnClickListener(new Button.OnClickListener(){
-			public void onClick(View v){	
+			public void onClick(View v){
+				Log.d(TAG, "CLICKED connect arduino button");
 		    	PresentationActivity.super.sendData("setup");
 		    	currentViewable_.setState("debug");
 			}

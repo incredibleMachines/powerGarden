@@ -134,7 +134,10 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		if(bHaveData){
 		String[] parseData = gotData.split(",");
 		String dataType = new String(parseData[0]);
-		//Log.d(TAG, "GOT DATA MODE = "+dataType);
+		Log.d(TAG, "GOT DATA MODE = "+dataType);
+		for(int i=0; i<parseData.length; i++){
+			Log.d(TAG, "Data: "+ parseData[i]);
+		}
 		//Log.d(TAG, "Is is equal? "+(dataType.equalsIgnoreCase("c")));
 		if(dataType.equalsIgnoreCase("c")){
 
@@ -143,6 +146,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			for(int i = 0; i<parseData.length-1; i++){
 				PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
 				plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
+				Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
 			}
 
 		    //Log.d(TAG, "before debug");
@@ -155,13 +159,13 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 								PowerGarden.Device.plants[i].triggered = false;
 							}
 							if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
-									!PowerGarden.Device.plants[i].triggered){
+								!PowerGarden.Device.plants[i].triggered){
 									//if(!plants[i].triggered){ 
-									PowerGarden.Device.plants[i].triggered = true;
-									if(i==7){
+								PowerGarden.Device.plants[i].triggered = true;
+								if(i==7){
 									MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
 									mp.start();
-									}
+								}
 									PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
 //									if(i == 7){
 //										plantVal_8.setTextColor(Color.GREEN);
@@ -175,8 +179,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 						else{
 							plantValView[7].setTextColor(Color.WHITE);
 						}
-						
-						for(int i=0; i<8; i++){
+						for(int i=0; i<plantValView.length; i++){
 							plantValView[i].setText(String.valueOf(plantDisplay[i]));
 						}
 					}
@@ -229,7 +232,6 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 						String humStr = String.valueOf(hum);
 						tempval.setText(tempStr);
 						humval.setText(humStr);
-						
 					}
 				};
 				if(runner != null){
@@ -253,6 +255,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		    }
 		}else if(dataType.equalsIgnoreCase("D")){
 			//LIGHT, TEMP, HUM, MOIST, RANGE
+			Log.d(TAG, "received 'D' ! ");
 			PowerGarden.light = Integer.parseInt(parseData[1]);
 			PowerGarden.temp = Integer.parseInt(parseData[2]);
 			PowerGarden.hum = Integer.parseInt(parseData[3]);
@@ -263,8 +266,11 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			if(debug){
 				Runnable runner = new Runnable(){
 					public void run() {
-						String distanceStr = String.valueOf(distance);
-						distanceval.setText(distanceStr);
+						distanceval.setText(String.valueOf(PowerGarden.distance));
+						lightval.setText(String.valueOf(PowerGarden.light));
+						moistval.setText(String.valueOf(PowerGarden.moisture));
+						humval.setText(String.valueOf(PowerGarden.hum));
+						tempval.setText(String.valueOf(PowerGarden.temp));
 					}
 				};
 				if(runner != null){
@@ -273,7 +279,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		    }
 		}
 		else{
-			
+			Log.d(TAG, "RECEIVED ARDUINO DATA MISMATCH");
 		}
 
 		}
@@ -298,6 +304,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		JSONObject j = new JSONObject();
 		   long time = System.currentTimeMillis() / 1000L;
 		   	try {
+		   		Log.d(TAG, "createJson and SENDING:");
+		   		Log.d(TAG, name+" "+Integer.toString(value)+ " "+ name2+" "+ Integer.toString(value2)
+		   				+ " "+ name3+" "+Integer.toString(value3)+ " "+ name4+" "+Integer.toString(value4));
 		   		j.put(name, value).put(name2, value2).put(name3, value3).put(name4, value4);
 		   	} catch (JSONException e) {
 		   		e.printStackTrace();
@@ -329,7 +338,6 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			    debug = false;
 				activity_.resetView();
 			}
-			
 		});
 		audioTest = (Button) activity_.findViewById(R.id.audiotest);
 		audioTest.setOnClickListener(new Button.OnClickListener(){
@@ -339,9 +347,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 				//audioSetup();
 				playAudio();
 			}
-			
 		});
-		
 		//audioSetup();
 	}
 	
@@ -364,7 +370,6 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		
 		plantCopy = (TextView) activity_.findViewById(R.id.fullscreen_content);
 		setTextViewFont(italiaBook, plantCopy);
-		
 		//for 'factoids'
 		//setTextViewFont(interstateBold, plantCopy);
 	}
@@ -465,6 +470,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 	@Override
 	public void setState(String state) {
 		if(state == "debug"){
+			Log.d(TAG, "setState: 'debug'");
 			activity_.setContentView(R.layout.debug_view);
 			debug = true;
 			setupDebug();

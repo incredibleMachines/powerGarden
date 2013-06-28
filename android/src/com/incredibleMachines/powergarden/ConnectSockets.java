@@ -36,14 +36,8 @@ public class ConnectSockets extends Activity implements Connectable {
 	   static Button mSendUpdate;
 	   static Button mSendTouch;
 	   static Spinner mplantList;
-	   //static ListView mplantsView;
 	   
 	   static LinearLayout mLinearLayout;
-	   //final ArrayList<PlantData> plantList = new ArrayList<PlantData>();
-	   
-
-	   
-	  
 
 	   private void alert(String message) {
 	      Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
@@ -56,8 +50,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	      mHostname.setText(PowerGarden.getPrefString("hostname", "192.168.1.0"));
 	      mPort.setText(PowerGarden.getPrefString("port", "9001"));
 	      mID.setText(PowerGarden.getPrefString("deviceID", "set_id"));
-	      mNumPlants.setText(PowerGarden.getPrefString("numPlants","8"));
-	      
+	      mNumPlants.setText(PowerGarden.getPrefString("numPlants","8"));  
 	   }
 
 	   private void saveDevicePrefs(){
@@ -176,43 +169,37 @@ public class ConnectSockets extends Activity implements Connectable {
 
 	@Override
 	public boolean isConnected() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void connect() {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void sendData(CharSequence data) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void sendData(int type, byte[] data) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void signalToUi(int type, Object data) {
-		// TODO Auto-generated method stub
+
 		Runnable myrun = null;
 		if(type == PowerGarden.Connected){
 			myrun = new Runnable(){
@@ -221,12 +208,8 @@ public class ConnectSockets extends Activity implements Connectable {
 					saveDevicePrefs();
 				}
 			};
-			
 		}
 		Log.d(TAG, "Got type: " + type);
-		this.runOnUiThread(myrun);
-		
+		this.runOnUiThread(myrun);	
 	}
-
-
 }
