@@ -15,6 +15,7 @@ function DB(){
 	this.devicesDb; 
 	this.plantsDb;
 	this.touchesDb;
+	this.settingsDb;
 	this.twitter;
 	
 	/* ******************************************************************************************* */
@@ -29,6 +30,7 @@ function DB(){
 		this.personalitiesDb = db.collection('personalities');
 		this.dataDb = db.collection('data');
 		this.touchesDb = db.collection('touches');
+		this.settingsDb = db.collection('settings');
 	});
 		
 }
@@ -45,7 +47,7 @@ DB.prototype.routeUpdate = function(message,connection){
 		console.error('[Update Error] message.device_id=%s connection.device_id=%s', message.device_id, connection.device_id );/*error error;*/ 
 	}else{
 		 
-		console.log("GOT MESSAGE.DATA :: "+JSON.stringify(message.data));
+		//console.log("GOT MESSAGE.DATA :: "+JSON.stringify(message.data));
 			
 		var obj = {	'device_id': new BSON.ObjectID( String(message.device_id)), 
 					'moisture':message.data.moisture, 
@@ -55,14 +57,106 @@ DB.prototype.routeUpdate = function(message,connection){
 					'timestamp': new Date()
 				};
 				
+		var minutes = 15; //may need to be reset
+		var time = new Date();
+		time.setMinutes( time.getMinutes()-minutes );		
+		
+		var self = this;
+		
 		dataDb.insert(obj, {safe:true}, function(err,doc){
 			if(err) console.error(err);//throw err;
 			
 			//check the last values and determine mood of plant 
 			//update plants/device if necessary
+			var recent = {
+							device_id : obj.device_id,
+							timestamp: { $gte: time }
+						  };
+						  
+			dataDb.find(recent).toArray( function(err,res){
+				//console.log(res);
+				if(err) console.error(err);
+				//console.log(res.length);
+				self.calcDeviceMood(message,connection,res,self);
+			
+			});
+			
 		
 		});	
 	}
+}
+
+DB.prototype.calcDeviceMood = function(message,connection,results,self){
+	
+		
+				
+		var obj = {	device_id: new BSON.ObjectID( String(message.device_id)) };
+				   
+		var avgResults = {};
+		
+		for(var i=0; i<results.length; i++){
+			
+			avgResults.temp += results[i].temp;
+			avgResults.moisture += results[i].moisture;
+			avgResults.light += results[i].light;
+			avgResults.humidity += results[i].humidity;
+			
+		}
+		
+		avgResults.temp /= results.length;
+		avgResults.moisture /= results.length;
+		avgResults.light /= results.length;
+		avgResults.humidity /= results.length;
+		
+		settingsDb.findOne(obj, function(err, res){
+			if(err) console.error(err);
+			console.log(res);		
+			
+			var mood ={};
+			
+			if(res.humidity.active){
+				//does not affect mood
+				if(avgResults.humidity>res.humidity.low && avgResults.humidity < res.humidity.high) mood.humidity='content';
+				else if(avgResults.humidity<res.humidity.low) mood.humidity='low';
+				else if(avgResults.humidity>res.humidity.high) mood.humidity='high';
+			}
+
+			if(res.temp.active){
+				//does not affect mood
+				if(avgResults.temp>res.temp.low && avgResults.temp < res.temp.high) mood.temp='content';
+				else if(avgResults.temp<res.temp.low) mood.temp='low';
+				else if(avgResults.temp>res.temp.high) mood.temp='high';
+				
+			}
+			if(res.light.active){
+				//does not affect mood
+				if(avgResults.light>res.light.low && avgResults.light < res.light.high) mood.light='content';
+				else if(avgResults.light<res.light.low) mood.light='low';
+				else if(avgResults.light>res.light.high) mood.light='high';
+				
+			}
+			
+			if(res.moisture.active){
+				//affects mood
+				if(avgResults.moisture>res.moisture.low && avgResults.moisture < res.moisture.high) mood.moisture='content';
+				else if(avgResults.moisture<res.moisture.low) mood.moisture='low';
+				else if(avgResults.moisture>res.moisture.high) mood.moisture='high';
+				
+				
+				if(mood.moisture=='content'){
+					//device mood content
+					
+				}else if(mood.moisture=='low'){
+					//device mood dry
+				}else if(mood.moisture=='high'){
+					//device mood wet
+				}
+				
+			}	
+			
+			
+		});
+		
 }
 
 /* ******************************************************************************************* */
@@ -169,8 +263,10 @@ DB.prototype.plantTouch = function(message,connection){
 	var TouchThreshold =10;
 	var minutes =1;
 	var time = new Date();
-	var self = this;
 	time.setMinutes( time.getMinutes()-minutes );
+	
+	var self = this;
+
 	// console.log(time);
 	touchesDb.insert(obj, function(err){
 				if(err) console.error(err) //throw err;
