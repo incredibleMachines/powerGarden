@@ -135,9 +135,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		String[] parseData = gotData.split(",");
 		String dataType = new String(parseData[0]);
 		Log.d(TAG, "GOT DATA MODE = "+dataType);
-		for(int i=0; i<parseData.length; i++){
-			Log.d(TAG, "Data: "+ parseData[i]);
-		}
+//		for(int i=0; i<parseData.length; i++){
+//			Log.d(TAG, "Data: "+ parseData[i]);
+//		}
 		//Log.d(TAG, "Is is equal? "+(dataType.equalsIgnoreCase("c")));
 		if(dataType.equalsIgnoreCase("c")){
 
@@ -146,7 +146,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			for(int i = 0; i<parseData.length-1; i++){
 				PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
 				plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
-				Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
+				//Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
 			}
 
 		    //Log.d(TAG, "before debug");
@@ -155,11 +155,12 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 				Runnable runner = new Runnable(){
 					public void run() {
 						for(int i =0;i<PowerGarden.Device.plants.length;i++){
-							if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){
+							if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){ //if we've hit trigger time max
 								PowerGarden.Device.plants[i].triggered = false;
+								
 							}
 							if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
-								!PowerGarden.Device.plants[i].triggered){
+								!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
 									//if(!plants[i].triggered){ 
 								PowerGarden.Device.plants[i].triggered = true;
 								if(i==7){
@@ -172,16 +173,20 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 //									}
 								//}
 							}
-						}
-						if(PowerGarden.Device.plants[7].triggered){
-							plantValView[7].setTextColor(Color.GREEN);
-						}
-						else{
-							plantValView[7].setTextColor(Color.WHITE);
-						}
-						for(int i=0; i<plantValView.length; i++){
 							plantValView[i].setText(String.valueOf(plantDisplay[i]));
+							if(PowerGarden.Device.plants[i].triggered) {
+								plantValView[i].setTextColor(Color.GREEN);
+							} else plantValView[i].setTextColor(Color.WHITE);
 						}
+//						if(PowerGarden.Device.plants[7].triggered){
+//							plantValView[7].setTextColor(Color.GREEN);
+//						}
+//						else{
+//							plantValView[7].setTextColor(Color.WHITE);
+//						}
+//						for(int i=0; i<plantValView.length; i++){
+//							plantValView[i].setText(String.valueOf(plantDisplay[i]));
+//						}
 					}
 				};
 				if(runner != null){
@@ -300,7 +305,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 //		}
 //	}
 	private void createJson(String name, int value, String name2, int value2, String name3, int value3, String name4, int value4 ){
-		if(PowerGarden.Device.ID != null){
+		Log.d(TAG, "DEVICE ID: "+PowerGarden.Device.ID + " Registered: " +PowerGarden.bRegistered);
+		if(PowerGarden.bRegistered){
 		JSONObject j = new JSONObject();
 		   long time = System.currentTimeMillis() / 1000L;
 		   	try {
@@ -309,9 +315,10 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		   				+ " "+ name3+" "+Integer.toString(value3)+ " "+ name4+" "+Integer.toString(value4));
 		   		j.put(name, value).put(name2, value2).put(name3, value3).put(name4, value4);
 		   	} catch (JSONException e) {
+		   		Log.d(TAG, "CATCH ERROR");
 		   		e.printStackTrace();
 		   	}
-		   if(PowerGarden.bConnected)
+		   //if(PowerGarden.bConnected)
 		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID.toString(), j, this);
 		}
 	}

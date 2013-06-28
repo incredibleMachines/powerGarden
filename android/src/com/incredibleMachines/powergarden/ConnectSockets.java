@@ -54,10 +54,15 @@ public class ConnectSockets extends Activity implements Connectable {
 	   }
 
 	   private void saveDevicePrefs(){
-		   PowerGarden.savePref("deviceID", mID.getText().toString());
-		   PowerGarden.savePref("numPlants", mNumPlants.getText().toString());
+		   //PowerGarden.savePref("deviceID", mID.getText().toString());
+		   //PowerGarden.savePref("numPlants", mNumPlants.getText().toString());
 	   }
-	 
+	   private void savePlantPrefs(){
+		   //PowerGarden.savePref("deviceID", mID.getText().toString());
+		   PowerGarden.savePref("numPlants", mNumPlants.getText().toString());
+		   PowerGarden.savePref("plantType", mplantList.getSelectedItem().toString());
+	   }
+
 	   private void saveServerPrefs() {
 
 	      //SharedPreferences.Editor editor = PowerGarden.mSettings.edit();
@@ -88,6 +93,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	   private void setupSendButton(){
            mSendMessage.setOnClickListener(new Button.OnClickListener() {
            	public void onClick(View v) {
+           		savePlantPrefs();
            		PowerGarden.SM.authDevice(mType.getText().toString(), mID.getText().toString(), Integer.parseInt(mNumPlants.getText().toString()), mplantList.getSelectedItem().toString() , ConnectSockets.this);
            		PowerGarden.Device.plantType = mplantList.getSelectedItem().toString();
            	}

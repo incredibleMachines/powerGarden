@@ -25,7 +25,7 @@ import android.widget.TextView;
  * 
  * @see SystemUiHider
  */
-public class PresentationActivity extends UsbActivity implements Connectable {
+public class PresentationActivity extends UsbActivity implements Connectable{
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -91,6 +91,21 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 	}
 	
 	@Override
+	public void signalToUi(int type, Object data){
+		super.signalToUi(type, data);
+		Log.d(TAG, "GOT CALLBACK: " + Integer.toString(type));
+		if(type == PowerGarden.SocketConnected){
+			PowerGarden.bConnected = true;
+			PowerGarden.Device.plantType = PowerGarden.getPrefString("plantType", null);
+			PowerGarden.Device.PlantNum = Integer.parseInt(PowerGarden.getPrefString("numPlants", null));
+			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
+			//PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, this);
+		}else if(type == PowerGarden.Registered){
+			PowerGarden.bRegistered = true;
+		}
+	}
+	
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
 	        //do your stuff
@@ -112,6 +127,7 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 	    if(PowerGarden.getPrefString("deviceID", null) == null){
 	    	//offline/unregistered
 	    }else{
+	    	PowerGarden.Device.ID = PowerGarden.getPrefString("deviceID", null);
 	    	PowerGarden.Device.host = PowerGarden.getPrefString("hostname", null);
 	    	PowerGarden.Device.port = PowerGarden.getPrefString("port", null);
 	    	PowerGarden.SM.connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,this);
