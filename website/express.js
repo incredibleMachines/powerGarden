@@ -64,9 +64,11 @@ app.get('/update', function(req, res) {
 	var set = {};
 
 	if (!req.query.sensor) {
+
 		// if there's no sensor, then we're just toggling whether a device is active
 		// { device_id: "51ccbb988bce5acc05000001", active: false }
 		set['active'] = req.query.active == 'true' ? true : false;
+
 	} else {
 
 		// otherwise we're setting a sensor property. check if it's whether we're toggling
@@ -86,12 +88,23 @@ app.get('/update', function(req, res) {
 	}
 	
 	var obj = { $set: set }
-	console.log(obj);
+	// console.log(obj);
 
-	settingsDb.update({ device_id: device_id }, obj, function(err, result) {
-		if (err) console.error(err);
-		res.send(obj);
-	})
+	if (!req.query.sensor) {
+		// console.log('updating devices');
+		devicesDb.update({ _id: device_id }, obj, function(err, result) {
+			if (err) console.error(err);
+			res.send(obj);
+		});
+	} else {
+		// console.log('updating sensors');
+		settingsDb.update({ device_id: device_id }, obj, function(err, result) {
+			if (err) console.error(err);
+			res.send(obj);
+		});
+	}
+
+
 })
 
 app.listen(8080);
