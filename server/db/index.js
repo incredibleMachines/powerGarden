@@ -332,12 +332,33 @@ DB.prototype.logDevice = function(message,connection,self){
 		console.log("plants.length: "+message.num_plants);
 		for(var i = 0; i<message.num_plants; i++) self.createPlant(message,connection,i,self);
 		
+		self.createSettings(message,connection,self);
 		
 		var res = { "device_id": connection.device_id, "connection_id": connection.id };
 		//connection.socket.send(JSON.stringify(res));
 		connection.socket.emit('register',res);
 	});	
 }
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+DB.prototype.createSettings = function(message,connection,self){
+	
+	var obj = {};
+	obj.device_id = connection.device_id;
+	obj.humidity = { active: true, low: 10, high:60};
+	obj.temp = {active: true, low: 15, high:35};
+	obj.moisture = {active: true, low:0, high:100};
+	obj.light = {active: true, low:400, high: 1000};	
+	
+	settingsDb.insert(obj,{safe:true},function(err){
+		if(err) console.error(err);
+	});
+	
+}
+
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
 
 DB.prototype.updateDocument = function(collection,id,json){
 	console.log("[Updating Document] Collection: "+collection+" id: "+id);
