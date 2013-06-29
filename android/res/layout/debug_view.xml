@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:background="@color/default_background"
+    android:background="@color/darkgrey"
     tools:context=".PresentationActivity" 
     android:scrollbars="vertical">
 
@@ -65,7 +65,7 @@
                        android:id="@+id/seekBar1"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="20000" />
+                       android:max="5000" />
 
                    <TextView
                        android:id="@+id/bar1text"
@@ -106,7 +106,7 @@
                        android:id="@+id/seekBar2"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="20000" />
+                       android:max="5000" />
 
                    <TextView
                        android:id="@+id/bar2text"
@@ -147,7 +147,7 @@
                        android:id="@+id/seekBar3"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="20000" />
+                       android:max="5000" />
 
                    <TextView
                        android:id="@+id/bar3text"
@@ -188,7 +188,7 @@
                        android:id="@+id/seekBar4"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="20000" />
+                       android:max="5000" />
 
                    <TextView
                        android:id="@+id/bar4text"
@@ -235,7 +235,7 @@
                        android:id="@+id/seekBar5"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="20000" />
+                       android:max="5000" />
 
                    <TextView
                        android:id="@+id/bar5text"
@@ -276,7 +276,7 @@
                        android:id="@+id/seekBar6"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="20000" />
+                       android:max="5000" />
 
                    <TextView
                        android:id="@+id/bar6text"
@@ -317,7 +317,7 @@
                        android:id="@+id/seekBar7"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="20000" />
+                       android:max="5000" />
 
                    <TextView
                        android:id="@+id/bar7text"
@@ -358,7 +358,7 @@
                        android:id="@+id/seekBar8"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="20000" />
+                       android:max="5000" />
 
                    <TextView
                        android:id="@+id/bar8text"

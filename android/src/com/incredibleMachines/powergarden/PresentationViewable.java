@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -50,9 +51,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     TextView moistval;
     
     TextView plantCopy;
-
-    Typeface italiaBook;
-    Typeface interstateBold;
+//
+//    Typeface italiaBook;
+//    Typeface interstateBold;
     
     int numPlants = 8;
     
@@ -365,12 +366,33 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			}
 		});
 		//audioSetup();
+		
+		for(int i=0; i<threshBar.length; i++){
+	    	try {
+	    		Class res = R.id.class;
+	    		String id = "seekBar"+Integer.toString(i+1);
+	    		Field field = res.getField(id);
+				int resId = field.getInt(null);
+				threshBar[i] = (SeekBar) activity_.findViewById(resId);
+				threshBar[i].setOnSeekBarChangeListener(this);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			if(PowerGarden.getPrefString("threshVal_"+Integer.toString(i), null) != null ){
+				int savedThresh = Integer.parseInt(PowerGarden.getPrefString("threshVal_"+Integer.toString(i), null));
+				threshBar[i].setProgress(savedThresh);
+			} else threshBar[i].setProgress(50);
+		}
 	}
+		
 	
 
 	@Override
 	public void setActivity(Activity activity) {
 		// TODO Auto-generated method stub
+		/** onCreate, only hit once at startup **/
+		
 		Log.d(TAG, "setActivity");
         if (activity_ == activity) {
         	Log.d(TAG, "activty_ == activity, returning --");
@@ -381,11 +403,13 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			PlantObject tempPlant = new PlantObject();
 			PowerGarden.Device.plants[i] = tempPlant;
 		}
-		italiaBook = Typeface.createFromAsset(activity_.getAssets(),"fonts/italiaBook.ttf");
-		interstateBold = Typeface.createFromAsset(activity_.getAssets(), "fonts/Interstate-BoldCondensed.ttf");
+		
+		/*only for the first onCreate*/
+		PowerGarden.italiaBook = Typeface.createFromAsset(activity_.getAssets(),"fonts/italiaBook.ttf");
+		PowerGarden.interstateBold = Typeface.createFromAsset(activity_.getAssets(), "fonts/Interstate-BoldCondensed.ttf");
 		
 		plantCopy = (TextView) activity_.findViewById(R.id.fullscreen_content);
-		setTextViewFont(italiaBook, plantCopy);
+		setTextViewFont(PowerGarden.italiaBook, plantCopy);
 		//for 'factoids'
 		//setTextViewFont(interstateBold, plantCopy);
 	}
@@ -466,6 +490,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 					int resId = field.getInt(null);
 					TextView threshBarText = (TextView)activity_.findViewById(resId);
 					threshBarText.setText(Integer.toString(threshVal[i]));
+					PowerGarden.savePref("threshVal_"+Integer.toString(i), Integer.toString(threshVal[i])); //set the thresh to sharedPref
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 

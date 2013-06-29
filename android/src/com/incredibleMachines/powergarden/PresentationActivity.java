@@ -8,6 +8,7 @@ import com.victorint.android.usb.interfaces.Viewable;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -121,6 +122,9 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		//super.onCreate(savedInstanceState);
 		Log.d(TAG,"!!!START!!!");
 		setContentView(R.layout.activity_presentation);
+		
+		
+		
 	    SM = new SocketManager();
 	    PowerGarden.SM = SM;
 	    PowerGarden.loadPrefs(getApplicationContext());
@@ -275,6 +279,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
 		
 		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+		setTextViewFont(PowerGarden.italiaBook, plantCopy);
 		
 		if(PowerGarden.Device.plantType.contains("Cherry")){
 			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
@@ -382,4 +387,9 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			}
 		});
 	}
+    public static void setTextViewFont(Typeface tf, TextView...params) {
+        for (TextView tv : params) {
+            tv.setTypeface(tf);
+        }
+    }
 }
