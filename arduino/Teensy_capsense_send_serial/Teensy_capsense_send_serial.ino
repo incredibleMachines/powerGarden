@@ -16,7 +16,7 @@ void setup(){
 boolean flag = false;
 void loop(){
   
-  if(Serial2.read()==99){ //data was requested
+  if(Serial2.read()==99){ //data was requested0
     flag = true;
   }
   
