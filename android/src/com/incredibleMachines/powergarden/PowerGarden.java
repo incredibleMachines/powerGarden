@@ -3,10 +3,14 @@ package com.incredibleMachines.powergarden;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.widget.TextView;
 
 public class PowerGarden {
+
+    static Typeface italiaBook;
+    static Typeface interstateBold;
 	
 	public static int HAPPY = 1;
 	public static int DRY = 2;
