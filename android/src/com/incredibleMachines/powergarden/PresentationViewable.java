@@ -163,8 +163,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 								!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
 									//if(!plants[i].triggered){ 
 								PowerGarden.Device.plants[i].triggered = true;
+								sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i));
 								if(i==7){
-									MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
+									mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
 									mp.start();
 								}
 									PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
@@ -266,7 +267,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			PowerGarden.hum = Integer.parseInt(parseData[3]);
 			PowerGarden.moisture = Integer.parseInt(parseData[4]);
 			PowerGarden.distance = Integer.parseInt(parseData[5]);
-			createJson("light",PowerGarden.light,"temperature",PowerGarden.temp,"humidity",PowerGarden.hum,"moisture",PowerGarden.moisture);
+			//objTest(new Object({"light",PowerGarden.light}));
+			//objTest(new Monkey("string",49));
+			sendJson("update",new Monkey("light",PowerGarden.light),new Monkey("temperature",PowerGarden.temp),new Monkey("humidity",PowerGarden.hum),new Monkey("moisture",PowerGarden.moisture));
 			final int distance = PowerGarden.distance;
 			if(debug){
 				Runnable runner = new Runnable(){
@@ -304,22 +307,28 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 //		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID.toString(), j, this);
 //		}
 //	}
-	private void createJson(String name, int value, String name2, int value2, String name3, int value3, String name4, int value4 ){
+
+
+	private void sendJson(String type, Monkey...monkey ){
 		Log.d(TAG, "DEVICE ID: "+PowerGarden.Device.ID + " Registered: " +PowerGarden.bRegistered);
 		if(PowerGarden.bRegistered){
 		JSONObject j = new JSONObject();
 		   long time = System.currentTimeMillis() / 1000L;
 		   	try {
 		   		Log.d(TAG, "createJson and SENDING:");
-		   		Log.d(TAG, name+" "+Integer.toString(value)+ " "+ name2+" "+ Integer.toString(value2)
-		   				+ " "+ name3+" "+Integer.toString(value3)+ " "+ name4+" "+Integer.toString(value4));
-		   		j.put(name, value).put(name2, value2).put(name3, value3).put(name4, value4);
+		   		for(int i = 0;i<monkey.length;i++){
+		   			j.put(monkey[i].key.toString(), (Integer)monkey[i].value);
+		   		}
+		   		//Log.d(TAG, name+" "+Integer.toString(value)+ " "+ name2+" "+ Integer.toString(value2)
+		   				//+ " "+ name3+" "+Integer.toString(value3)+ " "+ name4+" "+Integer.toString(value4));
+		   		//j.put(name, value).put(name2, value2).put(name3, value3).put(name4, value4);
+		   				
 		   	} catch (JSONException e) {
 		   		Log.d(TAG, "CATCH ERROR");
 		   		e.printStackTrace();
 		   	}
 		   //if(PowerGarden.bConnected)
-		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID.toString(), j, this);
+		   PowerGarden.SM.updateData(type, PowerGarden.Device.ID.toString(), j, this);
 		}
 	}
 	@Override
@@ -519,4 +528,5 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
             tv.setTypeface(tf);
         }
     }
+
 }
