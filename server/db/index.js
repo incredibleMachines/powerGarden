@@ -85,6 +85,8 @@ DB.prototype.routeUpdate = function(message,connection){
 		});	
 	}
 }
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
 
 DB.prototype.calcDeviceMood = function(message,connection,results,self){
 	
@@ -108,11 +110,11 @@ DB.prototype.calcDeviceMood = function(message,connection,results,self){
 		avgResults.light /= results.length;
 		avgResults.humidity /= results.length;
 		
+		var mood ={};
+
 		settingsDb.findOne(obj, function(err, res){
 			if(err) console.error(err);
-			console.log(res);		
-			
-			var mood ={};
+			//console.log(res);		
 			
 			if(res.humidity.active){
 				//does not affect mood
@@ -139,24 +141,35 @@ DB.prototype.calcDeviceMood = function(message,connection,results,self){
 			if(res.moisture.active){
 				//affects mood
 				if(avgResults.moisture>res.moisture.low && avgResults.moisture < res.moisture.high) mood.moisture='content';
-				else if(avgResults.moisture<res.moisture.low) mood.moisture='low';
-				else if(avgResults.moisture>res.moisture.high) mood.moisture='high';
-				
-				
-				if(mood.moisture=='content'){
-					//device mood content
-					
-				}else if(mood.moisture=='low'){
-					//device mood dry
-				}else if(mood.moisture=='high'){
-					//device mood wet
-				}
+				else if(avgResults.moisture<res.moisture.low) mood.moisture='dry';
+				else if(avgResults.moisture>res.moisture.high) mood.moisture='wet';
 				
 			}	
+			
+			self.processMood(message,connection,mood,self);
 			
 			
 		});
 		
+}
+
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+DB.prototype.processMood = function(message,connection,mood,self){
+	
+	//take in mood array
+	//check touch values
+	
+	//head to look up table and discern
+	
+	//signal device about plants mood -
+
+	//signal device with mood and updated text
+	
+	
+	
+	
 }
 
 /* ******************************************************************************************* */
@@ -273,7 +286,7 @@ DB.prototype.plantTouch = function(message,connection){
 				touchesDb.count({ device_id: obj.device_id, index: obj.index , timestamp:{ $gt : time}}, function(err,count){
 					
 					if(err) console.error(err);
-					console.log(count);
+					//console.log(count);
 					
 					var json = {};
 					if(count == 0){
@@ -361,7 +374,8 @@ DB.prototype.createSettings = function(message,connection,self){
 /* ******************************************************************************************* */
 
 DB.prototype.updateDocument = function(collection,id,json){
-	console.log("[Updating Document] Collection: "+collection+" id: "+id);
+
+	console.log("[Updating Document] Collection: "+collection.collectionName+" id: "+id);
 	var obj = { _id : new BSON.ObjectID( String(id) ) };
 	collection.update(obj,json,function(err){
 		if(err) console.error(err); //throw err;

@@ -4,7 +4,21 @@
 
 var io = require('socket.io').listen(9001).set('log level', 2);
 var DB = require('./db/index');
-var pgtwitter = require('./pgtwitter/index')
+var pgtwitter = require('./pgtwitter/index');
+var colors = require('colors');
+
+colors.setTheme({
+  silly: 'rainbow',
+  input: 'grey',
+  verbose: 'cyan',
+  prompt: 'grey',
+  info: 'green',
+  data: 'grey',
+  help: 'cyan',
+  warn: 'yellow',
+  debug: 'blue',
+  error: 'red'
+});
 
 
 /* ******************************************************************************************* */
@@ -29,23 +43,22 @@ io.sockets.on('connection', function (socket) {
 	var connectKey = 'client-'+clientID;
 	clients[connectKey]=connection;
 
-	console.log("[NEW CONN] connection.id %s",connection.id);
-	console.log("[NEW CONN] connection.device_id %s",connection.device_id);
+	console.log("[NEW CONNECTION]connection.device_id %s",connection.device_id);
 
 	socket.on('register', function (msg) {
-	    console.log('[Device Register Request]: ', msg);
+	    console.log('[INBOUND REQUEST]'.warn+' [REGISTER] '.help + JSON.stringify(msg).input);
 	    database.routeRegister(msg,connection);
 	  
 	});
 	
 	socket.on('update', function (msg) {
-	    console.log('[Device Update Request]: ', msg);
+	    console.log('[INBOUND REQUEST]'.warn+' [UPDATE] '.help + JSON.stringify(msg).input);
 	    database.routeUpdate(msg,connection);
 	  
 	});
 	
 	socket.on('touch',function(msg){
-		console.log('[Plant Touch Signaled]', msg);
+		console.log('[INBOUND REQUEST]'.warn+' [TOUCH] '.help + JSON.stringify(msg).input);
 		database.plantTouch(msg,connection);
 		  
 	});
