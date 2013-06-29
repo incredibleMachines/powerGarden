@@ -317,7 +317,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		   	try {
 		   		Log.d(TAG, "createJson and SENDING:");
 		   		for(int i = 0;i<monkey.length;i++){
-		   			j.put(monkey[i].key.toString(), (Integer)monkey[i].value);
+		   			j.put(monkey[i].key.toString(), monkey[i].value);
 		   		}
 		   		//Log.d(TAG, name+" "+Integer.toString(value)+ " "+ name2+" "+ Integer.toString(value2)
 		   				//+ " "+ name3+" "+Integer.toString(value3)+ " "+ name4+" "+Integer.toString(value4));
