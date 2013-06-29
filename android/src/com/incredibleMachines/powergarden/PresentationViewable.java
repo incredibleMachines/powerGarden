@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -50,9 +51,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     TextView moistval;
     
     TextView plantCopy;
-
-    Typeface italiaBook;
-    Typeface interstateBold;
+//
+//    Typeface italiaBook;
+//    Typeface interstateBold;
     
     int numPlants = 8;
     
@@ -135,9 +136,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		String[] parseData = gotData.split(",");
 		String dataType = new String(parseData[0]);
 		Log.d(TAG, "GOT DATA MODE = "+dataType);
-		for(int i=0; i<parseData.length; i++){
-			Log.d(TAG, "Data: "+ parseData[i]);
-		}
+//		for(int i=0; i<parseData.length; i++){
+//			Log.d(TAG, "Data: "+ parseData[i]);
+//		}
 		//Log.d(TAG, "Is is equal? "+(dataType.equalsIgnoreCase("c")));
 		if(dataType.equalsIgnoreCase("c")){
 
@@ -146,7 +147,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			for(int i = 0; i<parseData.length-1; i++){
 				PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
 				plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
-				Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
+				//Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
 			}
 
 		    //Log.d(TAG, "before debug");
@@ -155,15 +156,17 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 				Runnable runner = new Runnable(){
 					public void run() {
 						for(int i =0;i<PowerGarden.Device.plants.length;i++){
-							if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){
+							if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){ //if we've hit trigger time max
 								PowerGarden.Device.plants[i].triggered = false;
+								
 							}
 							if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
-								!PowerGarden.Device.plants[i].triggered){
+								!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
 									//if(!plants[i].triggered){ 
 								PowerGarden.Device.plants[i].triggered = true;
+								sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i));
 								if(i==7){
-									MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
+									mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
 									mp.start();
 								}
 									PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
@@ -172,16 +175,20 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 //									}
 								//}
 							}
-						}
-						if(PowerGarden.Device.plants[7].triggered){
-							plantValView[7].setTextColor(Color.GREEN);
-						}
-						else{
-							plantValView[7].setTextColor(Color.WHITE);
-						}
-						for(int i=0; i<plantValView.length; i++){
 							plantValView[i].setText(String.valueOf(plantDisplay[i]));
+							if(PowerGarden.Device.plants[i].triggered) {
+								plantValView[i].setTextColor(Color.GREEN);
+							} else plantValView[i].setTextColor(Color.WHITE);
 						}
+//						if(PowerGarden.Device.plants[7].triggered){
+//							plantValView[7].setTextColor(Color.GREEN);
+//						}
+//						else{
+//							plantValView[7].setTextColor(Color.WHITE);
+//						}
+//						for(int i=0; i<plantValView.length; i++){
+//							plantValView[i].setText(String.valueOf(plantDisplay[i]));
+//						}
 					}
 				};
 				if(runner != null){
@@ -261,7 +268,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			PowerGarden.hum = Integer.parseInt(parseData[3]);
 			PowerGarden.moisture = Integer.parseInt(parseData[4]);
 			PowerGarden.distance = Integer.parseInt(parseData[5]);
-			createJson("light",PowerGarden.light,"temperature",PowerGarden.temp,"humidity",PowerGarden.hum,"moisture",PowerGarden.moisture);
+			//objTest(new Object({"light",PowerGarden.light}));
+			//objTest(new Monkey("string",49));
+			sendJson("update",new Monkey("light",PowerGarden.light),new Monkey("temperature",PowerGarden.temp),new Monkey("humidity",PowerGarden.hum),new Monkey("moisture",PowerGarden.moisture));
 			final int distance = PowerGarden.distance;
 			if(debug){
 				Runnable runner = new Runnable(){
@@ -299,20 +308,28 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 //		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID.toString(), j, this);
 //		}
 //	}
-	private void createJson(String name, int value, String name2, int value2, String name3, int value3, String name4, int value4 ){
-		if(PowerGarden.Device.ID != null){
+
+
+	private void sendJson(String type, Monkey...monkey ){
+		Log.d(TAG, "DEVICE ID: "+PowerGarden.Device.ID + " Registered: " +PowerGarden.bRegistered);
+		if(PowerGarden.bRegistered){
 		JSONObject j = new JSONObject();
 		   long time = System.currentTimeMillis() / 1000L;
 		   	try {
 		   		Log.d(TAG, "createJson and SENDING:");
-		   		Log.d(TAG, name+" "+Integer.toString(value)+ " "+ name2+" "+ Integer.toString(value2)
-		   				+ " "+ name3+" "+Integer.toString(value3)+ " "+ name4+" "+Integer.toString(value4));
-		   		j.put(name, value).put(name2, value2).put(name3, value3).put(name4, value4);
+		   		for(int i = 0;i<monkey.length;i++){
+		   			j.put(monkey[i].key.toString(), monkey[i].value);
+		   		}
+		   		//Log.d(TAG, name+" "+Integer.toString(value)+ " "+ name2+" "+ Integer.toString(value2)
+		   				//+ " "+ name3+" "+Integer.toString(value3)+ " "+ name4+" "+Integer.toString(value4));
+		   		//j.put(name, value).put(name2, value2).put(name3, value3).put(name4, value4);
+		   				
 		   	} catch (JSONException e) {
+		   		Log.d(TAG, "CATCH ERROR");
 		   		e.printStackTrace();
 		   	}
-		   if(PowerGarden.bConnected)
-		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID.toString(), j, this);
+		   //if(PowerGarden.bConnected)
+		   PowerGarden.SM.updateData(type, PowerGarden.Device.ID.toString(), j, this);
 		}
 	}
 	@Override
@@ -349,12 +366,33 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			}
 		});
 		//audioSetup();
+		
+		for(int i=0; i<threshBar.length; i++){
+	    	try {
+	    		Class res = R.id.class;
+	    		String id = "seekBar"+Integer.toString(i+1);
+	    		Field field = res.getField(id);
+				int resId = field.getInt(null);
+				threshBar[i] = (SeekBar) activity_.findViewById(resId);
+				threshBar[i].setOnSeekBarChangeListener(this);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			if(PowerGarden.getPrefString("threshVal_"+Integer.toString(i), null) != null ){
+				int savedThresh = Integer.parseInt(PowerGarden.getPrefString("threshVal_"+Integer.toString(i), null));
+				threshBar[i].setProgress(savedThresh);
+			} else threshBar[i].setProgress(50);
+		}
 	}
+		
 	
 
 	@Override
 	public void setActivity(Activity activity) {
 		// TODO Auto-generated method stub
+		/** onCreate, only hit once at startup **/
+		
 		Log.d(TAG, "setActivity");
         if (activity_ == activity) {
         	Log.d(TAG, "activty_ == activity, returning --");
@@ -365,11 +403,13 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			PlantObject tempPlant = new PlantObject();
 			PowerGarden.Device.plants[i] = tempPlant;
 		}
-		italiaBook = Typeface.createFromAsset(activity_.getAssets(),"fonts/italiaBook.ttf");
-		interstateBold = Typeface.createFromAsset(activity_.getAssets(), "fonts/Interstate-BoldCondensed.ttf");
+		
+		/*only for the first onCreate*/
+		PowerGarden.italiaBook = Typeface.createFromAsset(activity_.getAssets(),"fonts/italiaBook.ttf");
+		PowerGarden.interstateBold = Typeface.createFromAsset(activity_.getAssets(), "fonts/Interstate-BoldCondensed.ttf");
 		
 		plantCopy = (TextView) activity_.findViewById(R.id.fullscreen_content);
-		setTextViewFont(italiaBook, plantCopy);
+		setTextViewFont(PowerGarden.italiaBook, plantCopy);
 		//for 'factoids'
 		//setTextViewFont(interstateBold, plantCopy);
 	}
@@ -450,6 +490,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 					int resId = field.getInt(null);
 					TextView threshBarText = (TextView)activity_.findViewById(resId);
 					threshBarText.setText(Integer.toString(threshVal[i]));
+					PowerGarden.savePref("threshVal_"+Integer.toString(i), Integer.toString(threshVal[i])); //set the thresh to sharedPref
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 
@@ -512,4 +554,5 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
             tv.setTypeface(tf);
         }
     }
+
 }

@@ -75,10 +75,11 @@ public class SocketManager implements  IOCallback {
 	}
 	
 	public void connectToServer(String host, String port, Connectable _callback){
-		
+		callbackActivity = _callback;
 		try {
 			Log.d(TAG, "connectToServer");
 			Log.d(TAG, _callback.toString());
+			
 			//todo: read this from a text file
 				socket = new SocketIO();
 				socket.connect("http://"+host+":"+port+"/", this);
@@ -117,7 +118,7 @@ public class SocketManager implements  IOCallback {
 	public void onConnect() {
 		//System.out.println("Connection established");
 		Log.d(TAG, "onConnect callback");
-		//callbackActivity.signalToUi(PowerGarden.SocketConnected, null);
+		callbackActivity.signalToUi(PowerGarden.SocketConnected, null);
 	}
 
 	@Override
@@ -131,10 +132,16 @@ public class SocketManager implements  IOCallback {
 			
 			try {
 				JSONObject j = new JSONObject(args[0].toString() );
-				PowerGarden.Device.ID = j.getString("device_id");
-				PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
-				System.out.println(PowerGarden.Device.ID);
-				callbackActivity.signalToUi(PowerGarden.Connected, PowerGarden.Device.ID);
+				if(PowerGarden.Device.ID == null){
+					PowerGarden.Device.ID = j.getString("device_id");
+					PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
+				}else{
+					//SOMETHING IS FUCKED
+					PowerGarden.Device.ID = j.getString("device_id");
+					PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
+				}
+				//System.out.println(PowerGarden.Device.ID);
+				callbackActivity.signalToUi(PowerGarden.Registered, PowerGarden.Device.ID);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

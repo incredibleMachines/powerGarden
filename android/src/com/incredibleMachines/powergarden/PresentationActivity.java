@@ -8,6 +8,7 @@ import com.victorint.android.usb.interfaces.Viewable;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,7 +26,7 @@ import android.widget.TextView;
  * 
  * @see SystemUiHider
  */
-public class PresentationActivity extends UsbActivity implements Connectable {
+public class PresentationActivity extends UsbActivity implements Connectable{
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -91,6 +92,21 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 	}
 	
 	@Override
+	public void signalToUi(int type, Object data){
+		super.signalToUi(type, data);
+		Log.d(TAG, "GOT CALLBACK: " + Integer.toString(type));
+		if(type == PowerGarden.SocketConnected){
+			PowerGarden.bConnected = true;
+			PowerGarden.Device.plantType = PowerGarden.getPrefString("plantType", null);
+			PowerGarden.Device.PlantNum = Integer.parseInt(PowerGarden.getPrefString("numPlants", null));
+			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
+			//PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, this);
+		}else if(type == PowerGarden.Registered){
+			PowerGarden.bRegistered = true;
+		}
+	}
+	
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
 	        //do your stuff
@@ -106,12 +122,16 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 		//super.onCreate(savedInstanceState);
 		Log.d(TAG,"!!!START!!!");
 		setContentView(R.layout.activity_presentation);
+		
+		
+		
 	    SM = new SocketManager();
 	    PowerGarden.SM = SM;
 	    PowerGarden.loadPrefs(getApplicationContext());
 	    if(PowerGarden.getPrefString("deviceID", null) == null){
 	    	//offline/unregistered
 	    }else{
+	    	PowerGarden.Device.ID = PowerGarden.getPrefString("deviceID", null);
 	    	PowerGarden.Device.host = PowerGarden.getPrefString("hostname", null);
 	    	PowerGarden.Device.port = PowerGarden.getPrefString("port", null);
 	    	PowerGarden.SM.connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,this);
@@ -259,6 +279,7 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
 		
 		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+		setTextViewFont(PowerGarden.italiaBook, plantCopy);
 		
 		if(PowerGarden.Device.plantType.contains("Cherry")){
 			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
@@ -366,4 +387,9 @@ public class PresentationActivity extends UsbActivity implements Connectable {
 			}
 		});
 	}
+    public static void setTextViewFont(Typeface tf, TextView...params) {
+        for (TextView tv : params) {
+            tv.setTypeface(tf);
+        }
+    }
 }

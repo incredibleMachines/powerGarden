@@ -3,10 +3,14 @@ package com.incredibleMachines.powergarden;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.widget.TextView;
 
 public class PowerGarden {
+
+    static Typeface italiaBook;
+    static Typeface interstateBold;
 	
 	public static int HAPPY = 1;
 	public static int DRY = 2;
@@ -32,7 +36,7 @@ public class PowerGarden {
 	public static class Device{
 		static String ID;
 		static String connectionID;
-		static String PlantNum;
+		static int PlantNum;
 		static String plantType = "Cherry Tomatoes"; //should be populated by prefs	
 		static PlantObject plants[] = new PlantObject[8];
 		static String host;
@@ -43,11 +47,11 @@ public class PowerGarden {
 	
 	//--- global socket vars
 	public static SocketManager SM;
-	public static int SocketConnected = 0;
-	public static int Connected = 1;
-	public static int Disconnected = 2;
-	public static int Planted = 3;
-	public static int Updated = 4;
+	public static int SocketConnected = 90;
+	public static int Connected = 91;
+	public static int Disconnected = 92;
+	public static int Registered = 93;
+	public static int Updated = 94;
 
 	//--- global sensors
 	public static int temp;
@@ -59,4 +63,5 @@ public class PowerGarden {
 	//--- app status
 	public static boolean bAudioPlaying = false;
 	public static boolean bConnected = false;
+	public static boolean bRegistered = false;
 }

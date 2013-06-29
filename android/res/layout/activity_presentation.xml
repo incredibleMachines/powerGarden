@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_background"
+    android:background="@color/darkgrey"
     tools:context=".PresentationActivity" >
 
     <!--
@@ -20,7 +20,7 @@
         android:keepScreenOn="true"
         android:text="@string/dummy_content"
         android:textColor="@color/white"
-        android:textSize="220sp"
+        android:textSize="215sp"
         android:padding="20dp"
         android:lineSpacingExtra="20dp"
         android:textStyle="bold" />

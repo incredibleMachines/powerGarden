@@ -101,11 +101,11 @@ public class ArduinoUsbService extends IntentService {
         @Override
         public void handleMessage(Message msg) {
         	try {
-        	Log.d(TAG, "Service handleMessage: " + msg.what);
-        	Log.d(TAG, "Service handleMessage: " + msg.toString());
+        	////Log.d(TAG, "Service handleMessage: " + msg.what);
+        	////Log.d(TAG, "Service handleMessage: " + msg.toString());
         	switch (msg.what) {
         	case MSG_REGISTER_CLIENT:
-        		Log.d(TAG, "Service handleMessage: MSG_REGISTER_CLIENT " + msg.replyTo);
+        		////Log.d(TAG, "Service handleMessage: MSG_REGISTER_CLIENT " + msg.replyTo);
         		//if (!mClients.contains(msg.replyTo)) {
         		mClients.add(msg.replyTo);
         		if (debug_) {
@@ -150,17 +150,17 @@ public class ArduinoUsbService extends IntentService {
 	        				sendBytesToClients(msg2);
          				*/
        			} catch (RemoteException e) {
-        				Log.d(TAG, "MSG_REGISTER_CLIENT: " + getExceptionStack(e, true));
+        				//Log.d(TAG, "MSG_REGISTER_CLIENT: " + getExceptionStack(e, true));
         			}
 
         		}
         		break;
         	case MSG_UNREGISTER_CLIENT:
         		mClients.remove(msg.replyTo);
-        		Log.d(TAG, "Service handleMessage: MSG_UNREGISTER_CLIENT " + msg.replyTo);
+        		////Log.d(TAG, "Service handleMessage: MSG_UNREGISTER_CLIENT " + msg.replyTo);
         		break;
         	case MSG_SEND_EXIT_TO_CLIENT:
-        		Log.d(TAG, "Service handleMessage: MSG_SEND_EXIT_TO_CLIENT " + mClients.size());
+        		////Log.d(TAG, "Service handleMessage: MSG_SEND_EXIT_TO_CLIENT " + mClients.size());
         		for (int i=mClients.size()-1; i>=0; i--) {
         			try {
         				Message msgToClient = Message.obtain(null,
@@ -171,14 +171,14 @@ public class ArduinoUsbService extends IntentService {
         				// we are going through the list from back to front
         				// so this is safe to do inside the loop.
         				mClients.remove(i);
-        				Log.d(TAG, "MSG_SEND_EXIT_TO_CLIENT: " + getExceptionStack(e, true));
+        				////Log.d(TAG, "MSG_SEND_EXIT_TO_CLIENT: " + getExceptionStack(e, true));
         			}
         		}
         		break;
         	case MSG_SEND_ASCII_TO_CLIENT:
         		Bundle b = msg.getData();
         		CharSequence asciiMessage = b.getCharSequence(ArduinoUsbService.MSG_KEY);
-                	Log.d(TAG, "Service handleMessage: MSG_SEND_ASCII_TO_CLIENT " + asciiMessage);
+                	////Log.d(TAG, "Service handleMessage: MSG_SEND_ASCII_TO_CLIENT " + asciiMessage);
                     for (int i=mClients.size()-1; i>=0; i--) {
                         try {
                 			Message msgToClient = Message.obtain(null,
@@ -191,7 +191,7 @@ public class ArduinoUsbService extends IntentService {
                             // we are going through the list from back to front
                             // so this is safe to do inside the loop.
                             mClients.remove(i);
-                            Log.d(TAG, "MSG_SEND_ASCII_TO_CLIENT: " + getExceptionStack(e, true));
+                           // //Log.d(TAG, "MSG_SEND_ASCII_TO_CLIENT: " + getExceptionStack(e, true));
                         }
                     }
                     break;
@@ -199,7 +199,7 @@ public class ArduinoUsbService extends IntentService {
                 	Bundle bb = msg.getData();
                 	byte[] data = bb.getByteArray(ArduinoUsbService.MSG_KEY);
                 	int length = (data == null) ? -1 : data.length;
-                	Log.d(TAG, "Service handleMessage: MSG_SEND_BYTES_TO_CLIENT " + msg.getData());
+                	////Log.d(TAG, "Service handleMessage: MSG_SEND_BYTES_TO_CLIENT " + msg.getData());
                     for (int i=mClients.size()-1; i>=0; i--) {
                         try {
                 			Message msgToClient = Message.obtain(null,
@@ -213,14 +213,14 @@ public class ArduinoUsbService extends IntentService {
                             // we are going through the list from back to front
                             // so this is safe to do inside the loop.
                             mClients.remove(i);
-                            Log.d(TAG, "MSG_SEND_BYTES_TO_CLIENT: " + getExceptionStack(e, true));
+                           // //Log.d(TAG, "MSG_SEND_BYTES_TO_CLIENT: " + getExceptionStack(e, true));
                         }
                     }
                     break;
                 case MSG_SEND_ASCII_TO_SERVER:
                 	Bundle sb = msg.getData();
                 	CharSequence asciiServerMessage = sb.getCharSequence(ArduinoUsbService.MSG_KEY);
-                	Log.d(TAG, "Service handleMessage: MSG_SEND_ASCII_TO_SERVER " + asciiServerMessage);
+                	////Log.d(TAG, "Service handleMessage: MSG_SEND_ASCII_TO_SERVER " + asciiServerMessage);
 
                 	if (deviceName_ == null) {
                 		String noconnectMessage = getResources().getString(R.string.no_usb_devices_attached_message) +
@@ -249,14 +249,14 @@ public class ArduinoUsbService extends IntentService {
                 				try {
                 					outputStream_.write(buffer);
                 				} catch (IOException e) {
-                					Log.d(TAG, "Send Data to USB fails: " + getExceptionStack(e, true));
+                					//Log.d(TAG, "Send Data to USB fails: " + getExceptionStack(e, true));
                 					sendMessageToClients("Send Data to USB fails: "+e.getMessage());
                 					disconnect();
                 				}
                 			}
 
                 		} catch (Exception e) {
-                			Log.d(TAG, "MSG_SEND_ASCII_TO_SERVER: " + getExceptionStack(e, true));
+                			//Log.d(TAG, "MSG_SEND_ASCII_TO_SERVER: " + getExceptionStack(e, true));
                 			sendMessageToClients("Exception " + e.getMessage());
                 		}
                 	}
@@ -265,7 +265,7 @@ public class ArduinoUsbService extends IntentService {
                 	Bundle sbb = msg.getData();
                 	byte[] sData = sbb.getByteArray(ArduinoUsbService.MSG_KEY);
                 	int sLength = (sData == null) ? -1 : sData.length;
-                	Log.d(TAG, "Service handleMessage: MSG_SEND_BYTES_TO_SERVER " + sLength);
+                	//Log.d(TAG, "Service handleMessage: MSG_SEND_BYTES_TO_SERVER " + sLength);
                 	if (deviceName_ == null) {
                 		String noconnectMessage = getResources().getString(R.string.no_usb_devices_attached_message) +
                 		"\n";
@@ -276,14 +276,14 @@ public class ArduinoUsbService extends IntentService {
                 				try {
                 					outputStream_.write(sData);
                 				} catch (IOException e) {
-                					Log.d(TAG, "Send Data to USB fails: " + getExceptionStack(e, true));
+                					//Log.d(TAG, "Send Data to USB fails: " + getExceptionStack(e, true));
                 					sendMessageToClients("Send Data to USB fails: "+e.getMessage());
                 					disconnect();
                 				}
                 			}
 
                 		} catch (Exception e) {
-                			Log.d(TAG, "MSG_SEND_ASCII_TO_SERVER: " + getExceptionStack(e, true));
+                			//Log.d(TAG, "MSG_SEND_ASCII_TO_SERVER: " + getExceptionStack(e, true));
                 			sendMessageToClients("Exception " + e.getMessage());
                 		}
                 	}
@@ -292,7 +292,7 @@ public class ArduinoUsbService extends IntentService {
                 	Bundle eb = msg.getData();
                 	byte[] eData = eb.getByteArray(ArduinoUsbService.MSG_KEY);
                 	int eLength = (eData == null) ? -1 : eData.length;
-                	Log.d(TAG, "Service handleMessage: MSG_SEND_ECHO_TO_SERVER " + eLength);
+                	//Log.d(TAG, "Service handleMessage: MSG_SEND_ECHO_TO_SERVER " + eLength);
                 	sendBytesToClients(eData);
                 	break;
                 default:
@@ -300,7 +300,7 @@ public class ArduinoUsbService extends IntentService {
             }
        } catch (Exception ee) {
     		if (debug_) {
-    			Log.e(TAG, "Server handleMessage Exception: "+ Utils.getExceptionStack(ee, true));
+    			//Log.e(TAG, "Server handleMessage Exception: "+ Utils.getExceptionStack(ee, true));
     			//showMessage("handleMessage: " +ee.getMessage() + "\n");
     		}
     	}
@@ -328,12 +328,12 @@ public class ArduinoUsbService extends IntentService {
 
 			String action = intent.getAction(); 
 
-			Log.d(TAG,"onReceive entered: " + action);
+			//Log.d(TAG,"onReceive entered: " + action);
 
 			if (UsbManager.ACTION_USB_ACCESSORY_DETACHED.equals(action)) {
 				UsbAccessory accessory = UsbManager.getAccessory(intent);
 
-				Log.d(TAG,"Accessory detached");	        	
+				//Log.d(TAG,"Accessory detached");	        	
 
 				// TODO: Check it's us here?
 
@@ -346,7 +346,7 @@ public class ArduinoUsbService extends IntentService {
 				}
 			}
 
-			Log.d(TAG,"onReceive exited");
+			//Log.d(TAG,"onReceive exited");
 		}
 	};
 
@@ -372,7 +372,7 @@ public class ArduinoUsbService extends IntentService {
 		} else {
 			perm = -1;
 		}
-		Log.d(TAG, "getNotification before notification: perm="+perm+", mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
+		//Log.d(TAG, "getNotification before notification: perm="+perm+", mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
 
 		Notification notification = new Notification(R.drawable.notification,
 				getResources().getString(R.string.usb_device_attached), System.currentTimeMillis());
@@ -394,7 +394,7 @@ public class ArduinoUsbService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent arg0) {
 
-		Log.d(TAG, "onHandleIntent entered: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
+		//Log.d(TAG, "onHandleIntent entered: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
 
 		startForeground(NOTIFICATION_ID, getNotification());
 
@@ -443,7 +443,7 @@ public class ArduinoUsbService extends IntentService {
 					String message = "Ping :: " + System.currentTimeMillis();
 					String message2 = "Ping2 :: " + System.currentTimeMillis();
 					Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-					Log.d(TAG, message);
+					//Log.d(TAG, message);
 					sendMessageToClients(message);
 					sendBytesToClients(message2.getBytes());
 					count = 0;
@@ -463,14 +463,14 @@ public class ArduinoUsbService extends IntentService {
 		disconnect();
 		stopForeground(true);
 
-		Log.d(TAG, "onHandleIntent exited: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
+		//Log.d(TAG, "onHandleIntent exited: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
 		stopSelf();
 
 	}
 	
 
 	private void connect() {
-		Log.d(TAG, "connect entered: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
+		//Log.d(TAG, "connect entered: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
 		disconnect(false);
 		
 		accessoryDetached_ = false;
@@ -501,7 +501,7 @@ public class ArduinoUsbService extends IntentService {
 					try {
 						doWork();
 					} catch (Exception ee) {
-						Log.d(TAG, "doWork fail: " + getExceptionStack(ee, true));
+						//Log.d(TAG, "doWork fail: " + getExceptionStack(ee, true));
 						//Toast.makeText(ArduinoUsbService.this, "doWork fail: " + ee.getMessage(), Toast.LENGTH_SHORT).show();
 						sendMessageToClients("doWork fail: " + ee.getMessage() + "\n");
 					}
@@ -519,10 +519,10 @@ public class ArduinoUsbService extends IntentService {
 				startActivity(startApplicationIntent_);
 			}
 		} catch (Exception e) {
-			Log.d(TAG, "Connect fail: " + getExceptionStack(e, true));
+			//Log.d(TAG, "Connect fail: " + getExceptionStack(e, true));
 			sendMessageToClients("Connect fail: " + e.getMessage() + "\n");
 		}
-		Log.d(TAG, "connect exited: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
+		//Log.d(TAG, "connect exited: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
 	}
 
 	public void disconnect() {
@@ -530,7 +530,7 @@ public class ArduinoUsbService extends IntentService {
 	}
 		
 	public void disconnect(boolean stopApp) {
-		Log.d(TAG, "disconnect entered: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
+		//Log.d(TAG, "disconnect entered: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
 		if (debug_) sendMessageToClients(getResources().getString(R.string.disconnected_from_usb_device_message)
 				+ ": " + deviceName_ + "\n");
 
@@ -542,7 +542,7 @@ public class ArduinoUsbService extends IntentService {
 					connectingThread_ = null;
 				}
 			} catch (Exception e) {
-				Log.d(TAG, "Stop Thread fail: " + getExceptionStack(e, true));
+				//Log.d(TAG, "Stop Thread fail: " + getExceptionStack(e, true));
 				sendMessageToClients("Stop Thread fail: "+e.getMessage());
 			}
 
@@ -550,7 +550,7 @@ public class ArduinoUsbService extends IntentService {
 				descriptor_.close();
 			}
 		} catch (IOException e) {
-			Log.d(TAG, "Disconnect Exception: " + getExceptionStack(e, true));
+			//Log.d(TAG, "Disconnect Exception: " + getExceptionStack(e, true));
 			sendMessageToClients("Disconnect Exception: "+e.getMessage());
 
 		} finally {
@@ -566,16 +566,16 @@ public class ArduinoUsbService extends IntentService {
 			try {
 				sendExitToClients();
 			} catch (Exception e) {
-				Log.d(TAG, "Stop Application fail: " + getExceptionStack(e, true));
+				//Log.d(TAG, "Stop Application fail: " + getExceptionStack(e, true));
 				sendMessageToClients("Stop Application fail: " + getExceptionStack(e, true));
 			}
 
 		}
-		Log.d(TAG, "disconnect exited");
+		//Log.d(TAG, "disconnect exited");
 	}
 
 	public void doWork() {
-		Log.d(TAG, "doWork entered: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
+		//Log.d(TAG, "doWork entered: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
 		int ret = 0;
 		byte[] buffer = new byte[16384];
 		int i;
@@ -621,7 +621,7 @@ public class ArduinoUsbService extends IntentService {
 			sendBytesToClients(msg2);
 			*/
 		}
-		Log.d(TAG, "doWork exited: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
+		//Log.d(TAG, "doWork exited: mUsbManager="+mUsbManager_+", accessory="+accessory_+", descriptor="+descriptor_+", inputStream="+inputStream_+", outputStream="+outputStream_);
 	}
 
 
@@ -635,7 +635,7 @@ public class ArduinoUsbService extends IntentService {
 			msg.replyTo = mMessenger_;
 			mMessenger_.send(msg);
 		} catch (RemoteException e) {
-			Log.d(TAG, "sendMessageToClients Exception: " + getExceptionStack(e, true));
+			//Log.d(TAG, "sendMessageToClients Exception: " + getExceptionStack(e, true));
 		}
 	}
 
@@ -649,7 +649,7 @@ public class ArduinoUsbService extends IntentService {
 			msg.replyTo = mMessenger_;
 			mMessenger_.send(msg);
 		} catch (RemoteException e) {
-			Log.d(TAG, "sendBytesToClients Exception: " + getExceptionStack(e, true));
+			//Log.d(TAG, "sendBytesToClients Exception: " + getExceptionStack(e, true));
 		}
 	}
 
