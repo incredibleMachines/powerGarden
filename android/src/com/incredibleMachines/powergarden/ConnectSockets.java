@@ -1,6 +1,7 @@
 package com.incredibleMachines.powergarden;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,7 +113,14 @@ public class ConnectSockets extends Activity implements Connectable {
         		   long time = System.currentTimeMillis() / 1000L;
         		   	try {
         		   		//j.put("moisture", 2131).put("temp", 89.75).put("humidity", 66.32).put("light", 3324.32).put("timestamp", time );
-        		   		j.put("moisture", PowerGarden.moisture).put("temp", PowerGarden.temp).put("humidity", PowerGarden.hum).put("light", PowerGarden.light).put("timestamp", time );
+        		   		Random generator = new Random(); 
+        		   		int tempMoist = generator.nextInt(99) + 5; 
+        		   		int tempTemp = generator.nextInt(35) + 20;
+        		   		int tempHumidity = generator.nextInt(99) + 5;
+        		   		int tempLight = generator.nextInt(500) + 0;
+        		   		if(PowerGarden.sendFakeNumbersOnUpdateButtonClick){ //*** IS YOUR NAME CHRIS PIUGGI? **//
+        		   			j.put("moisture", tempMoist).put("temp", tempTemp).put("humidity", tempHumidity).put("light", tempLight).put("timestamp", time );
+        		   		}else j.put("moisture", PowerGarden.moisture).put("temp", PowerGarden.temp).put("humidity", PowerGarden.hum).put("light", PowerGarden.light).put("timestamp", time );
         		   	} catch (JSONException e) {
         		   		e.printStackTrace();
         		   	}

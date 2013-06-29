@@ -64,4 +64,5 @@ public class PowerGarden {
 	public static boolean bAudioPlaying = false;
 	public static boolean bConnected = false;
 	public static boolean bRegistered = false;
+	static boolean sendFakeNumbersOnUpdateButtonClick = true; ///**** IS YOUR NAME CHRIS PIUGGI? ****///
 }

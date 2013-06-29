@@ -425,10 +425,10 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			audioTest.setText("Stop "+PowerGarden.Device.plantType +" audio");
 			mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.cherrytomatoes_audiotest);
 			mp.start();
-		} else if(PowerGarden.Device.plantType.contains("Beets")){
-			audioTest.setText("Stop "+PowerGarden.Device.plantType +" audio");
-			mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.beets_audiotest);
-			mp.start();
+//		} else if(PowerGarden.Device.plantType.contains("Beets")){
+//			audioTest.setText("Stop "+PowerGarden.Device.plantType +" audio");
+//			mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.beets_audiotest);
+//			mp.start();
 //		} else if(PowerGarden.Device.plantType.contains("Celery")){
 //			audioTest.setText("Play "+PowerGarden.Device.plantType);
 //			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
