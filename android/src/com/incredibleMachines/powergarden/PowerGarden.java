@@ -42,7 +42,7 @@ public class PowerGarden {
 		static String host;
 		static String port;
 		static String deviceMood;
-		static String messageCopy;
+		static String messageCopy = plantType;
 	}
 	
 	//--- global socket vars
@@ -52,6 +52,7 @@ public class PowerGarden {
 	public static int Disconnected = 92;
 	public static int Registered = 93;
 	public static int Updated = 94;
+	public static int MessageUpdated = 95;
 
 	//--- global sensors
 	public static int temp;
