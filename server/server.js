@@ -27,7 +27,7 @@ colors.setTheme({
 
 var clients = {};
 //Connect to mongo server, store collection references
-var database = new DB();
+var database = new DB(colors);
 
 //Connect to twitter, pass callback for responding to tweets
 pgtwitter.start(twitterCallback);

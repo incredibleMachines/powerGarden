@@ -17,6 +17,7 @@ function DB(){
 	this.touchesDb;
 	this.settingsDb;
 	this.twitter;
+	this.colors;
 	
 	/* ******************************************************************************************* */
 	/* Connect to mongo server, store collection references							 			   */
@@ -44,7 +45,7 @@ module.exports = DB;
 DB.prototype.routeUpdate = function(message,connection){
 	
 	if(message.device_id != connection.device_id) { 
-		console.error('[Update Error] message.device_id=%s connection.device_id=%s', message.device_id, connection.device_id );/*error error;*/ 
+		console.error('[UPDATE ERROR] '.error+"\t\t message.device_id=%s connection.device_id=%s".data, message.device_id, connection.device_id );/*error error;*/ 
 	}else{
 		 
 		//console.log("GOT MESSAGE.DATA :: "+JSON.stringify(message.data));
@@ -61,7 +62,7 @@ DB.prototype.routeUpdate = function(message,connection){
 		var time = new Date();
 		time.setMinutes( time.getMinutes()-minutes );		
 		
-		var self = this;
+		var _db = this;
 		
 		dataDb.insert(obj, {safe:true}, function(err,doc){
 			if(err) console.error(err);//throw err;
@@ -77,7 +78,7 @@ DB.prototype.routeUpdate = function(message,connection){
 				//console.log(res);
 				if(err) console.error(err);
 				//console.log(res.length);
-				self.calcDeviceMood(message,connection,res,self);
+				_db.calcDeviceMood(message,connection,res,_db);
 			
 			});
 			
@@ -88,37 +89,40 @@ DB.prototype.routeUpdate = function(message,connection){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-DB.prototype.calcDeviceMood = function(message,connection,results,self){
+DB.prototype.calcDeviceMood = function(message,connection,results,_db){
 	
 		
 				
 		var obj = {	device_id: new BSON.ObjectID( String(message.device_id)) };
 				   
 		var avgResults = {};
+		avgResults.temp =0;
+		avgResults.moisture =0;
+		avgResults.light = 0;
+		avgResults.humidity=0;
 		
-		for(var i=0; i<results.length; i++){
-			
+		for(var i=0; i< results.length; i++){
+			//console.log('Results :',results[i]);
 			avgResults.temp += results[i].temp;
 			avgResults.moisture += results[i].moisture;
 			avgResults.light += results[i].light;
 			avgResults.humidity += results[i].humidity;
 			
 		}
-		
+		//console.log(avgResults);
 		avgResults.temp /= results.length;
 		avgResults.moisture /= results.length;
 		avgResults.light /= results.length;
 		avgResults.humidity /= results.length;
 		
 		var mood ={};
-
 		settingsDb.findOne(obj, function(err, res){
 			if(err) console.error(err);
-			//console.log(res);		
+			//console.log('[FINDING SETTINGS]',res);		
 			
 			if(res.humidity.active){
 				//does not affect mood
-				if(avgResults.humidity>res.humidity.low && avgResults.humidity < res.humidity.high) mood.humidity='content';
+				if(avgResults.humidity>res.humidity.low && avgResults.humidity < res.humidity.high) mood['humidity']='content';
 				else if(avgResults.humidity<res.humidity.low) mood.humidity='low';
 				else if(avgResults.humidity>res.humidity.high) mood.humidity='high';
 			}
@@ -144,9 +148,8 @@ DB.prototype.calcDeviceMood = function(message,connection,results,self){
 				else if(avgResults.moisture<res.moisture.low) mood.moisture='dry';
 				else if(avgResults.moisture>res.moisture.high) mood.moisture='wet';
 				
-			}	
-			
-			self.processMood(message,connection,mood,self);
+			}				
+			_db.processMood(message,connection,mood,_db);
 			
 			
 		});
@@ -156,15 +159,20 @@ DB.prototype.calcDeviceMood = function(message,connection,results,self){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-DB.prototype.processMood = function(message,connection,mood,self){
+DB.prototype.processMood = function(message,connection,mood,_db){
 	
 	//take in mood array
 	//check touch values
-	
+		
 	//head to look up table and discern
-	
 	//signal device about plants mood -
-
+	var res = {};
+	res.device_id = message.device_id;
+	if(message.plant_type) res.plant_type = message.plant_type;
+	res.mood = mood;
+	res.message="Show this message";
+	console.log(JSON.stringify(res));
+	connection.socket.emit('update',res);
 	//signal device with mood and updated text
 	
 	
@@ -190,13 +198,13 @@ DB.prototype.routeRegister = function(message,connection){
 		if(message.device_id.length == 24){
 			var oID = new BSON.ObjectID(message.device_id);
 			var obj = {'_id': oID};
-			var self = this;
+			var _db = this;
 			//find device by id
 			devicesDb.findOne(obj,function(err,result){
 				
 				if(!result){
 					console.log("[Device Registration Failed]");
-					self.logDevice(message,connection,self);
+					_db.logDevice(message,connection,_db);
 					
 				}else{
 					
@@ -204,7 +212,7 @@ DB.prototype.routeRegister = function(message,connection){
 					console.log("[Device Already Registered]");
 					connection.device_id = message.device_id;
 					//assignPlantData(result,connection);
-					self.setActive(connection, true);
+					_db.setActive(connection, true);
 					
 					connection.socket.emit('register', res);
 					//connection.socket.send(JSON.stringify(res));	
@@ -278,7 +286,7 @@ DB.prototype.plantTouch = function(message,connection){
 	var time = new Date();
 	time.setMinutes( time.getMinutes()-minutes );
 	
-	var self = this;
+	var _db = this;
 
 	// console.log(time);
 	touchesDb.insert(obj, function(err){
@@ -317,7 +325,7 @@ DB.prototype.plantTouch = function(message,connection){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-DB.prototype.createPlant = function(message,connection,plant_index,self){
+DB.prototype.createPlant = function(message,connection,plant_index,_db){
 	//blocking or non-blocking function?
 	
 	//console.log("plant: "+ JSON.stringify(plant));
@@ -327,7 +335,7 @@ DB.prototype.createPlant = function(message,connection,plant_index,self){
 		  if(err) console.error(err); //throw err;
 
 		   var json={ $push: { plants: { index:doc[0].index, _id:doc[0]._id } } };
-		   self.updateDocument(devicesDb,connection.device_id, json);
+		   _db.updateDocument(devicesDb,connection.device_id, json);
 		   
 	});
 }
@@ -335,7 +343,7 @@ DB.prototype.createPlant = function(message,connection,plant_index,self){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-DB.prototype.logDevice = function(message,connection,self){
+DB.prototype.logDevice = function(message,connection,_db){
 	var obj = {date: new Date(), plants: [], type: message.plant_type, active: true};
 	devicesDb.insert(obj, {safe:true}, function(err,doc){
 		if(err) console.error(err); //throw err;
@@ -343,9 +351,9 @@ DB.prototype.logDevice = function(message,connection,self){
 		connection.device_id = doc[0]._id;
 		console.log('Created Record: '+connection.device_id);
 		console.log("plants.length: "+message.num_plants);
-		for(var i = 0; i<message.num_plants; i++) self.createPlant(message,connection,i,self);
+		for(var i = 0; i<message.num_plants; i++) _db.createPlant(message,connection,i,_db);
 		
-		self.createSettings(message,connection,self);
+		_db.createSettings(message,connection,_db);
 		
 		var res = { "device_id": connection.device_id, "connection_id": connection.id };
 		//connection.socket.send(JSON.stringify(res));
@@ -355,7 +363,7 @@ DB.prototype.logDevice = function(message,connection,self){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-DB.prototype.createSettings = function(message,connection,self){
+DB.prototype.createSettings = function(message,connection,_db){
 	
 	var obj = {};
 	obj.device_id = connection.device_id;
