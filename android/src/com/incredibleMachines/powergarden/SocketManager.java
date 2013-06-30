@@ -140,31 +140,48 @@ public class SocketManager implements  IOCallback {
 					PowerGarden.Device.ID = j.getString("device_id");
 					PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
 				}
+				
 				//System.out.println(PowerGarden.Device.ID);
+			
 				callbackActivity.signalToUi(PowerGarden.Registered, PowerGarden.Device.ID);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			//System.out.println(args[0]);
-			
-			
 			//System.out.println(String.valueOf(args));
-			
 			//System.out.println(args.toString());
+			
 		}else if(event.equals("planted")){
 			System.out.println(args.toString());
 		}else if(event.equals("update")){
 			try {
 				JSONObject j = new JSONObject(args[0].toString() );
-				if(PowerGarden.Device.ID != j.getString("device_id")){
-					Log.e(TAG, "DEVICE ID MISMACTCH");
+				if(!PowerGarden.Device.ID.contentEquals(j.getString("device_id"))){
+					Log.e(TAG, "DEVICE ID MISMATCH");
+					Log.e(TAG, "PowerGarden.Device.ID: "+ PowerGarden.Device.ID);
+					Log.e(TAG, "incoming Device.ID: "+ j.getString("device_id"));
+					
 				}
 				//PowerGarden.Device.ID = j.getString("device_id");
 				PowerGarden.Device.deviceMood = j.getString("mood");
 				PowerGarden.Device.messageCopy = j.getString("message");
 //				PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
 //				System.out.println(PowerGarden.Device.ID);
+				
+				if(j.has("message")){
+					PowerGarden.Device.messageCopy = j.getString("message");
+					Log.wtf(TAG, "received 'message'");
+					Log.wtf(TAG, PowerGarden.Device.messageCopy);
+					callbackActivity.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
+				} else Log.wtf(TAG, "NO 'message' received");
+				
+				if(j.has("mood")){
+					//do something yo
+				}
+				
+				
 				callbackActivity.signalToUi(PowerGarden.Updated, PowerGarden.Device.ID);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

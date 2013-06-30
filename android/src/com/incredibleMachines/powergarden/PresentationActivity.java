@@ -68,6 +68,9 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
 		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
 		
+		//plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+		plantCopy.setText(PowerGarden.Device.messageCopy);
+		setTextViewFont(PowerGarden.italiaBook, plantCopy);
 //		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
 		
 		if(PowerGarden.Device.plantType.contains("Cherry")){
@@ -103,6 +106,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			//PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, this);
 		}else if(type == PowerGarden.Registered){
 			PowerGarden.bRegistered = true;
+		}else if(type == PowerGarden.MessageUpdated){
+			plantCopy.setText(PowerGarden.Device.messageCopy);
 		}
 	}
 	
@@ -278,7 +283,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
 		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
 		
-		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+		//plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+		plantCopy.setText(PowerGarden.Device.messageCopy);
 		setTextViewFont(PowerGarden.italiaBook, plantCopy);
 		
 		if(PowerGarden.Device.plantType.contains("Cherry")){
