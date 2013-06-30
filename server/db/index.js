@@ -120,21 +120,21 @@ DB.prototype.calcDeviceMood = function(message,connection,results,_db){
 			if(err) console.error(err);
 			//console.log('[FINDING SETTINGS]',res);		
 			
-			if(res.humidity.active){
+			if(res.humidity.active==true){
 				//does not affect mood
 				if(avgResults.humidity>res.humidity.low && avgResults.humidity < res.humidity.high) mood['humidity']='content';
 				else if(avgResults.humidity<res.humidity.low) mood.humidity='low';
 				else if(avgResults.humidity>res.humidity.high) mood.humidity='high';
 			}
 
-			if(res.temp.active){
+			if(res.temp.active==true){
 				//does not affect mood
 				if(avgResults.temp>res.temp.low && avgResults.temp < res.temp.high) mood.temp='content';
 				else if(avgResults.temp<res.temp.low) mood.temp='low';
 				else if(avgResults.temp>res.temp.high) mood.temp='high';
 				
 			}
-			if(res.light.active){
+			if(res.light.active==true){
 				//does not affect mood
 				if(avgResults.light>res.light.low && avgResults.light < res.light.high) mood.light='content';
 				else if(avgResults.light<res.light.low) mood.light='low';
@@ -142,7 +142,7 @@ DB.prototype.calcDeviceMood = function(message,connection,results,_db){
 				
 			}
 			
-			if(res.moisture.active){
+			if(res.moisture.active==true){
 				//affects mood
 				if(avgResults.moisture>res.moisture.low && avgResults.moisture < res.moisture.high) mood.moisture='content';
 				else if(avgResults.moisture<res.moisture.low) mood.moisture='dry';
@@ -166,13 +166,61 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 		
 	//head to look up table and discern
 	//signal device about plants mood -
-	var res = {};
-	res.device_id = message.device_id;
-	if(message.plant_type) res.plant_type = message.plant_type;
-	res.mood = mood;
-	res.message="Show this message";
-	console.log(JSON.stringify(res));
-	connection.socket.emit('update',res);
+	var device = {	device_id: new BSON.ObjectID( String(message.device_id)) };
+	//find device to check plants	
+	plantsDb.find(device).toArray( function(err,result){
+		//check each plants touch for most up to date results
+		for(var i = 0; i< result.length; i++){
+			var obj = {device_id: new BSON.ObjectID(String(message.device_id)), index: i };
+			_db.checkPlantTouches(obj,connection,false,_db);
+		}
+		
+		//count all plants values to discern device global touch mood
+		plantsDb.find(device).toArray( function(err,result){
+		
+			var touchesMood={worked_up:0,lonely:0,content:0};
+			
+			for(var i = 0; i< result.length; i++){
+				
+				if(result[i].mood=='born'||result[i].mood=='lonely'){
+					touchesMood.lonely +=1;
+				}else if(result[i].mood=='worked_up'){
+					touchesMood.worked_up +=1;
+				}else if(result[i].mood=='content'){
+					touchesMood.content+=1;
+				}
+			}
+			
+			//check which value is most prevelant 
+			if(touchesMood.worked_up > Object.keys(touchesMood).length){
+				//a large number of plants are worked up
+				console.log("WORKED UP");
+			}
+			if(touchesMood.lonely > Object.keys(touchesMood).length){
+				//Large Number of plants are lonely
+				console.log("LONELY");
+			}if(touchesMood.content > Object.keys(touchesMood).length){
+				//Large Number of plants are lonely
+				console.log("CONTENT");
+			}
+			
+			console.log(Object.keys(touchesMood).length)
+			console.log(touchesMood);
+		});
+		
+	});
+	
+
+	
+	var resp = {};
+	resp.device_id = message.device_id;
+	if(message.plant_type) resp.plant_type = message.plant_type;
+	resp.mood = mood;
+	resp.message="Show this message - ";
+	var time = new Date();
+	resp.message+=time;
+	console.log(JSON.stringify(resp));
+	connection.socket.emit('update',resp);
 	//signal device with mood and updated text
 	
 	
@@ -196,8 +244,7 @@ DB.prototype.routeRegister = function(message,connection){
 		console.log("Size of device_id: "+message.device_id.length);
 		
 		if(message.device_id.length == 24){
-			var oID = new BSON.ObjectID(message.device_id);
-			var obj = {'_id': oID};
+			var obj = {'_id': new BSON.ObjectID(message.device_id)};
 			var _db = this;
 			//find device by id
 			devicesDb.findOne(obj,function(err,result){
@@ -268,7 +315,7 @@ DB.prototype.plantTouch = function(message,connection){
 	
 	//May need to create dual index of device_id & plant index
 	var obj = {device_id: new BSON.ObjectID(String(message.device_id)), index: message.plant_index };
-	console.log("[PLANT TOUCH] " +JSON.stringify(obj));
+	//console.log("[PLANT TOUCH] ".info +JSON.stringify(obj));
 
 	var json = {$inc : {touch: 1}};
 	plantsDb.update(obj, json,function(err){
@@ -281,46 +328,57 @@ DB.prototype.plantTouch = function(message,connection){
 	
 	// console.log(obj.timestamp);
 	
-	var TouchThreshold =10;
-	var minutes =1;
-	var time = new Date();
-	time.setMinutes( time.getMinutes()-minutes );
-	
 	var _db = this;
 
 	// console.log(time);
 	touchesDb.insert(obj, function(err){
 				if(err) console.error(err) //throw err;
-				touchesDb.count({ device_id: obj.device_id, index: obj.index , timestamp:{ $gt : time}}, function(err,count){
-					
-					if(err) console.error(err);
-					//console.log(count);
-					
-					var json = {};
-					if(count == 0){
-						console.log("[PLANT STATE] Lonely "+count);
-						json.mood = "lonely";
-					}else if(count != 0 && count < TouchThreshold){
-						console.log("[PLANT STATE] Content "+count);
-						json.mood = "content";
-					}else if(count > TouchThreshold){
-						console.log("[PLANT STATE] Worked Up "+count);
-						json.mood = "worked_up";
-					}				
-					
-					// json.mood=mood;
-					json.plant_index=obj.index;
-					plantsDb.update({ device_id: obj.device_id, index: obj.index }, {$set:json}, function(err, res) {
-						if (err) console.error(err);
-					});
-
-					connection.socket.emit('touch', json);
-					
-				});
+				
+				_db.checkPlantTouches(obj,connection,true,_db);
 		
 	});
 
 	//this.twitter.twitterRef.gotTouched();
+}
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+DB.prototype.checkPlantTouches=function(obj,connection, signalToDevice, _db ){
+	
+	var TouchThreshold =10;
+	var minutes =1;
+	var time = new Date();
+	time.setMinutes( time.getMinutes()-minutes );
+	
+	touchesDb.count({ device_id: obj.device_id, index: obj.index , timestamp:{ $gt : time}}, function(err,count){
+	
+		if(err) console.error(err);
+		//console.log(count);
+		
+		var json = {};
+		if(count == 0){
+			console.log("[PLANT STATE]".info+" Lonely ".warn+count);
+			json.mood = "lonely";
+		}else if(count != 0 && count < TouchThreshold){
+			console.log("[PLANT STATE]".info+" Content ".debug+count);
+			json.mood = "content";
+		}else if(count > TouchThreshold){
+			console.log("[PLANT STATE]".info+" Worked Up ".error+count);
+			json.mood = "worked_up";
+		}				
+		
+		// json.mood=mood;
+		json.plant_index=obj.index;
+		plantsDb.update({ device_id: obj.device_id, index: obj.index }, {$set:json}, function(err, res) {
+			if (err) console.error(err);
+		});
+		
+		if(signalToDevice==true) connection.socket.emit('touch', json);
+	
+	});
+	
+	
+	
 }
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -367,10 +425,10 @@ DB.prototype.createSettings = function(message,connection,_db){
 	
 	var obj = {};
 	obj.device_id = connection.device_id;
-	obj.humidity = { active: true, low: 10, high:60};
-	obj.temp = {active: true, low: 15, high:35};
+	obj.humidity = { active: false, low: 10, high:60};
+	obj.temp = {active: false, low: 15, high:35};
 	obj.moisture = {active: true, low:0, high:100};
-	obj.light = {active: true, low:400, high: 1000};	
+	obj.light = {active: false, low:400, high: 1000};	
 	
 	settingsDb.insert(obj,{safe:true},function(err){
 		if(err) console.error(err);
