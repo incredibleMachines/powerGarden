@@ -7,6 +7,15 @@ var DB = require('./db/index');
 var pgtwitter = require('./pgtwitter/index');
 var colors = require('colors');
 
+
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
+var browserio = require('socket.io').listen(server).set('log level',2);
+
+server.listen(8080);
+//app.listen(8080);
+
 colors.setTheme({
   silly: 'rainbow',
   input: 'grey',
@@ -26,16 +35,56 @@ colors.setTheme({
 /* ******************************************************************************************* */
 
 var clients = {};
-//Connect to mongo server, store collection references
-var database = new DB(colors);
+var browsers = {};
+
 
 //Connect to twitter, pass callback for responding to tweets
 pgtwitter.start(twitterCallback);
 
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+
+/* app.use(express.favicon()); */
+app.use(express.static(__dirname+'/public'));
+
+
+
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+var browserClientID = 0;
+
+browserio.sockets.on('connection',function(browserSocket){
+	
+	console.log('connection incoming');
+	var browserConnection = new Connection( ++browserClientID, 'set_id', browserSocket);
+	var connectKey = 'browser-'+browserClientID;
+	browsers[connectKey]=browserConnection;
+	
+	
+	for(var key in clients){
+	
+		browserSocket.emit('init', {connection_id: clients[key]['id'], device_id: clients[key]['device_id']});	
+	}
+	//browserSocket.emit('init', clients);
+
+	
+	browserSocket.on('disconnect',function(){
+		delete browsers['browser'+browserConnection.id];
+		console.log("[BROWSER DISCONN]".error+"connection.id %s".input, browserConnection.id);
+
+	});
+	
+	
+});
+
+//Connect to mongo server, store collection references
+var database = new DB(browserio.sockets);
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 var clientID = 0;
+
 
 io.sockets.on('connection', function (socket) {
   //io.sockets.emit('this', { will: 'be received by everyone'});
@@ -44,7 +93,9 @@ io.sockets.on('connection', function (socket) {
 	clients[connectKey]=connection;
 
 	console.log("[NEW CONN]".help+" connection.device_id %s".data,connection.device_id);
-
+	
+	//browserio.sockets.emit('device_conn',connectKey);
+	
 	socket.on('register', function (msg) {
 	    console.log('[INBOUND REQUEST]'.warn+' [REGISTER] '.warn + JSON.stringify(msg).input);
 	    database.routeRegister(msg,connection);
@@ -66,8 +117,12 @@ io.sockets.on('connection', function (socket) {
 	socket.on('disconnect', function () {
 	  /* io.sockets.emit('user disconnected'); */
   	  
-	  console.log("[DISCONN] connection.id %s",connection.id);
-	  console.log("[DISCONN] connection.device_id %s",connection.device_id);
+	  console.log("[CLIENT DISCONN]".error+"connection.id %s".input, connection.id);
+	  console.log("[CLIENT DISCONN]".error+"connection.device_id %s".input, connection.device_id);
+	  
+	  var res = {device_id: connection.device_id, connection_id: connection.id};
+	  
+	  browserio.sockets.emit('device_disconn',res);
 	  
 	  if(connection.device_id != 'set_id') database.setActive(connection, false);
 	  delete clients["client-"+connection.id];
