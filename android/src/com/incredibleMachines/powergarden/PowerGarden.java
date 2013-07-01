@@ -34,15 +34,17 @@ public class PowerGarden {
 	
 	//--- this device
 	public static class Device{
-		static String ID;
+		static String ID = "set_id";
 		static String connectionID;
-		static int PlantNum;
+		static int PlantNum = 8;
 		static String plantType = "Cherry Tomatoes"; //should be populated by prefs	
 		static PlantObject plants[] = new PlantObject[8];
 		static String host;
 		static String port;
 		static String deviceMood;
 		static String messageCopy = plantType;
+		static int distanceThreshold; //distance at which we'll send a PING to server
+		static boolean datastream_mode = false;
 	}
 	
 	//--- global socket vars
@@ -53,6 +55,8 @@ public class PowerGarden {
 	public static int Registered = 93;
 	public static int Updated = 94;
 	public static int MessageUpdated = 95;
+	public static int Touched = 96;
+	public static String serverResponseRaw;
 
 	//--- global sensors
 	public static int temp;

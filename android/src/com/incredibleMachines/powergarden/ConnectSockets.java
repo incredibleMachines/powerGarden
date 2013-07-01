@@ -30,7 +30,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	   static TextView mStatusline;
 	   static Button mStart;
 
-	   static EditText mType;
+	   //static EditText mType;
 	   static EditText mID;
 	   static EditText mNumPlants;
 	   static Button mSendMessage;
@@ -50,7 +50,12 @@ public class ConnectSockets extends Activity implements Connectable {
 
 	      mHostname.setText(PowerGarden.getPrefString("hostname", "192.168.1.0"));
 	      mPort.setText(PowerGarden.getPrefString("port", "9001"));
+	      
+	      //if(PowerGarden.getPrefString("deviceID", "set_id") != null){
 	      mID.setText(PowerGarden.getPrefString("deviceID", "set_id"));
+	      //} else
+	    	  
+	    	  
 	      mNumPlants.setText(PowerGarden.getPrefString("numPlants","8"));  
 	   }
 
@@ -91,18 +96,21 @@ public class ConnectSockets extends Activity implements Connectable {
 	      });
 	   }
 	   
-	   private void setupSendButton(){
+	   private void setupSendButton(){ //*** REGISTER BUTTON ***//
            mSendMessage.setOnClickListener(new Button.OnClickListener() {
            	public void onClick(View v) {
            		savePlantPrefs();
-           		PowerGarden.SM.authDevice(mType.getText().toString(), mID.getText().toString(), Integer.parseInt(mNumPlants.getText().toString()), mplantList.getSelectedItem().toString() , ConnectSockets.this);
+           		
+           		//PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum.toString(), mplantList.getSelectedItem().toString() , ConnectSockets.this);
+           		PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, ConnectSockets.this);
            		PowerGarden.Device.plantType = mplantList.getSelectedItem().toString();
            	}
            });
            
            mSendTouch.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
-	        	   PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );				
+	        	   //PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );
+	        	   PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, (int) (Math.random()*8), ConnectSockets.this );
 			}
            });
            
@@ -127,7 +135,7 @@ public class ConnectSockets extends Activity implements Connectable {
         		   		e.printStackTrace();
         		   	}
         		   PowerGarden.Device.plantType = mplantList.getSelectedItem().toString();
-        		   PowerGarden.SM.updateData("update", mID.getText().toString(), j, ConnectSockets.this);
+        		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID, j, ConnectSockets.this);
         	   } 
            });
 	   }
@@ -135,7 +143,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	      mHostname.setEnabled(false);
 	      mPort.setEnabled(false);
 	      mStart.setText("Disconnect");
-	      mType.setText("register");
+	      //mType.setText("register");
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
 	            PowerGarden.SM.closeUpShop();
@@ -158,7 +166,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	    mPort = (EditText) findViewById(R.id.port);
 	    mStatusline = (TextView) findViewById(R.id.statusline);
 	    mStart = (Button) findViewById(R.id.start);
-	    mType = (EditText) findViewById(R.id.type);
+	    //mType = (EditText) findViewById(R.id.type);
 	    mID = (EditText) findViewById(R.id.device_id);
 	    mNumPlants = (EditText) findViewById(R.id.num_plants);
 	    mSendMessage = (Button) findViewById(R.id.sendMsg);
@@ -215,14 +223,60 @@ public class ConnectSockets extends Activity implements Connectable {
 	public void signalToUi(int type, Object data) {
 
 		Runnable myrun = null;
-		if(type == PowerGarden.Connected){
+		if(type == PowerGarden.SocketConnected){
 			myrun = new Runnable(){
 				public void run(){
 					mID.setText(PowerGarden.Device.ID);
+					mStatusline.setText("CONNECTED TO HOST: "+PowerGarden.Device.host +"\n"+ "ON PORT "+ PowerGarden.Device.port);
 					saveDevicePrefs();
 				}
 			};
 		}
+		
+		else if(type == PowerGarden.Registered){
+			Log.wtf(TAG, "from SignalToUi > type .Registered");
+			//mID.setText(PowerGarden.Device.ID);
+			myrun = new Runnable(){
+				public void run(){
+					mID.setText(PowerGarden.Device.ID);
+					mStatusline.setText("server says REGISTERED\n\n " + PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};
+		}
+		
+		else if(type == PowerGarden.Updated){
+			Log.d(TAG, "from SignalToUi > type .Updated");
+			//mStatusline.setText(PowerGarden.serverResponseRaw);
+			myrun = new Runnable(){
+				public void run(){
+					mStatusline.setText("server says UPDATED\n\n "+PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};
+		}
+		
+		else if(type == PowerGarden.Touched){
+			Log.d(TAG, "from SignalToUi > type .Touched");
+			myrun = new Runnable(){
+				public void run(){
+					mStatusline.setText("server says TOUCHED\n\n "+PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};
+		}
+		
+		else { //impossibility?
+			final int type_ = type;
+			myrun = new Runnable(){
+				
+				public void run(){
+					mStatusline.setText("server says TYPE UNRECOGNIZED\n\n " + Integer.toString(type_) + " : "+PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};
+		}
+		 
 		Log.d(TAG, "Got type: " + type);
 		this.runOnUiThread(myrun);	
 	}
