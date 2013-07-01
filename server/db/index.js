@@ -3,7 +3,7 @@ var MongoClient = require('mongodb').MongoClient,
 	mongo = new MongoClient(new Server('localhost', 27017)),
 	BSON = require('mongodb').BSONPure;
 
-	
+
 //var utils = require('./dbUtils');	
 
 	
@@ -18,6 +18,12 @@ function DB(){
 	this.settingsDb;
 	this.twitter;
 	this.colors;
+	
+	//console.log(storedMood);
+	
+	//this.statusMood = new moods();
+	
+	//console.log(Moods);
 	
 	/* ******************************************************************************************* */
 	/* Connect to mongo server, store collection references							 			   */
@@ -223,9 +229,10 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 			resp.device_id = message.device_id;
 			if(message.plant_type) resp.plant_type = message.plant_type;
 			resp.mood = mood;
-			resp.message="Show this message - ";
-			var time = new Date();
-			resp.message+=time;
+			//console.log(JSON.stringify(storedMood['tomato']['moisture']['high'][0]));
+			resp.message={ 	moisture: storedMood['tomato']['moisture'][mood.moisture][Math.round(Math.random(storedMood['tomato']['moisture'][mood.moisture].length))], 
+							touches: storedMood['tomato']['touches'][mood.touches][Math.round(Math.random(storedMood['tomato']['touches'][mood.touches].length))] 
+							};
 			console.log(JSON.stringify(resp));
 			connection.socket.emit('update',resp);
 			//signal device with mood and updated text
@@ -245,7 +252,7 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-DB.prototype.routeRegister = function(message,connection){
+	DB.prototype.routeRegister = function(message,connection){
 	//check for ID in DB
 	//if ID exists
 	//return ID, status - connected, rejoined
@@ -466,3 +473,90 @@ DB.prototype.updateDocument = function(collection,id,json){
 
 //no upsert 
 }
+
+var storedMood = {
+			
+			tomato:{	moisture:{
+								high:[
+									"Being TOO generous with the water can drown the tomatoes. Let's give 'em a break, shall we?",
+									"Swimming is a fun summer activity for people, not tomatoes! Can you ease up on the water please?",
+									"These tomatoes are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+									"Tomatoes love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+									"The tomatoes need time to drink up this water before they get more. Check in on them soon!",
+									"Holy H20! That's a lot of water. The tomatoes probably need a break now…",
+									"Water is awesome but we don't want the tomatoes to float away... how about petting them instead?",
+									"Oh dear, these tomatoes are drenched! Any more water would be too much of a good thing.",
+									"If the tomatoes keep getting this much water, they're gonna need an umbrella!"
+								],
+								content:[
+									"The tomatoes sure look refreshed! Way to beat the heat.",
+									"The tomatoes are super appreciative. If they could send you a drink in return, they would!",
+									"Thanks for helping the tomatoes stay juicy!",
+									"Look at those water works! Nice job!",
+									"The tomatoes love you for giving them a shower. They were really thirsty until you came along!",
+									"Thanks! Nothing beats a cool splash of water on a hot summer day.",
+									"Excellent water-wielding skills. I knew you could do it!",
+									"Great watering job, you must have done this before!",
+									"Thanks for keeping the tomatoes hydrated! You are a big help!"
+								],
+								low:[
+									"Hey you! Yeah, you. These tomatoes need some water, can you help?",
+									"Can you water these tomatoes please? They'd do it themselves, but they don't have arms...",
+									"If it gets any drier over here, these tomatoes are going to become tumbleweeds!",
+									"These tomato plants sure look dry! Can you send some water their way?",
+									"Boy, are these tomatoes parched... come quench their thirst!",
+									"These tomatoes could sure use a shower; trust me, I'm standing right next to them!",
+									"Show the tomatoes you care – give them some good ol' H20. They'll thank you for it.",
+									"Tomatoes need water to grow. Can you help them out on this hot day?",
+									"Sun-dried tomatoes are great in a salad but not in a garden... quick, send these guys some water!"
+								]
+						},
+						touches:{
+								high:[	
+																
+									"Careful, if the tomatoes get too worked-up they're going to fall off their vines! Let's spread the love around a bit.",
+									"It's time for the tomatoes to get their beauty rest. Come back soon!",
+									"The tomatoes need to focus on growing right now. Can you play with the other veggies for a bit?",
+									"Tomatoes love attention, but so do the rest of the veggies!", 
+									"Pay the carrots a visit before they get too jealous…",
+									"Looks like you guys are getting along great. I bet the other veggies would love to meet you too!",
+									"All of the hustle and bustle can be overwhelming for tomatoes. They need to relax for a bit… be sure to come back later!",
+									"Sounds like these tomatoes need to calm down a little. Can you give the other veggies some attention?",
+									"The tomatoes are getting tuckered out. Want to play with some other veggies?",
+									"Looks like the tomatoes need to mellow out a little. Can you go say 'hi' to other veggies in the garden?",
+									"Any more action and these tomatoes are going to turn into sauce!"
+								],
+								content:[
+									"You're a great playmate; hope you visit the garden every day!",
+									"Wow, you've got the magic touch! Keep it up!",
+									"Perfect job, you're a natural!",
+									"You guys are getting along so well! Were you a tomato in your past life?",
+									"The tomatoes are really digging all this attention. Thanks!",
+									"Who knew that veggies could be such fun friends?",
+									"You're making the tomatoes so happy! Great job!",
+									"Holy cow, you're like, the tomato whisperer. Teach me your ways!",
+									"You sure seem to know what tomatoes like! Thank goodness you're here.",
+									"That's fun, isn't it? Who know tomatoes were so a-peel-ing?"
+								],
+								low:[
+									"Greetings from the garden! Come on over, it looks like the tomatoes would love to meet you.",
+									"Get in touch with nature. Literally! See what happens when you pet these tomatoes...",
+									"You seem like a veggie lover. Can you hang out with them for a sec?",
+									"Did you know that tomatoes are extremely ticklish? Don't believe me? Try it and see!",
+									"Help these tomato plants grow big and tall: give 'em a pinch to grow an inch!",
+									"This tomato has an itch it can't scratch. Can you help out?",
+									"I need your help waking these tomatoes up from their nap. Can you give 'em a poke for me please?",
+									"Don't be a stranger – introduce yourself to these tomatoes with a tiny handshake!",
+									"Seems like you would get along with these tomatoes. Come on over and meet 'em! They love being social.",
+									"Plant your feet right here, these tomatoes want to spend some time with you!",
+									"Even though tomatoes grow in bunches, they can still get lonely. Will you keep them company for a bit?"
+								]
+						},
+						
+						
+			},
+			"pepper":{},
+			"celery":{},
+			"carrots":{},
+			"beets":{}
+};
