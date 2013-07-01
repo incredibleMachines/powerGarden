@@ -43,22 +43,22 @@ io.sockets.on('connection', function (socket) {
 	var connectKey = 'client-'+clientID;
 	clients[connectKey]=connection;
 
-	console.log("[NEW CONNECTION]connection.device_id %s",connection.device_id);
+	console.log("[NEW CONN]".help+" connection.device_id %s".data,connection.device_id);
 
 	socket.on('register', function (msg) {
-	    console.log('[INBOUND REQUEST]'.warn+' [REGISTER] '.help + JSON.stringify(msg).input);
+	    console.log('[INBOUND REQUEST]'.warn+' [REGISTER] '.warn + JSON.stringify(msg).input);
 	    database.routeRegister(msg,connection);
 	  
 	});
 	
 	socket.on('update', function (msg) {
-	    console.log('[INBOUND REQUEST]'.warn+' [UPDATE] '.help + JSON.stringify(msg).input);
+	    console.log('[INBOUND REQUEST]'.help+' [UPDATE] '.help + JSON.stringify(msg).input);
 	    database.routeUpdate(msg,connection);
 	  
 	});
 	
 	socket.on('touch',function(msg){
-		console.log('[INBOUND REQUEST]'.warn+' [TOUCH] '.help + JSON.stringify(msg).input);
+		console.log('[INBOUND REQUEST]'.help+' [TOUCH] '.info + JSON.stringify(msg).input);
 		database.plantTouch(msg,connection);
 		  
 	});
