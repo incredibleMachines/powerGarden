@@ -49,11 +49,11 @@ public class SocketManager implements  IOCallback {
 			}
 	}
 	
-	public void plantTouch(String type, String device_id, int plant_index, Connectable _callback){
+	public void plantTouch(String type, String device_id, int plant_index, int cap_val, Connectable _callback){
 		callbackActivity = _callback;
 		try{
 			socket.emit(type, 
-					new JSONObject().put("device_id", device_id).put("plant_index", plant_index)
+					new JSONObject().put("device_id", device_id).put("plant_index", plant_index).put("cap_val", cap_val) //added capval here
 					);
 			
 		}catch(Exception e){
@@ -121,8 +121,8 @@ public class SocketManager implements  IOCallback {
 		callbackActivity.signalToUi(PowerGarden.SocketConnected, null);
 	}
 
-	@Override
-	public void on(String event, IOAcknowledge ack, Object... args) {
+	@Override 
+	public void on(String event, IOAcknowledge ack, Object... args) { //incoming from server
 		
 		System.out.println("Server triggered event '" + event + "'");
 //		Log.d(TAG, "INCOMING MESSAGE: "+args[0].toString());
@@ -179,7 +179,7 @@ public class SocketManager implements  IOCallback {
 					e.printStackTrace();
 				}
 			}
-			
+				
 			//**** touched ****//
 			else if(event.equals("touch")){
 				
@@ -192,7 +192,7 @@ public class SocketManager implements  IOCallback {
 				callbackActivity.signalToUi(PowerGarden.Touched, PowerGarden.Device.ID);
 			}
 			
-			//**** control message ****//
+			//**** control message ****  *** FUTURE ***//
 			else if(event.equals("control")){
 				//https://docs.google.com/a/incrediblemachines.net/document/d/1ue7jnC6fR7SFgvZNny9MtHGbP_Sm8F-FrgUELhT9OKo/edit
 				if(j.has("distance_thresh")){
@@ -223,7 +223,7 @@ public class SocketManager implements  IOCallback {
 	
 	
 
-	/**** LAST WORKING VERSION ****/
+	/**** PREVIOUS WORKING VERSION ****/
 //	public void on(String event, IOAcknowledge ack, Object... args) {
 //		
 //		System.out.println("Server triggered event '" + event + "'");
