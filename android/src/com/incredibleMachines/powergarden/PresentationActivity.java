@@ -1,5 +1,6 @@
 package com.incredibleMachines.powergarden;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import com.incredibleMachines.powergarden.R.color;
@@ -7,9 +8,12 @@ import com.incredibleMachines.powergarden.util.SystemUiHider;
 import com.victorint.android.usb.interfaces.Connectable;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -218,23 +222,55 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		});
         currentViewable_ = new PresentationViewable();
         currentViewable_.setActivity(this);
+        
 	}
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-
-		// Trigger the initial hide() shortly after the activity has been
-		// created, to briefly hint to the user that UI controls
-		// are available.
 		delayedHide(100);
+		
+		//****** setup soundPool player ******//
+		
+        //this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		soundPool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0);
+        soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId,
+                    int status) {
+                PowerGarden.audioLoaded = true;
+                Log.wtf(TAG, "soundpool audioLoaded TRUE");
+            }
+        });
+        
+        PowerGarden.cherryTomatoesAudio[0] =  soundPool.load(this,R.raw.cherrytomatoes_0,1);
+        PowerGarden.cherryTomatoesAudio[1] =  soundPool.load(this,R.raw.cherrytomatoes_1,1);
+        PowerGarden.cherryTomatoesAudio[2] =  soundPool.load(this,R.raw.cherrytomatoes_2,1);
+        PowerGarden.cherryTomatoesAudio[3] =  soundPool.load(this,R.raw.cherrytomatoes_3,1);
+        PowerGarden.cherryTomatoesAudio[4] =  soundPool.load(this,R.raw.cherrytomatoes_4,1);
+        PowerGarden.cherryTomatoesAudio[5] =  soundPool.load(this,R.raw.cherrytomatoes_5,1);
+        PowerGarden.cherryTomatoesAudio[6] =  soundPool.load(this,R.raw.cherrytomatoes_6,1);
+        PowerGarden.cherryTomatoesAudio[7] =  soundPool.load(this,R.raw.cherrytomatoes_7,1);
+        
+        //TODO: have them load by dynamic resID:
+        
+//        for(int i=0; i<PowerGarden.numSounds; i++){
+//	    	try {
+//	    		Class res = R.id.class;
+//	    		String id = "cherrytomatoes_"+Integer.toString(i+1);
+//	    		Field field = res.getField(id);
+//				int resId = field.getInt(null);
+//				
+//				PowerGarden.cherryTomatoesAudio[i] = soundPool.load(this,resId,1);
+//				
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} 
+//      }
 	}
 
-	/**
-	 * Touch listener to use for in-layout UI controls to delay hiding the
-	 * system UI. This is to prevent the jarring behavior of controls going away
-	 * while interacting with activity UI.
-	 */
+	
 	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -249,9 +285,21 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	Runnable mHideRunnable = new Runnable() {
 		@Override
 		public void run() {
+			
 			mSystemUiHider.hide();
 		}
 	};
+	
+	public void playAudio(int sound){
+		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if (PowerGarden.audioLoaded) {
+        	
+        	//.play(audio[i], leftVol, rightVol, priority, loop, rate);
+        	soundPool.play(PowerGarden.cherryTomatoesAudio[sound], 1.0f, 1.0f, 1, 0, 1f);             
+        	Log.d(TAG, "Played sound "+Integer.toString(sound));
+        } else Log.d(TAG, "audio NOT loaded yet");
+	}
+	
 
 	/**
 	 * Schedules a call to hide() in [delay] milliseconds, canceling any
@@ -301,42 +349,42 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		mSystemUiHider
 				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
 					// Cached values.
-					int mControlsHeight;
-					int mShortAnimTime;
+			int mControlsHeight;
+			int mShortAnimTime;
 
-					@Override
-					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-					public void onVisibilityChange(boolean visible) {
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-							// If the ViewPropertyAnimator API is available
-							// (Honeycomb MR2 and later), use it to animate the
-							// in-layout UI controls at the bottom of the
-							// screen.
-							if (mControlsHeight == 0) {
-								mControlsHeight = controlsView.getHeight();
-							}
-							if (mShortAnimTime == 0) {
-								mShortAnimTime = getResources().getInteger(
-										android.R.integer.config_shortAnimTime);
-							}
-							controlsView
-									.animate()
-									.translationY(visible ? 0 : mControlsHeight)
-									.setDuration(mShortAnimTime);
-						} else {
-							// If the ViewPropertyAnimator APIs aren't
-							// available, simply show or hide the in-layout UI
-							// controls.
-							controlsView.setVisibility(visible ? View.VISIBLE
-									: View.GONE);
-						}
-
-						if (visible && AUTO_HIDE) {
-							// Schedule a hide().
-							delayedHide(AUTO_HIDE_DELAY_MILLIS);
-						}
+			@Override
+			@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+			public void onVisibilityChange(boolean visible) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+					// If the ViewPropertyAnimator API is available
+					// (Honeycomb MR2 and later), use it to animate the
+					// in-layout UI controls at the bottom of the
+					// screen.
+					if (mControlsHeight == 0) {
+						mControlsHeight = controlsView.getHeight();
 					}
-				});
+					if (mShortAnimTime == 0) {
+						mShortAnimTime = getResources().getInteger(
+								android.R.integer.config_shortAnimTime);
+					}
+					controlsView
+							.animate()
+							.translationY(visible ? 0 : mControlsHeight)
+							.setDuration(mShortAnimTime);
+				} else {
+					// If the ViewPropertyAnimator APIs aren't
+					// available, simply show or hide the in-layout UI
+					// controls.
+					controlsView.setVisibility(visible ? View.VISIBLE
+							: View.GONE);
+				}
+
+				if (visible && AUTO_HIDE) {
+					// Schedule a hide().
+					delayedHide(AUTO_HIDE_DELAY_MILLIS);
+				}
+			}
+		});
 
 		// Set up the user interaction to manually show or hide the system UI.
 		contentView.setOnClickListener(new View.OnClickListener() {

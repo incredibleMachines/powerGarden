@@ -12,12 +12,20 @@ public class PowerGarden {
     static Typeface italiaBook;
     static Typeface interstateBold;
 	
+    
 	public static int HAPPY = 1;
 	public static int DRY = 2;
 	public static int UNHAPPY = 3;
-	public static SharedPreferences mSettings;
-	private static final String PREFS_NAME = "PowerGarden";
+
+	//--- audio
+	public static final int numSounds = 8;
+	public static int[] cherryTomatoesAudio = new int [numSounds];
+	public static boolean audioLoaded = false;
 	
+	//--- shared preferences
+	public static SharedPreferences mSettings;
+	SharedPreferences.Editor editor = PowerGarden.mSettings.edit();
+	private static final String PREFS_NAME = "PowerGarden";
 	public static void loadPrefs(Context context){
 		mSettings = context.getSharedPreferences(PREFS_NAME, 0);
 	}
@@ -29,8 +37,7 @@ public class PowerGarden {
 		editor.putString(name,value);
 		editor.commit();
 	}
-	SharedPreferences.Editor editor = PowerGarden.mSettings.edit();
-	
+		
 	
 	//--- this device
 	public static class Device{

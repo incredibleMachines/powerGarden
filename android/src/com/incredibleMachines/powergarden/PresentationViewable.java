@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -28,6 +30,10 @@ import java.util.*;
 import com.incredibleMachines.powergarden.R.color;
 import com.victorint.android.usb.interfaces.Connectable;
 import com.victorint.android.usb.interfaces.Viewable;
+
+import android.media.SoundPool.OnLoadCompleteListener;
+import android.media.AudioManager;
+import android.media.SoundPool;
 
 public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeListener, Connectable {
 	private static String TAG = "PresentationViewable";
@@ -63,24 +69,13 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     Button closeDebug;
     Button audioTest;
     
-    boolean triggered_1 = false;
-    long trig_1_time = 0;
-    boolean triggered_2 = false;
-    long trig_2_time = 0;
-    boolean triggered_3 = false;
-    long trig_3_time = 0;
     final long triggerTime = 2500;
     boolean bHaveData = false;
     String gotData;
-    MediaPlayer mp;
+    
     
 	@Override
 	public void signalToUi(int type, Object data) {
-		
-//		if(debugServer){
-//			
-//			
-//		}
 
 		if(debugSensors){
 		    plantValView[0] = (TextView) activity_.findViewById(R.id.arduino_value_1);
@@ -156,7 +151,6 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 					//Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
 				}
 	
-			    //Log.d(TAG, "before debug");
 			    if(debugSensors){
 			    	//Log.d(TAG, "Should be debug");
 					Runnable runner = new Runnable(){
@@ -164,21 +158,24 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 							for(int i =0;i<PowerGarden.Device.plants.length;i++){
 								if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){ //if we've hit trigger time max
 									PowerGarden.Device.plants[i].triggered = false;
-									
 								}
+								
 								if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
 									!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
-										//if(!plants[i].triggered){ 
+									
 									PowerGarden.Device.plants[i].triggered = true;
-									//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i));
+									
+									//play correct sound for this plant here
+									activity_.playAudio(i); //right now just a single array of "cherrytomato_audio[i]"
+									
+									//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
 									PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
-									if(i==7){
-										mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
-										mp.start();
-									}
-										PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
+									PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
 								}
+								
 								plantValView[i].setText(String.valueOf(plantDisplay[i]));
+								if(PowerGarden.Device.datastream_mode == true) //this might be getting crazy
+									PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
 								if(PowerGarden.Device.plants[i].triggered) {
 									plantValView[i].setTextColor(Color.GREEN);
 								} else plantValView[i].setTextColor(Color.WHITE);
@@ -338,11 +335,11 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 
 			@Override
 			public void onClick(View v) {
-				//audioSetup();
-				playAudio();
+				//Log.d(TAG, "audioTest button hit");
+				int tempAudioFile = (int) (Math.random()*8);
+				activity_.playAudio(tempAudioFile);
 			}
 		});
-		//audioSetup();
 		
 		for(int i=0; i<threshBar.length; i++){
 	    	try {
@@ -387,53 +384,9 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		
 		plantCopy = (TextView) activity_.findViewById(R.id.fullscreen_content);
 		setTextViewFont(PowerGarden.italiaBook, plantCopy);
-		//for 'factoids'
-		//setTextViewFont(interstateBold, plantCopy);
-	}
-	
-	private void playAudio(){
-		// TODO Auto-generated method stub
-		//activity_.setContentView(R.layout.activity_presentation);
-		//debug = false;
-		if(!PowerGarden.bAudioPlaying){
-		PowerGarden.bAudioPlaying = true;
 		
-		if(PowerGarden.Device.plantType.contains("Cherry")){
-			audioTest.setText("Stop "+PowerGarden.Device.plantType +" audio");
-			mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.cherrytomatoes_audiotest);
-			mp.start();
-//		} else if(PowerGarden.Device.plantType.contains("Beets")){
-//			audioTest.setText("Stop "+PowerGarden.Device.plantType +" audio");
-//			mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.beets_audiotest);
-//			mp.start();
-//		} else if(PowerGarden.Device.plantType.contains("Celery")){
-//			audioTest.setText("Play "+PowerGarden.Device.plantType);
-//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
-//			mp.start();
-//		} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
-//			audioTest.setText("Play "+PowerGarden.Device.plantType);
-//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.tomatoes_audiotest);
-//			mp.start();
-//		} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
-//			audioTest.setText("Play "+PowerGarden.Device.plantType);
-//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.orangecarrot_audiotest);
-//			mp.start();
-//		} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
-//			audioTest.setText("Play "+PowerGarden.Device.plantType);
-//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.purplecarrot_audiotest);
-//			mp.start();
-//		} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
-//			audioTest.setText("Play "+PowerGarden.Device.plantType);
-//			MediaPlayer mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.bellpeppers_audiotest);
-//			mp.start();
-//		}  else if(PowerGarden.Device.plantType == null){
-
-		} else {
-			audioTest.setText("no audio available");
-		}
-		}else{
-			mp.stop();
-		}
+		//for 'factoids':
+		//setTextViewFont(interstateBold, plantCopy);
 	}
 
 	@Override
