@@ -555,8 +555,110 @@ var storedMood = {
 						
 						
 			},
-			"pepper":{},
-			"celery":{},
-			"carrots":{},
-			"beets":{}
+			pepper:{
+				moisture:{
+							high:[
+									"Uh oh, the peppers have had too much water. Better let their soil dry out a bit.",
+									"Being TOO generous with the water can drown the peppers. Let's give 'em a break, shall we?",
+									"Swimming is a fun summer activity for people, not peppers! Can you ease up on the water please?",
+									"These peppers are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+									"Peppers love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+									"The peppers need time to drink up this water before they get more. Check in on them soon!",
+									"Holy H20! That's a lot of water. The peppers probably need a break now…",
+									"Water is awesome but we don't want the peppers to float away... how about petting them instead?",
+									"Oh dear, these peppers are drenched! Any more water would be too much of a good thing.",
+									"If the peppers keep getting this much water, they're gonna need an umbrella!",
+									"Water droplets look neat on a pepper's waxy peel, but too much and these guy will be in trouble..."
+									],
+							content:[
+									"That drink really helped, the peppers feel better already!",
+									"The peppers sure look refreshed! Way to beat the heat.",
+									"The peppers are super appreciative. If they could send you a drink in return, they would!",
+									"Thanks for helping the peppers stay crisp!",
+									"Look at those water works! Nice job!",
+									"The peppers love you for giving them a shower. They were really thirsty until you came along!",
+									"Thanks! Nothing beats a cool splash of water on a hot summer day.",
+									"Excellent water-wielding skills. I knew you could do it!",
+									"Great watering job, you must have done this before!",
+									"Thanks for keeping the peppers hydrated! You are a big help!"
+								],
+							low:[
+									"It's like a desert over here; come water these peppers before they shrivel up!",
+									"Hey you! Yeah, you. These peppers need some water, can you help?",
+									"Can you water these peppers please? They'd do it themselves, but they don't have arms...",
+									"If it gets any drier over here, these peppers are going to become parched!",
+									"These pepper plants sure look dry! Can you send some water their way?",
+									"Boy, are these peppers parched... come quench their thirst!",
+									"These peppers could sure use a shower; trust me, I'm standing right next to them!",
+									"Show the peppers you care – give them some good ol' H20. They'll thank you for it.",
+									"Peppers need water to grow. Can you help them out on this hot day?",
+									"Pepper flakes are great on pizza but not in a garden. Send 'em some water before they dry out too much!"
+							]
+				},
+				touches:{
+					high:[
+						"Peppers like to be pet, but it looks like they need some 'me time' right now. Why not give the celery a little attention?",
+						"Careful, if the peppers get too worked-up they're going to fall off the stalk! Let's spread the love around a bit.",
+						"It's time for the peppers to get their beauty rest. Come back soon!",
+						"The peppers need to focus on growing right now. Can you play with the other veggies for a bit?",
+						"Peppers love attention, but so do the rest of the veggies! Pay the celery a visit before it gets too jealous...",
+						"Looks like you guys are getting along great. I bet the other veggies would love to meet you too!",
+						"All of the hustle and bustle can be overwhelming for peppers. They need to relax for a bit… be sure to come back later!",
+						"Sounds like these peppers need to calm down a little. Can you give the other veggies some attention?",
+						"The peppers are getting tuckered out. Want to play with some other veggies?",
+						"Looks like the peppers need to mellow out a little. Can you go say 'hi' to other veggies in the garden?",
+						"This pepper thinks it recognizes you... does it ring a bell?"
+					],content:[
+						"Awww, the peppers are loving that! Thanks for entertaining them.",
+						"You're a great playmate; hope you visit the garden every day!",
+						"Wow, you've got the magic touch! Keep it up!",
+						"Perfect job, you're a natural!",
+						"You guys are getting along so well! Were you a pepper in your past life?",
+						"The peppers are really digging all this attention. Thanks!",
+						"Who knew that veggies could be such fun friends?",
+						"You're making the peppers so happy! Great job!",
+						"Holy cow, you're like, the pepper whisperer. Teach me your ways!",
+						"You sure seem to know what peppers like! Thank goodness you're here.",
+						"Thanks for joining the pep rally! These guys sure have spirit!"
+					],
+					low:[
+						"The peppers are working hard to grow big and tangy. Give them a high five for their efforts!",
+						"Greetings from the garden! Come on over, it looks like the tomatoes would love to meet you.",
+						"Get in touch with nature. Literally! See what happens when you pet these peppers...",
+						"You seem like a veggie lover. Can you hang out with them for a sec?",
+						"Did you know that peppers are extremely ticklish? Don't believe me? Try it and see!",
+						"Help these pepper plants grow big and tall: give 'em a pinch to grow an inch!",
+						"This pepper has an itch it can't scratch. Can you help out?",
+						"It's time to wake these peppers up from their nap. Can you give 'em a poke?",
+						"Don't be a stranger – introduce yourself to these peppers with a tiny handshake!",
+						"Seems like you would get along with these peppers. Come on over and meet 'em! They love being social.",
+						"Plant your feet right here, these peppers want to spend some time with you!",
+						"These peppers feel hollow on the inside. Would you cheer them up?"
+					]
+				}
+			},
+			celery:{
+				moisture:{
+					high:[],content:[],low:[]
+				},
+				touches:{
+					high:[],content:[],low:[]
+				}
+			},
+			carrots:{
+				moisture:{
+					high:[],content:[],low:[]
+				},
+				touches:{
+					high:[],content:[],low:[]
+				}
+			},
+			beets:{
+				moisture:{
+					high:[],content:[],low:[]
+				},
+				touches:{
+					high:[],content:[],low:[]
+				}
+			}
 };
