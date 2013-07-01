@@ -106,8 +106,7 @@ $('.device-table > tbody > tr').live('click', function() {
 });
 
 $('input[type=text]').live('change', function() {
-	var id = $(this).parents('[id$=plants]').attr('id');
-	var device_id = id.substring(0, 24);
+	var device_id = $(this).parents('[id$=plants]').attr('id').substring(0, 24);
 
 	var data = {
 		device_id: device_id,
@@ -152,8 +151,7 @@ $('.toggle-device-active').live('click', function() {
 
 $('.toggle-sensor-active').live('click', function() {
 
-	var id = $(this).parents('[id$=plants]').attr('id');
-	var device_id = id.substring(0, 24);
+	var device_id = $(this).parents('[id$=plants]').attr('id').substring(0, 24);
 	var sensor = $(this).attr('data-sensor');
 
 	var button = this;
