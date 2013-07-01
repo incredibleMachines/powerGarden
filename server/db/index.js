@@ -145,8 +145,8 @@ DB.prototype.calcDeviceMood = function(message,connection,results,_db){
 			if(res.moisture.active==true){
 				//affects mood
 				if(avgResults.moisture>res.moisture.low && avgResults.moisture < res.moisture.high) mood.moisture='content';
-				else if(avgResults.moisture<res.moisture.low) mood.moisture='dry';
-				else if(avgResults.moisture>res.moisture.high) mood.moisture='wet';
+				else if(avgResults.moisture<res.moisture.low) mood.moisture='low';
+				else if(avgResults.moisture>res.moisture.high) mood.moisture='high';
 				
 			}				
 			_db.processMood(message,connection,mood,_db);
@@ -191,37 +191,51 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 				}
 			}
 			
-			//check which value is most prevelant 
-			if(touchesMood.worked_up > Object.keys(touchesMood).length){
-				//a large number of plants are worked up
+			if(touchesMood.worked_up > touchesMood.lonely && touchesMood.worked_up > touchesMood.content ){
 				console.log("WORKED UP");
-			}
-			if(touchesMood.lonely > Object.keys(touchesMood).length){
-				//Large Number of plants are lonely
+				mood.touches = 'high';
+
+			}else if(touchesMood.lonely > touchesMood.worked_up && touchesMood.lonely > touchesMood.content){
 				console.log("LONELY");
-			}if(touchesMood.content > Object.keys(touchesMood).length){
-				//Large Number of plants are lonely
+				mood.touches = 'low';
+
+			}else if(touchesMood.content >touchesMood.worked_up && touchesMood.content > touchesMood.lonely ){
 				console.log("CONTENT");
+				mood.touches='content';
+			}else if(touchesMood.worked_up>0 && (touchesMood.worked_up == touchesMood.content || touchesMood.worked_up == touchesMood.lonely)){
+				console.log("WORKED UP");
+				mood.touches = 'high';
+				
+			}else if(touchesMood.lonely >0 && touchesMood.lonely == touchesMood.content){
+				console.log("LONELY");
+				mood.touches = 'low';
+
 			}
-			
-			console.log(Object.keys(touchesMood).length)
-			console.log(touchesMood);
+			var update = {$set: {mood: mood}} ;
+			console.log(update);
+			devicesDb.update({_id:device.device_id},update, function(err){ 
+						console.log('updated'); 
+						if(err)console.error(err);
+					});
+			//console.log(Object.keys(touchesMood).length)
+			console.log("[TOUCHES MOOD]".debug+" "+JSON.stringify(touchesMood).data);
+			var resp = {};
+			resp.device_id = message.device_id;
+			if(message.plant_type) resp.plant_type = message.plant_type;
+			resp.mood = mood;
+			resp.message="Show this message - ";
+			var time = new Date();
+			resp.message+=time;
+			console.log(JSON.stringify(resp));
+			connection.socket.emit('update',resp);
+			//signal device with mood and updated text
 		});
 		
 	});
 	
 
 	
-	var resp = {};
-	resp.device_id = message.device_id;
-	if(message.plant_type) resp.plant_type = message.plant_type;
-	resp.mood = mood;
-	resp.message="Show this message - ";
-	var time = new Date();
-	resp.message+=time;
-	console.log(JSON.stringify(resp));
-	connection.socket.emit('update',resp);
-	//signal device with mood and updated text
+
 	
 	
 	
@@ -314,7 +328,7 @@ DB.prototype.assignPlantData = function(result,connection){
 DB.prototype.plantTouch = function(message,connection){
 	
 	//May need to create dual index of device_id & plant index
-	var obj = {device_id: new BSON.ObjectID(String(message.device_id)), index: message.plant_index };
+	var obj = {device_id: new BSON.ObjectID(String(message.device_id)), index: message.plant_index, cap_val: message.cap_val };
 	//console.log("[PLANT TOUCH] ".info +JSON.stringify(obj));
 
 	var json = {$inc : {touch: 1}};
@@ -343,8 +357,8 @@ DB.prototype.plantTouch = function(message,connection){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-DB.prototype.checkPlantTouches=function(obj,connection, signalToDevice, _db ){
-	
+DB.prototype.checkPlantTouches = function(obj,connection, signalToDevice, _db ){
+
 	var TouchThreshold =10;
 	var minutes =1;
 	var time = new Date();
@@ -357,23 +371,26 @@ DB.prototype.checkPlantTouches=function(obj,connection, signalToDevice, _db ){
 		
 		var json = {};
 		if(count == 0){
-			console.log("[PLANT STATE]".info+" Lonely ".warn+count);
+			console.log("[PLANT STATE]".info+" Lonely ".warn+count+"\t\t [DEVICE ID]".help+" %s".data,obj.device_id);
 			json.mood = "lonely";
 		}else if(count != 0 && count < TouchThreshold){
-			console.log("[PLANT STATE]".info+" Content ".debug+count);
+			console.log("[PLANT STATE]".info+" Content ".debug+count+"\t\t [DEVICE ID]".help+" %s".data,obj.device_id);
 			json.mood = "content";
 		}else if(count > TouchThreshold){
-			console.log("[PLANT STATE]".info+" Worked Up ".error+count);
+			console.log("[PLANT STATE]".info+" Worked Up ".error+count+"\t\t [DEVICE ID]".help+" %s".data,obj.device_id);
 			json.mood = "worked_up";
-		}				
+		}		
+				
 		
-		// json.mood=mood;
+		//json.mood=mood;
 		json.plant_index=obj.index;
 		plantsDb.update({ device_id: obj.device_id, index: obj.index }, {$set:json}, function(err, res) {
 			if (err) console.error(err);
 		});
 		
-		if(signalToDevice==true) connection.socket.emit('touch', json);
+		if(signalToDevice==true) {	//console.log(json);
+									connection.socket.emit('touch', json);
+									}
 	
 	});
 	
@@ -402,7 +419,7 @@ DB.prototype.createPlant = function(message,connection,plant_index,_db){
 /* ******************************************************************************************* */
 
 DB.prototype.logDevice = function(message,connection,_db){
-	var obj = {date: new Date(), plants: [], type: message.plant_type, active: true};
+	var obj = {date: new Date(), plants: [], type: message.plant_type, active: true, mood: 'born'};
 	devicesDb.insert(obj, {safe:true}, function(err,doc){
 		if(err) console.error(err); //throw err;
 		

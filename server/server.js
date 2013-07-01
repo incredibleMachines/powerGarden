@@ -52,13 +52,13 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	socket.on('update', function (msg) {
-	    console.log('[INBOUND REQUEST]'.help+' [UPDATE] '.help + JSON.stringify(msg).input);
+	    console.log('[INBOUND REQUEST]'.warn+' [UPDATE] '.help + JSON.stringify(msg).input);
 	    database.routeUpdate(msg,connection);
 	  
 	});
 	
 	socket.on('touch',function(msg){
-		console.log('[INBOUND REQUEST]'.help+' [TOUCH] '.info + JSON.stringify(msg).input);
+		console.log('[INBOUND REQUEST]'.warn+' [TOUCH] '.info + JSON.stringify(msg).input);
 		database.plantTouch(msg,connection);
 		  
 	});
