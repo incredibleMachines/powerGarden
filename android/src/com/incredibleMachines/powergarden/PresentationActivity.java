@@ -1,14 +1,15 @@
 package com.incredibleMachines.powergarden;
 
+import java.util.HashMap;
+
 import com.incredibleMachines.powergarden.R.color;
 import com.incredibleMachines.powergarden.util.SystemUiHider;
 import com.victorint.android.usb.interfaces.Connectable;
-import com.victorint.android.usb.interfaces.Viewable;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,39 +28,25 @@ import android.widget.TextView;
  * @see SystemUiHider
  */
 public class PresentationActivity extends UsbActivity implements Connectable{
-	/**
-	 * Whether or not the system UI should be auto-hidden after
-	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-	 */
-	private static final boolean AUTO_HIDE = true;
 
-	/**
-	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-	 * user interaction before hiding the system UI.
-	 */
+	private static final boolean AUTO_HIDE = true;			//show/hide menu vars
 	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-	/**
-	 * If set, will toggle the system UI visibility upon interaction. Otherwise,
-	 * will show the system UI visibility upon interaction.
-	 */
 	private static final boolean TOGGLE_ON_CLICK = true;
-
-	/**
-	 * The flags to pass to {@link SystemUiHider#getInstance}.
-	 */
 	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
-
-	/**
-	 * The instance of the {@link SystemUiHider} for this activity.
-	 */
 	private SystemUiHider mSystemUiHider;
 	
 	private static String TAG = "PresentationActivity";
+	
 	SocketManager SM;
 	
 	FrameLayout wrapper;
 	TextView plantCopy;
+	
+	//SOUNDPOOL STUFFS
+	private SoundPool soundPool;
+	private HashMap<Integer, Integer> soundsMap;
+	int SOUND1=1;
+	int SOUND2=2;
 	
 	@Override
 	public void onResume(){
@@ -373,6 +360,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		//set up websockets
 		findViewById(R.id.setup_sockets_button).setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v){
+				currentViewable_.setState("debugServer");
 				Intent setupSockets = new Intent(getApplicationContext(), ConnectSockets.class);
 				PresentationActivity.this.startActivity(setupSockets);
 			}
