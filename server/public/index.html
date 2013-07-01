@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="socket.io/socket.io.js"></script>
+		<script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+		<script>
+			var connections = [];
+
+			function populate(connection_id,device_id){
+				
+					if( $.inArray(device_id, connections) == -1 ){
+						connections.push(device_id);
+						
+						var html = '<section class="client-'+connection_id+'" data-connection="'+connection_id+'" data-device="'+device_id+'">';
+						html+= '<h4>Device ID:</h4>';
+						html+= '<p>'+device_id+'</p>';
+						html+= '</section>';
+						
+						$('body').append(html);
+					}
+			}
+		
+		
+			$(document).ready(function(){
+				var socket = io.connect('http://localhost:8080');
+				socket.on('init', function(data){
+
+					populate(data.connection_id,data.device_id);
+					
+				});
+				socket.on('device_conn', function(data){
+				
+					populate(data.connection_id,data.device_id);
+
+				});
+				
+				socket.on('device_disconn',function(data){
+					console.log(data);
+					console.log(connections);
+					$('.client-'+data.connection_id).remove();
+					for(var i = 0; i< connections.length;i++){
+						if(connections[i]== data.device_id){
+							//connections[i]
+							connections.splice(i,1);
+							break;
+						}
+					}
+					console.log(connections);
+				});
+				
+				
+			});
+		</script>
+	</head>
+	<body>
+	
+	</body>
+</html>
