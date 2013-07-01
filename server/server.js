@@ -2,7 +2,7 @@
 /* Pull in required modules						 								 			   */
 /* ******************************************************************************************* */
 
-var io = require('socket.io').listen(9001).set('log level', 2);
+var io = require('socket.io').listen(9000).set('log level', 2);
 var DB = require('./db/index');
 var pgtwitter = require('./pgtwitter/index');
 var colors = require('colors');
@@ -39,7 +39,7 @@ var browsers = {};
 
 
 //Connect to twitter, pass callback for responding to tweets
-pgtwitter.start(twitterCallback);
+//pgtwitter.start(twitterCallback);
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -67,7 +67,11 @@ browserio.sockets.on('connection',function(browserSocket){
 		browserSocket.emit('init', {connection_id: clients[key]['id'], device_id: clients[key]['device_id']});	
 	}
 	//browserSocket.emit('init', clients);
-
+	browserSocket.on('update_touch',function(msg){
+		console.log(msg);
+		clients['client-'+msg.connection_id].socket.emit('control',msg);
+		
+	});
 	
 	browserSocket.on('disconnect',function(){
 		delete browsers['browser'+browserConnection.id];

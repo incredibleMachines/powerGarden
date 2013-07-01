@@ -6,7 +6,7 @@
 		<script>
 			var connections = [];
 
-			function populate(connection_id,device_id){
+			function populate(connection_id,device_id,socket){
 				
 					if( $.inArray(device_id, connections) == -1 ){
 						connections.push(device_id);
@@ -14,10 +14,36 @@
 						var html = '<section class="client-'+connection_id+'" data-connection="'+connection_id+'" data-device="'+device_id+'">';
 						html+= '<h4>Device ID:</h4>';
 						html+= '<p>'+device_id+'</p>';
+						
+						for(var i = 0; i<8; i++){
+							html+= '<article> <p>Plant '+i+'</p>';
+							html+= '<p><input class="plant-'+i+' slider client-'+connection_id+'" type="range" data-plant_index="'+i+'" min="0" max="15000"/></p>';
+							html+= '<p class="value">7500</p>'
+							html+= '</article>';
+							
+						}
+
+						html+= '<button class="send client-'+connection_id+'" type="button">Send</button>';
 						html+= '</section>';
 						
-						$('body').append(html);
+						$('body').append(html);	
+						$('input.slider.client-'+connection_id).on( "change",function(){
+							//console.log('slide');
+							var val = $(this).val();
+							$(this).parent().parent().find('.value').html(val);
+							var connection = $(this).parent().parent().parent().data('connection');
+							var device = $(this).parent().parent().parent().data('device');
+							var plant = $(this).data('plant_index');
+							var json = { value:val, connection_id:connection, device_id:device, plant_index: plant};
+							//console.log(json);
+							socket.emit('update_touch', json);
+						});
+						
+						$('button.send.client-'+connection_id).on( "click", function(){ 
+							console.log('here'); 
+						});					
 					}
+					
 			}
 		
 		
@@ -25,12 +51,12 @@
 				var socket = io.connect('http://localhost:8080');
 				socket.on('init', function(data){
 
-					populate(data.connection_id,data.device_id);
+					populate(data.connection_id,data.device_id,socket);
 					
 				});
 				socket.on('device_conn', function(data){
 				
-					populate(data.connection_id,data.device_id);
+					populate(data.connection_id,data.device_id,socket);
 
 				});
 				
@@ -47,7 +73,6 @@
 					}
 					console.log(connections);
 				});
-				
 				
 			});
 		</script>
