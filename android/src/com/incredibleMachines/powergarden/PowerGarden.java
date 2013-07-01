@@ -44,7 +44,7 @@ public class PowerGarden {
 		static String deviceMood;
 		static String messageCopy = plantType;
 		static int distanceThreshold; //distance at which we'll send a PING to server
-		static boolean datastream_mode = false;
+		static boolean datastream_mode = false; //when this is true, we will stream all data as it comes in, to server.
 	}
 	
 	//--- global socket vars

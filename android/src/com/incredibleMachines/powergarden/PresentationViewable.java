@@ -170,7 +170,8 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 									!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
 										//if(!plants[i].triggered){ 
 									PowerGarden.Device.plants[i].triggered = true;
-									sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i));
+									//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i));
+									PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
 									if(i==7){
 										mp = MediaPlayer.create(activity_.getApplicationContext(), R.raw.laugh_1);
 										mp.start();

@@ -69,6 +69,7 @@ void readCapSense(){
       capDiff[i] = abs(capRead[i] - capThresholdMap[i]);
 
       if(debug==true){
+        
         //                    Serial.print("Plant ");
         //                   Serial.print(plant_num);
         //                    Serial.print(" was TOUCHED with a val of ");

@@ -154,7 +154,7 @@ void setup(){
   send_moisture_every = 60000;  
   read_temphum_every = 2000;
   send_temphum_every = 60000;
-  send_out_every = 2500;
+  send_out_every = 45000;
 
   pinMode(13, OUTPUT);
 

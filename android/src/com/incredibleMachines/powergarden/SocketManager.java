@@ -49,11 +49,11 @@ public class SocketManager implements  IOCallback {
 			}
 	}
 	
-	public void plantTouch(String type, String device_id, int plant_index, Connectable _callback){
+	public void plantTouch(String type, String device_id, int plant_index, int cap_val, Connectable _callback){
 		callbackActivity = _callback;
 		try{
 			socket.emit(type, 
-					new JSONObject().put("device_id", device_id).put("plant_index", plant_index)
+					new JSONObject().put("device_id", device_id).put("plant_index", plant_index).put("cap_val", cap_val)
 					);
 			
 		}catch(Exception e){
@@ -192,7 +192,7 @@ public class SocketManager implements  IOCallback {
 				callbackActivity.signalToUi(PowerGarden.Touched, PowerGarden.Device.ID);
 			}
 			
-			//**** control message ****//
+			//**** control message ****  *** FUTURE ***//
 			else if(event.equals("control")){
 				//https://docs.google.com/a/incrediblemachines.net/document/d/1ue7jnC6fR7SFgvZNny9MtHGbP_Sm8F-FrgUELhT9OKo/edit
 				if(j.has("distance_thresh")){

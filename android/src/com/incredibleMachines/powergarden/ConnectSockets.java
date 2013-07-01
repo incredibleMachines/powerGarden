@@ -110,7 +110,7 @@ public class ConnectSockets extends Activity implements Connectable {
            mSendTouch.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 	        	   //PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );
-	        	   PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, (int) (Math.random()*8), ConnectSockets.this );
+	        	   PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, (int) (Math.random()*8), (int) (Math.random()*2500), ConnectSockets.this );
 			}
            });
            
