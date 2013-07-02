@@ -2,10 +2,7 @@ package com.incredibleMachines.powergarden;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.widget.TextView;
 
 public class PowerGarden {
 
@@ -22,10 +19,12 @@ public class PowerGarden {
 	public static int[] cherryTomatoesAudio = new int [numSounds];
 	public static boolean audioLoaded = false;
 	
+	
 	//--- shared preferences
 	public static SharedPreferences mSettings;
 	SharedPreferences.Editor editor = PowerGarden.mSettings.edit();
 	private static final String PREFS_NAME = "PowerGarden";
+	
 	public static void loadPrefs(Context context){
 		mSettings = context.getSharedPreferences(PREFS_NAME, 0);
 	}
@@ -45,7 +44,7 @@ public class PowerGarden {
 		static String connectionID;
 		static int PlantNum = 8;
 		static String plantType = "Cherry Tomatoes"; //should be populated by prefs	
-		static PlantObject plants[] = new PlantObject[8];
+		static PlantObject plants[] = new PlantObject[PlantNum];
 		static String host;
 		static String port;
 		static String deviceMood;
@@ -63,14 +62,18 @@ public class PowerGarden {
 	public static int Updated = 94;
 	public static int MessageUpdated = 95;
 	public static int Touched = 96;
+	public static int ThreshChange = 97;
+	public static int StreamModeUpdate = 98;
+	public static int PlantIgnore = 99;
+	public static int Unrecognized = 100;
 	public static String serverResponseRaw;
 
 	//--- global sensors
-	public static int temp;
-	public static int hum;
-	public static int light;
-	public static int moisture;
-	public static int distance;
+	public static int temp = 0;
+	public static int hum = 0;
+	public static int light = 0;
+	public static int moisture = 0;
+	public static int distance = 0;
 	
 	//--- app status
 	public static boolean bAudioPlaying = false;

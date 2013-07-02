@@ -1,6 +1,5 @@
 package com.incredibleMachines.powergarden;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import org.json.JSONException;
@@ -10,18 +9,14 @@ import com.victorint.android.usb.interfaces.Connectable;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.app.Activity;
-import android.content.SharedPreferences;
 
 public class ConnectSockets extends Activity implements Connectable {
 	   private static final String TAG = "ConnectSocketsView";
@@ -40,16 +35,16 @@ public class ConnectSockets extends Activity implements Connectable {
 	   
 	   static LinearLayout mLinearLayout;
 
-	   private void alert(String message) {
-	      Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-	      toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
-	      toast.show();
-	   }
+//	   private void alert(String message) {
+//	      Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+//	      toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
+//	      toast.show();
+//	   }
 
 	   private void loadPrefs() {
 
-	      mHostname.setText(PowerGarden.getPrefString("hostname", "192.168.1.0"));
-	      mPort.setText(PowerGarden.getPrefString("port", "9001"));
+	      mHostname.setText(PowerGarden.getPrefString("hostname", "192.168.0.0"));
+	      mPort.setText(PowerGarden.getPrefString("port", "9000"));
 	      
 	      //if(PowerGarden.getPrefString("deviceID", "set_id") != null){
 	      mID.setText(PowerGarden.getPrefString("deviceID", "set_id"));
@@ -159,8 +154,8 @@ public class ConnectSockets extends Activity implements Connectable {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connect_sockets);
 		Log.d(TAG, "ConnectSockets Start");
-		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		final View contentView = findViewById(R.id.fullscreen_content);
+		//final View controlsView = findViewById(R.id.fullscreen_content_controls);
+		//final View contentView = findViewById(R.id.fullscreen_content);
 		
 	    mHostname = (EditText) findViewById(R.id.hostname);
 	    mPort = (EditText) findViewById(R.id.port);
@@ -265,8 +260,41 @@ public class ConnectSockets extends Activity implements Connectable {
 				}
 			};
 		}
+
+		else if(type == PowerGarden.ThreshChange){
+			Log.d(TAG, "from SignalToUi > type .ThreshChange");
+			final Object _d = data;
+			myrun = new Runnable(){
+				public void run(){
+					mStatusline.setText("server says THRESHOLD UPDATE "+_d.toString()+"\n\n"+PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};
+		}
 		
-		else { //impossibility?
+		else if (type == PowerGarden.StreamModeUpdate){
+			final int type_ = type;
+			myrun = new Runnable(){
+				
+				public void run(){
+					mStatusline.setText("server says STREAM MODE UPDATE\n\n " + Integer.toString(type_) + " : "+PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};			
+		}
+		
+		else if (type == PowerGarden.PlantIgnore){
+			final int type_ = type;
+			myrun = new Runnable(){
+				
+				public void run(){
+					mStatusline.setText("server says PLANT IGNORE\n\n " + Integer.toString(type_) + " : "+PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};			
+		}
+		
+		else if(type == PowerGarden.Unrecognized){ //impossibility?
 			final int type_ = type;
 			myrun = new Runnable(){
 				

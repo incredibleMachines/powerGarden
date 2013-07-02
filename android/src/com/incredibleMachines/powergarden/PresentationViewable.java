@@ -1,39 +1,24 @@
 package com.incredibleMachines.powergarden;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.webkit.WebView.FindListener;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.lang.reflect.Field;
-import java.util.*;
 
 import com.incredibleMachines.powergarden.R.color;
 import com.victorint.android.usb.interfaces.Connectable;
 import com.victorint.android.usb.interfaces.Viewable;
 
-import android.media.SoundPool.OnLoadCompleteListener;
-import android.media.AudioManager;
-import android.media.SoundPool;
 
 public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeListener, Connectable {
 	private static String TAG = "PresentationViewable";
@@ -41,14 +26,10 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 	private PresentationActivity activity_;
 	private int messageLevel_			= 22;
 	
-    TextView plant1Label;
-    TextView plant2Label;
-    TextView plant3Label;
-   
-    TextView plantValView[] = new TextView[8];
-    
-    SeekBar threshBar[] = new SeekBar[8];    
-    int threshVal[] = new int[8];
+    TextView plantValView[] = new TextView[PowerGarden.Device.PlantNum];
+    SeekBar threshBar[] = new SeekBar[PowerGarden.Device.PlantNum];    
+    int threshVal[] = new int[PowerGarden.Device.PlantNum];
+    TextView threshBarTextView[] = new TextView[PowerGarden.Device.PlantNum];
     
     TextView lightval;
     TextView distanceval;
@@ -57,12 +38,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     TextView moistval;
     
     TextView plantCopy;
-//
-//    Typeface italiaBook;
-//    Typeface interstateBold;
-    
-    int numPlants = 8;
-    
+  
     public boolean debugSensors = false;
     public boolean debugServer = false;
     
@@ -73,41 +49,88 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     boolean bHaveData = false;
     String gotData;
     
+    boolean bSetup = false;
+    void updateView(){
+    	Log.wtf(TAG, "update sensor View");
+//    	
+    	if(!bSetup)setupDebug();
     
+	    Runnable runner = new Runnable(){
+			public void run() {
+	//    	
+			//update debug window
+				for(int i=0; i<PowerGarden.Device.PlantNum; i++){
+					//PowerGarden.Device.plants[i].threshold = threshVal[i];
+//			    	try {
+//			    		Class res = R.id.class;
+//			    		String id = "bar"+Integer.toString(i+1)+"text";
+//			    		Field field = res.getField(id);
+//						int resId = field.getInt(null);
+//						TextView threshBarText = (TextView)activity_.findViewById(resId);
+//						threshBarText.setText(Integer.toString(threshVal[i]));
+//						PowerGarden.savePref("threshVal_"+Integer.toString(i), Integer.toString(threshVal[i])); //set the thresh to sharedPref
+//						
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					} 
+			    	try {
+			    		Class res = R.id.class;
+			    		String id = "bar"+Integer.toString(i+1)+"text";
+			    		Field field = res.getField(id);
+						int resId = field.getInt(null);
+						threshBarTextView[i] = (TextView)activity_.findViewById(resId);
+						threshBarTextView[i].setText(Integer.toString(PowerGarden.Device.plants[i].threshold));
+						PowerGarden.savePref("threshVal_"+Integer.toString(i), Integer.toString(PowerGarden.Device.plants[i].threshold));
+						//PowerGarden.savePref("plantIgnore_"+Integer.toString(i), Integer.toString(PowerGarden.Device.plants[i].threshold));
+						
+						final int thisOne = i;	
+						if (PowerGarden.Device.plants[thisOne].enabled){
+							plantValView[thisOne].setTextColor(color.darkgrey);
+							threshBarTextView[thisOne].setTextColor(Color.RED);
+						}
+						else {
+							threshBarTextView[thisOne].setTextColor(Color.WHITE);
+							plantValView[thisOne].setTextColor(Color.WHITE);
+						}
+						
+												
+						threshBarTextView[i].setOnClickListener(new TextView.OnClickListener(){
+							@Override
+							public void onClick(View v) {
+								PowerGarden.Device.plants[thisOne].enabled = !PowerGarden.Device.plants[thisOne].enabled;
+								PowerGarden.savePref("plantEnabled_"+Integer.toString(thisOne), String.valueOf(PowerGarden.Device.plants[thisOne].enabled)); //set the thresh to sharedPref
+								if (!PowerGarden.Device.plants[thisOne].enabled){
+									threshBarTextView[thisOne].setTextColor(Color.RED);
+									plantValView[thisOne].setTextColor(color.darkgrey);
+								}
+								else { 
+									threshBarTextView[thisOne].setTextColor(Color.WHITE);
+									plantValView[thisOne].setTextColor(Color.WHITE);
+								}
+								threshBar[thisOne].setEnabled(PowerGarden.Device.plants[thisOne].enabled);
+							}
+						});
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					} 
+					//threshBar[i].setProgress(PowerGarden.Device.plants[i].threshold);
+					//threshBarTextView[i].setText(PowerGarden.Device.plants[i].threshold);
+				}
+			}
+    	};
+		//if(runner != null){
+			activity_.runOnUiThread(runner);
+		//}
+    }
+    
+
+    
+    //boolean
 	@Override
 	public void signalToUi(int type, Object data) {
-
-		if(debugSensors){
-		    plantValView[0] = (TextView) activity_.findViewById(R.id.arduino_value_1);
-		    plantValView[1] = (TextView) activity_.findViewById(R.id.arduino_value_2);
-		    plantValView[2] = (TextView) activity_.findViewById(R.id.arduino_value_3);
-		    plantValView[3] = (TextView) activity_.findViewById(R.id.arduino_value_4);
-		    plantValView[4] = (TextView) activity_.findViewById(R.id.arduino_value_5);
-		    plantValView[5] = (TextView) activity_.findViewById(R.id.arduino_value_6);
-		    plantValView[6] = (TextView) activity_.findViewById(R.id.arduino_value_7);
-		    plantValView[7] = (TextView) activity_.findViewById(R.id.arduino_value_8);
-		    
-		    lightval = (TextView) activity_.findViewById(R.id.lightval);
-		    distanceval = (TextView) activity_.findViewById(R.id.distanceval);
-		    tempval = (TextView) activity_.findViewById(R.id.tempval);
-		    humval = (TextView) activity_.findViewById(R.id.humval);
-		    moistval = (TextView) activity_.findViewById(R.id.moistval);
-		    
-		    for (int i=0; i<threshBar.length; i++){
-		    	try {
-		    		Class res = R.id.class;
-		    		String id = "seekBar"+Integer.toString(i+1);
-		    		Field field = res.getField(id);
-					int resId = field.getInt(null);
-					threshBar[i] = (SeekBar) activity_.findViewById(resId);
-					threshBar[i].setOnSeekBarChangeListener(this);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-		    }
-		} 
-	    
+		
+		
 		// TODO Auto-generated method stub
 		if (type == Viewable.BYTE_SEQUENCE_TYPE) {
     		if (data == null || ((byte[]) data).length == 0) {
@@ -117,7 +140,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     		gotData = new String(byteArray);
     		Log.d(TAG, "Byte DATA: "+gotData);
     		bHaveData = true;
-		}else if (type == Viewable.CHAR_SEQUENCE_TYPE) {
+		} else if (type == Viewable.CHAR_SEQUENCE_TYPE) {
     		if (data == null || ((CharSequence) data).length() == 0) {
     			return;
     		}
@@ -132,18 +155,19 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
     		}
     		final CharSequence tmpData = (CharSequence) data;
     		Log.d(TAG, "Debug DATA: "+tmpData.toString());
-    	}
+    	} 
+		
+		//--- we got arduino data
 		if(bHaveData){
 			String[] parseData = gotData.split(",");
 			String dataType = new String(parseData[0]);
 			Log.d(TAG, "GOT DATA MODE = "+dataType);
-	//		for(int i=0; i<parseData.length; i++){
-	//			Log.d(TAG, "Data: "+ parseData[i]);
-	//		}
-			//Log.d(TAG, "Is is equal? "+(dataType.equalsIgnoreCase("c")));
-			if(dataType.equalsIgnoreCase("c")){
+
+			if(dataType.equalsIgnoreCase("c")){ /** capacitance touch received from arduino **/
 	
 				final int plantDisplay[] = new int [8];
+				
+				updateView(); //quick refresh of all PowerGarden.statics
 				
 				for(int i = 0; i<parseData.length-1; i++){
 					PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
@@ -151,41 +175,48 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 					//Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
 				}
 	
-			    if(debugSensors){
+			    //if(debugSensors){
 			    	//Log.d(TAG, "Should be debug");
 					Runnable runner = new Runnable(){
 						public void run() {
 							for(int i =0;i<PowerGarden.Device.plants.length;i++){
-								if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){ //if we've hit trigger time max
-									PowerGarden.Device.plants[i].triggered = false;
-								}
 								
-								if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
-									!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
+								if(PowerGarden.Device.plants[i].enabled){ //only if this plant is enabled
 									
-									PowerGarden.Device.plants[i].triggered = true;
+									if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){ //if we've hit trigger time max
+										PowerGarden.Device.plants[i].triggered = false;
+									}
 									
-									//play correct sound for this plant here
-									activity_.playAudio(i); //right now just a single array of "cherrytomato_audio[i]"
+									if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
+										!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
+										
+										PowerGarden.Device.plants[i].triggered = true;
+										
+										//play correct sound for this plant here
+										activity_.playAudio(i); //right now just a single array of "cherrytomato_audio[i]"
+										
+										//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
+										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
+										PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
+									}
 									
-									//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
-									PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
-									PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
+									plantValView[i].setText(String.valueOf(plantDisplay[i]));
+									
+									
+									if(PowerGarden.Device.datastream_mode == true) //this might be getting crazy
+										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
+									
+									if(PowerGarden.Device.plants[i].triggered) {
+										plantValView[i].setTextColor(Color.GREEN);
+									} else plantValView[i].setTextColor(Color.WHITE);
 								}
-								
-								plantValView[i].setText(String.valueOf(plantDisplay[i]));
-								if(PowerGarden.Device.datastream_mode == true) //this might be getting crazy
-									PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
-								if(PowerGarden.Device.plants[i].triggered) {
-									plantValView[i].setTextColor(Color.GREEN);
-								} else plantValView[i].setTextColor(Color.WHITE);
 							}
 						}
 					};
 					if(runner != null){
 						activity_.runOnUiThread(runner);
 					}
-			    }
+			    //}
 			}else if(dataType.equalsIgnoreCase("L")){
 				PowerGarden.light = Integer.parseInt(parseData[1]);
 				//createJson("light",PowerGarden.light);
@@ -279,7 +310,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 			    }
 			}
 			else{
-				Log.d(TAG, "RECEIVED ARDUINO DATA MISMATCH");
+				Log.e(TAG, "RECEIVED ARDUINO DATA MISMATCH");
 			}
 		}
 	}
@@ -317,15 +348,82 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 		// TODO Auto-generated method stub
 
 	}
+
 	
 	public void setupDebug(){
+		Log.d(TAG, "setupDebug");
+		//--- setup plant value views
+		for(int i=0; i<PowerGarden.Device.PlantNum; i++){
+	    	try {
+	    		Class res = R.id.class;
+	    		String id = "arduino_value_"+Integer.toString(i+1);
+	    		Field field = res.getField(id);
+				int resId = field.getInt(null);
+				plantValView[i] = (TextView) activity_.findViewById(resId);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+	    	try {
+	    		Class res = R.id.class;
+	    		String id = "bar"+Integer.toString(i+1)+"text";
+	    		Field field = res.getField(id);
+				int resId = field.getInt(null);
+				threshBarTextView[i] = (TextView)activity_.findViewById(resId);
+				//threshBarTextView[i].setText(Integer.toString(PowerGarden.Device.plants[i].threshold));
+				
+				if (!PowerGarden.Device.plants[i].enabled){
+					threshBarTextView[i].setTextColor(Color.RED);
+					plantValView[i].setTextColor(color.darkgrey);
+				}
+				else { 
+					threshBarTextView[i].setTextColor(Color.WHITE);
+					plantValView[i].setTextColor(Color.WHITE);
+				}
+				threshBar[i].setEnabled(PowerGarden.Device.plants[i].enabled);
+				
+				final int thisOne = i;
+				threshBarTextView[i].setOnClickListener(new TextView.OnClickListener(){
+					@Override
+					public void onClick(View v) {
+						PowerGarden.Device.plants[thisOne].enabled = !PowerGarden.Device.plants[thisOne].enabled;
+						PowerGarden.savePref("plantEnabled_"+Integer.toString(thisOne), String.valueOf(PowerGarden.Device.plants[thisOne].enabled)); //set the thresh to sharedPref
+						if (!PowerGarden.Device.plants[thisOne].enabled){
+							threshBarTextView[thisOne].setTextColor(Color.RED);
+							plantValView[thisOne].setTextColor(color.darkgrey);
+						}
+						else { 
+							threshBarTextView[thisOne].setTextColor(Color.WHITE);
+							plantValView[thisOne].setTextColor(Color.WHITE);
+						}
+						threshBar[thisOne].setEnabled(PowerGarden.Device.plants[thisOne].enabled);
+					}
+				});
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
+		}
+
+		//--- setup sensor values
+	    lightval = (TextView) activity_.findViewById(R.id.lightval);
+	    //lightval.setText(Integer.toString(PowerGarden.light));
+	    distanceval = (TextView) activity_.findViewById(R.id.distanceval);
+	    //distanceval.setText(Integer.toString(PowerGarden.distance));
+	    tempval = (TextView) activity_.findViewById(R.id.tempval);
+	    //tempval.setText(Integer.toString(PowerGarden.temp));
+	    humval = (TextView) activity_.findViewById(R.id.humval);
+	    //humval.setText(Integer.toString(PowerGarden.hum));
+	    moistval = (TextView) activity_.findViewById(R.id.moistval);
+	    //moistval.setText(Integer.toString(PowerGarden.moisture));
+	    
+	    //--- setup buttons
 		closeDebug = (Button) activity_.findViewById(R.id.close);
 		closeDebug.setOnClickListener(new Button.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//activity_.setContentView(R.layout.activity_presentation);
 			    debugSensors = false;
 				activity_.resetView();
 			}
@@ -335,12 +433,12 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 
 			@Override
 			public void onClick(View v) {
-				//Log.d(TAG, "audioTest button hit");
 				int tempAudioFile = (int) (Math.random()*8);
 				activity_.playAudio(tempAudioFile);
 			}
 		});
 		
+		//--- setup threshBars
 		for(int i=0; i<threshBar.length; i++){
 	    	try {
 	    		Class res = R.id.class;
@@ -353,11 +451,13 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
+	    	//Log.d(TAG, PowerGarden.getPrefString("threshVal_"+Integer.toString(i),null));
 			if(PowerGarden.getPrefString("threshVal_"+Integer.toString(i), null) != null ){
 				int savedThresh = Integer.parseInt(PowerGarden.getPrefString("threshVal_"+Integer.toString(i), null));
 				threshBar[i].setProgress(savedThresh);
-			} else threshBar[i].setProgress(50);
+			} else threshBar[i].setProgress(1000);
 		}
+		bSetup = true;
 	}
 		
 	
@@ -373,7 +473,7 @@ public class PresentationViewable implements Viewable, SeekBar.OnSeekBarChangeLi
         	return;
         }
 		activity_ = (PresentationActivity) activity;
-		for(int i = 0; i<numPlants; i++){
+		for(int i = 0; i<PowerGarden.Device.PlantNum; i++){
 			PlantObject tempPlant = new PlantObject();
 			PowerGarden.Device.plants[i] = tempPlant;
 		}
