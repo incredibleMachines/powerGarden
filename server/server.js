@@ -126,6 +126,17 @@ io.sockets.on('connection', function (socket) {
 		  
 	});
 	
+	socket.on('threshold',function(msg){
+		msg.connection_id = connection.id;
+		browserio.sockets.emit('threshold',msg);
+		
+	});
+	
+	socket.on('stream',function(msg){
+		msg.connection_id = connection.id;
+		browserio.sockets.emit('stream',msg);
+	});
+	
 	socket.on('disconnect', function () {
 	  /* io.sockets.emit('user disconnected'); */
   	  

@@ -94,7 +94,7 @@
 				
 				socket.on('device_disconn',function(data){
 					console.log(data);
-					console.log(connections);
+					//console.log(connections);
 					$('.client-'+data.connection_id).remove();
 					for(var i = 0; i< connections.length;i++){
 						if(connections[i]== data.device_id){
@@ -103,8 +103,17 @@
 							break;
 						}
 					}
-					console.log(connections);
+					//console.log(connections);
 				});
+				
+				socket.on('threshold',function(data){
+					console.log(data);
+				});
+				socket.on('stream',function(data){
+					console.log(data);
+				});
+				
+				
 				
 			});
 		</script>
