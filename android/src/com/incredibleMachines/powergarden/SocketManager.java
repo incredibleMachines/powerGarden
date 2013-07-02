@@ -80,10 +80,13 @@ public class SocketManager implements  IOCallback {
 			Log.d(TAG, "connectToServer");
 			Log.d(TAG, _callback.toString());
 			
+			PowerGarden.Device.host = host;
+			PowerGarden.Device.port = port;
+			
 			//todo: read this from a text file
 				socket = new SocketIO();
 				socket.connect("http://"+host+":"+port+"/", this);
-			
+				
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -146,6 +149,37 @@ public class SocketManager implements  IOCallback {
 				callbackActivity.signalToUi(PowerGarden.Registered, PowerGarden.Device.ID);	
 			}
 			
+			else if(event.equals("threshold")){
+				String thisType; //range or capacitive
+				int thisValue = 0;;
+				int thisPlantIndex = 0; //only needed for capacitive
+				if(j.has("value")){
+					thisValue = Integer.valueOf(j.getString("value"));
+					if(j.has("plant_index")){
+						thisPlantIndex = Integer.valueOf(j.getString("plant_index"));
+					}
+					if(j.has("type")){
+						thisType = j.getString("type");
+						//Log.d(TAG, "type = "+thisType);
+						if(thisType.contentEquals("cap")){
+							Log.d(TAG, "CAP thresh update: thisValue = "+Integer.toString(thisValue));
+							PowerGarden.Device.plants[thisPlantIndex].threshold = thisValue;
+							PowerGarden.savePref("threshVal_"+Integer.toString(thisPlantIndex), Integer.toString(PowerGarden.Device.plants[thisPlantIndex].threshold));
+							
+							callbackActivity.signalToUi(PowerGarden.ThreshChange, thisType);
+						} else {
+							Log.d(TAG, "RANGE thresh update: thisValue = "+Integer.toString(thisValue));
+							PowerGarden.Device.distanceThreshold = thisValue;
+							PowerGarden.savePref("rangeThresh", Integer.toString(PowerGarden.Device.distanceThreshold));
+							
+							callbackActivity.signalToUi(PowerGarden.ThreshChange, thisType);
+						}
+					}
+				}
+				//callbackActivity.signalToUi(PowerGarden.ThreshChange, PowerGarden.Device.ID);
+			}
+			
+			
 			//**** update ****//
 			else if(event.equals("update")){
 				try {
@@ -179,7 +213,36 @@ public class SocketManager implements  IOCallback {
 					e.printStackTrace();
 				}
 			}
+
+			//**** stream control update ****//
+			else if(event.equals("control")){
 				
+				boolean enabled;
+				int thisPlantIndex = 0;
+				if(j.has("stream")){
+					PowerGarden.Device.datastream_mode = Boolean.parseBoolean(j.getString("stream"));
+					Log.d(TAG, "datastream_mode set to: "+j.getString("stream"));
+					callbackActivity.signalToUi(PowerGarden.StreamModeUpdate, PowerGarden.Device.ID);
+				}
+			}
+			
+			
+			//**** stream control update ****//
+			else if(event.equals("ignore")){
+				
+				boolean enabled;
+				int thisPlantIndex = 0;
+				if(j.has("ignore")){
+					if(j.has("plant_index")){
+						thisPlantIndex = Integer.valueOf(j.getString("plant_index"));
+						PowerGarden.Device.plants[thisPlantIndex].enabled = Boolean.valueOf(j.getString("ignore"));
+						PowerGarden.savePref("plantIgnore_"+Integer.toString(thisPlantIndex), Integer.toString(PowerGarden.Device.plants[thisPlantIndex].threshold));
+						Log.d(TAG, "set ignore to " + j.getString("ignore")+" on plant "+j.getString("plant_index"));
+					}
+					callbackActivity.signalToUi(PowerGarden.PlantIgnore, thisPlantIndex);
+				}
+			}
+			
 			//**** touched ****//
 			else if(event.equals("touch")){
 				
@@ -192,28 +255,35 @@ public class SocketManager implements  IOCallback {
 				callbackActivity.signalToUi(PowerGarden.Touched, PowerGarden.Device.ID);
 			}
 			
-			//**** control message ****  *** FUTURE ***//
-			else if(event.equals("control")){
-				//https://docs.google.com/a/incrediblemachines.net/document/d/1ue7jnC6fR7SFgvZNny9MtHGbP_Sm8F-FrgUELhT9OKo/edit
-				if(j.has("distance_thresh")){
-					PowerGarden.Device.distanceThreshold = Integer.parseInt(j.getString("distance_thresh"));
-				}
-				if(j.has("cap_thresh")){
-					JSONObject thresholds = new JSONObject();
-					thresholds = j.getJSONObject("cap_thresh");
-					for(int i=0; i<PowerGarden.Device.PlantNum; i++){
-						if (thresholds.has(Integer.toString(i))){
-							PowerGarden.Device.plants[i].threshold = Integer.parseInt(thresholds.getString(Integer.toString(i)));
-						}
-					}
-				}
-				if(j.has("datastream_mode")){
-					PowerGarden.Device.datastream_mode = Boolean.parseBoolean(j.getString("datastream_mode"));
-				}
+			else {
 				
-				//**** NEEDS TO BE IMPLEMENTED HERE:
-				//callbackActivity.signalToUi(PowerGarden.ControlChange, PowerGarden.Device);
+				callbackActivity.signalToUi(PowerGarden.Unrecognized, PowerGarden.Device.ID);
 			}
+			
+			//**** control message ****  *** FUTURE ***//
+//			else if(event.equals("control")){
+//				//https://docs.google.com/a/incrediblemachines.net/document/d/1ue7jnC6fR7SFgvZNny9MtHGbP_Sm8F-FrgUELhT9OKo/edit
+//				if(j.has("distance_thresh")){
+//					PowerGarden.Device.distanceThreshold = Integer.parseInt(j.getString("distance_thresh"));
+//				}
+//				if(j.has("cap_thresh")){
+//					JSONObject thresholds = new JSONObject();
+//					thresholds = j.getJSONObject("cap_thresh");
+//					for(int i=0; i<PowerGarden.Device.PlantNum; i++){
+//						if (thresholds.has(Integer.toString(i))){
+//							PowerGarden.Device.plants[i].threshold = Integer.parseInt(thresholds.getString(Integer.toString(i)));
+//							PowerGarden.savePref("threshVal_"+Integer.toString(i), Integer.toString(i)); //set the thresh to sharedPref
+//							callbackActivity.signalToUi(PowerGarden.ControlChange, PowerGarden.Device.ID);
+//						}
+//					}
+//				}
+//				if(j.has("datastream_mode")){
+//					PowerGarden.Device.datastream_mode = Boolean.parseBoolean(j.getString("datastream_mode"));
+//				}
+//				
+//				//**** NEEDS TO BE IMPLEMENTED HERE:
+//				//callbackActivity.signalToUi(PowerGarden.ControlChange, PowerGarden.Device.ID);
+//			}
 			
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block

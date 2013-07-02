@@ -27,12 +27,10 @@ import java.util.Arrays;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
-import com.victorint.android.usb.interfaces.Viewable;
 
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -45,8 +43,6 @@ import android.os.Messenger;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.os.SystemClock;
-import android.util.Log;
-import android.widget.Toast;
 
 public class ArduinoUsbService extends IntentService {
 

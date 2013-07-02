@@ -1,14 +1,10 @@
 package com.incredibleMachines.powergarden;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-
 import com.incredibleMachines.powergarden.R.color;
 import com.incredibleMachines.powergarden.util.SystemUiHider;
 import com.victorint.android.usb.interfaces.Connectable;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.AudioManager;
@@ -48,9 +44,6 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	
 	//SOUNDPOOL STUFFS
 	private SoundPool soundPool;
-	private HashMap<Integer, Integer> soundsMap;
-	int SOUND1=1;
-	int SOUND2=2;
 	
 	@Override
 	public void onResume(){
@@ -89,18 +82,42 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	public void signalToUi(int type, Object data){
 		super.signalToUi(type, data);
 		Log.d(TAG, "GOT CALLBACK: " + Integer.toString(type));
+		if(data != null) Log.d(TAG, "DATA: " + data.toString());
+
+		
+		/*** connected ***/
 		if(type == PowerGarden.SocketConnected){
 			PowerGarden.bConnected = true;
 			PowerGarden.Device.plantType = PowerGarden.getPrefString("plantType", null);
 			PowerGarden.Device.PlantNum = Integer.parseInt(PowerGarden.getPrefString("numPlants", null));
 			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
 			//PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, this);
-		}else if(type == PowerGarden.Registered){
+		}
+		
+		/*** registered ***/
+		else if(type == PowerGarden.Registered){
 			PowerGarden.bRegistered = true;
-		}else if(type == PowerGarden.MessageUpdated){
+		}
+		
+		/*** message updated ***/
+		else if(type == PowerGarden.MessageUpdated){
 			plantCopy.setText(PowerGarden.Device.messageCopy);
 		}
+		
+		else if(type == PowerGarden.ThreshChange){
+			Log.d(TAG, "presViewable signalToUi recevievd THRESHCHANGE");
+			//updateThresholds( data.toString() );
+		}
 	}
+	
+//    void updateThresholds(String j){
+//    	Log.wtf(TAG, "updateThresh RECVD  " + j);
+//		//update debug window
+//		for(int i=0; i<PowerGarden.Device.PlantNum; i++){
+////			threshBar[i].setProgress(PowerGarden.Device.plants[i].threshold);
+////			threshBarTextView[i].setText(PowerGarden.Device.plants[i].threshold);
+//		}
+//    }
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -120,18 +137,22 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		setContentView(R.layout.activity_presentation);
 		
 		
-		
 	    SM = new SocketManager();
 	    PowerGarden.SM = SM;
 	    PowerGarden.loadPrefs(getApplicationContext());
+	    
+	    Log.wtf(TAG, "getPrefString: " + PowerGarden.getPrefString("deviceID", null));
+	    
 	    if(PowerGarden.getPrefString("deviceID", null) == null){
 	    	//offline/unregistered
+	    	Log.wtf(TAG, "getPref 'deviceID'=null");
 	    }else{
 	    	PowerGarden.Device.ID = PowerGarden.getPrefString("deviceID", null);
 	    	PowerGarden.Device.host = PowerGarden.getPrefString("hostname", null);
 	    	PowerGarden.Device.port = PowerGarden.getPrefString("port", null);
 	    	PowerGarden.SM.connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,this);
 	    }
+	    
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
 		
@@ -291,7 +312,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	};
 	
 	public void playAudio(int sound){
-		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         if (PowerGarden.audioLoaded) {
         	
         	//.play(audio[i], leftVol, rightVol, priority, loop, rate);
@@ -316,9 +337,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
-		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
+		//plantCopy = (TextView) findViewById(R.id.fullscreen_content);
 		
-		//plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
 		plantCopy.setText(PowerGarden.Device.messageCopy);
 		setTextViewFont(PowerGarden.italiaBook, plantCopy);
 		
