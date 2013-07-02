@@ -11,7 +11,6 @@
 					if( $.inArray(device_id, connections) == -1 ){
 						connections.push(device_id);
 						var deviceControl = false;
-						var plantControl = [];
 						var html = '<section class="client-'+connection_id+'" data-connection="'+connection_id+'" data-device="'+device_id+'">';
 							html+= '<h4>Device ID:</h4>';
 							html+= '<p>'+device_id+'</p>';
@@ -20,11 +19,11 @@
 							html+= '<p><button class="control client-'+connection_id+'" type="button">Control On</button></p>';
 
 						for(var i = 0; i<8; i++){
-							plantControl.push(false);
 							html+= '<article> <p>Plant '+i+'</p>';
 							html+= '<p><input class="plant-'+i+' cap client-'+connection_id+'" type="range" data-plant_index="'+i+'" min="0" max="15000"/>'; 
-							html+= '<button class="disablePlant client-'+connection_id+'" data-plant_index="'+i+'" type="button">disable</button></p>';
-							html+= '<p class="value">7500</p>'
+							html+= '<button class="plant-'+i+' disablePlant client-'+connection_id+'" data-ignore="false" data-plant_index="'+i+'" type="button">disable</button></p>';
+							html+= '<p class="plant-'+i+' value client-'+connection_id+'">7500</p>'
+							html+= '<p class="plant-'+i+' incoming client-'+connection_id+'">Nothing</p>'
 							html+= '</article>';
 						}
 
@@ -64,13 +63,15 @@
 						$('button.disablePlant.client-'+connection_id).on("click",function(){
 							//console.log( $(this).data('plant_index') );
 							var index = $(this).data('plant_index');
-							plantControl[index]= !plantControl[index];
+							var bool = $(this).data('ignore');
+							bool = !bool;
+							$(this).data('ignore',bool);
 							var connection = $(this).parent().parent().parent().data('connection');
 							var device = $(this).parent().parent().parent().data('device');
-							if(!plantControl[index]) $(this).html('Disable');
+							if(!bool) $(this).html('Disable');
 							else $(this).html('Enable');
 							
-							socket.emit('ignore', {device_id:device, connection_id:connection,ignore:plantControl[index]});
+							socket.emit('ignore', {	device_id:device, connection_id:connection, plant_index:index, ignore:bool});
 
 							
 						});					
@@ -105,12 +106,48 @@
 					}
 					//console.log(connections);
 				});
-				
+				socket.on('control',function(data){
+					var $elem = $('button.control.client-'+data.connection_id);
+					if(!data.stream) $elem.html('Control On');
+					else $elem.html('Control Off');
+					
+					//console.log(data);
+				});
+				socket.on('ignore',function(data){
+					//console.log(data);
+					
+					var $elem = $('button.plant-'+data.plant_index+'.disablePlant.client-'+data.connection_id);
+					if(!data.ignore) $elem.html('Disable');
+					else $elem.html('Enable');
+					$elem.data('ignore',data.ignore);
+					
+				});
 				socket.on('threshold',function(data){
-					console.log(data);
+					//console.log(data);
+					
+					if(data.type=='cap'){
+						$('input.plant-'+data.plant_index+'.cap.client-'+data.connection_id).val(data.value);
+						$('p.plant-'+data.plant_index+'.value.client-'+data.connection_id).html(data.value);
+
+					}else if(data.type=='range'){
+						$('input.range.client-'+data.connection_id).val(data.value);
+
+					}
 				});
 				socket.on('stream',function(data){
-					console.log(data);
+					//console.log(data);
+					
+					//$("section."+data.connection_id)
+					
+					$.each(data.cap_val, function(key, val){
+					
+						$('.plant-'+key+'.incoming.client-'+data.connection_id).html(val);
+						
+					});
+					
+				});
+				socket.on('disconnect',function(data){
+					$('body').html(' ');
 				});
 				
 				

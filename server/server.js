@@ -45,7 +45,7 @@ var browsers = {};
 /* ******************************************************************************************* */
 
 
-/* app.use(express.favicon()); */
+app.use(express.favicon(__dirname+'/public/favicon.ico'));
 app.use(express.static(__dirname+'/public'));
 
 
@@ -70,15 +70,22 @@ browserio.sockets.on('connection',function(browserSocket){
 	browserSocket.on('threshold',function(msg){
 		console.log(msg);
 		clients['client-'+msg.connection_id].socket.emit('threshold',msg);
+		browserSocket.broadcast.emit('threshold', msg);
+		
 		
 	});
 	browserSocket.on('control',function(msg){
 		console.log(msg);
 		clients['client-'+msg.connection_id].socket.emit('control',msg);
+		browserSocket.broadcast.emit('control', msg);
+		
 	});
 	browserSocket.on('ignore',function(msg){
 		console.log(msg);
 		clients['client-'+msg.connection_id].socket.emit('ignore',msg);
+		browserSocket.broadcast.emit('ignore', msg);
+			
+		
 	});
 	
 	browserSocket.on('disconnect',function(){
