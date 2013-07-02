@@ -7,7 +7,7 @@ var MongoClient = require('mongodb').MongoClient,
 //var utils = require('./dbUtils');	
 
 	
-function DB(){
+function DB(browserSockets){
 	
 	this.db; 
 	this.dataDb; 
@@ -17,7 +17,7 @@ function DB(){
 	this.touchesDb;
 	this.settingsDb;
 	this.twitter;
-	this.colors;
+	this.browserIO = browserSockets;
 	
 	//console.log(storedMood);
 	
@@ -282,6 +282,7 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 					//assignPlantData(result,connection);
 					_db.setActive(connection, true);
 					
+					_db.browserIO.emit('device_conn', res);
 					connection.socket.emit('register', res);
 					//connection.socket.send(JSON.stringify(res));	
 				}
@@ -437,9 +438,10 @@ DB.prototype.logDevice = function(message,connection,_db){
 		
 		_db.createSettings(message,connection,_db);
 		
-		var res = { "device_id": connection.device_id, "connection_id": connection.id };
+		var res = { device_id: connection.device_id, connection_id: connection.id };
 		//connection.socket.send(JSON.stringify(res));
 		connection.socket.emit('register',res);
+		_db.browserIO.emit('device_conn', res);
 	});	
 }
 /* ******************************************************************************************* */
