@@ -17,7 +17,7 @@ const char myPassword[] = "JustMach1n3";
 
 // Server settings
 char site[] = "192.168.0.7";
-int port = 8081;
+int port = 9001;
 
 // Pins for devices
 int wiflyPin = 11;
