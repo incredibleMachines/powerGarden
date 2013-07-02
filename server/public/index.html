@@ -10,37 +10,69 @@
 				
 					if( $.inArray(device_id, connections) == -1 ){
 						connections.push(device_id);
-						
+						var deviceControl = false;
+						var plantControl = [];
 						var html = '<section class="client-'+connection_id+'" data-connection="'+connection_id+'" data-device="'+device_id+'">';
-						html+= '<h4>Device ID:</h4>';
-						html+= '<p>'+device_id+'</p>';
-						
+							html+= '<h4>Device ID:</h4>';
+							html+= '<p>'+device_id+'</p>';
+							html+= '<p>Range Threshold:</p>';
+							html+= '<p><input class="range client-'+connection_id+'" type="range" data-plant_index="'+i+'" min="0" max="15000"/>';
+							html+= '<p><button class="control client-'+connection_id+'" type="button">Control On</button></p>';
+
 						for(var i = 0; i<8; i++){
+							plantControl.push(false);
 							html+= '<article> <p>Plant '+i+'</p>';
-							html+= '<p><input class="plant-'+i+' slider client-'+connection_id+'" type="range" data-plant_index="'+i+'" min="0" max="15000"/></p>';
+							html+= '<p><input class="plant-'+i+' cap client-'+connection_id+'" type="range" data-plant_index="'+i+'" min="0" max="15000"/>'; 
+							html+= '<button class="disablePlant client-'+connection_id+'" data-plant_index="'+i+'" type="button">disable</button></p>';
 							html+= '<p class="value">7500</p>'
 							html+= '</article>';
-							
 						}
 
-						html+= '<button class="send client-'+connection_id+'" type="button">Send</button>';
-						html+= '</section>';
+							html+= '</section>';
 						
 						$('body').append(html);	
-						$('input.slider.client-'+connection_id).on( "change",function(){
+						
+						$('input.cap.client-'+connection_id).on( "change",function(){
 							//console.log('slide');
 							var val = $(this).val();
 							$(this).parent().parent().find('.value').html(val);
 							var connection = $(this).parent().parent().parent().data('connection');
 							var device = $(this).parent().parent().parent().data('device');
 							var plant = $(this).data('plant_index');
-							var json = { value:val, connection_id:connection, device_id:device, plant_index: plant};
-							//console.log(json);
-							socket.emit('update_touch', json);
+							var json = { value:val, type:'cap', connection_id:connection, device_id:device, plant_index: plant};
+							socket.emit('threshold', json);
 						});
 						
-						$('button.send.client-'+connection_id).on( "click", function(){ 
-							console.log('here'); 
+						$('input.range.client-'+connection_id).on( "change",function(){
+							var val = $(this).val();
+							var connection = $(this).parent().parent().data('connection');
+							var device = $(this).parent().parent().data('device');
+							var json = { value:val, type:'range', connection_id:connection, device_id:device};
+							socket.emit('threshold', json);
+
+						});
+						
+						$('button.control.client-'+connection_id).on( "click", function(){ 
+							deviceControl = !deviceControl; 
+							if(!deviceControl) $(this).html('Control On');
+							else $(this).html('Control Off');
+							var connection = $(this).parent().parent().data('connection');
+							var device = $(this).parent().parent().data('device');
+							socket.emit('control', {device_id:device, connection_id:connection, stream:deviceControl });
+						});
+						
+						$('button.disablePlant.client-'+connection_id).on("click",function(){
+							//console.log( $(this).data('plant_index') );
+							var index = $(this).data('plant_index');
+							plantControl[index]= !plantControl[index];
+							var connection = $(this).parent().parent().parent().data('connection');
+							var device = $(this).parent().parent().parent().data('device');
+							if(!plantControl[index]) $(this).html('Disable');
+							else $(this).html('Enable');
+							
+							socket.emit('ignore', {device_id:device, connection_id:connection,ignore:plantControl[index]});
+
+							
 						});					
 					}
 					

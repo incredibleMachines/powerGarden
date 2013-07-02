@@ -67,10 +67,18 @@ browserio.sockets.on('connection',function(browserSocket){
 		browserSocket.emit('init', {connection_id: clients[key]['id'], device_id: clients[key]['device_id']});	
 	}
 	//browserSocket.emit('init', clients);
-	browserSocket.on('update_touch',function(msg){
+	browserSocket.on('threshold',function(msg){
+		console.log(msg);
+		clients['client-'+msg.connection_id].socket.emit('threshold',msg);
+		
+	});
+	browserSocket.on('control',function(msg){
 		console.log(msg);
 		clients['client-'+msg.connection_id].socket.emit('control',msg);
-		
+	});
+	browserSocket.on('ignore',function(msg){
+		console.log(msg);
+		clients['client-'+msg.connection_id].socket.emit('ignore',msg);
 	});
 	
 	browserSocket.on('disconnect',function(){
