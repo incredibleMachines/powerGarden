@@ -12,9 +12,9 @@ $.get('/devices', function(data) {
 
 		// generate code for whether or not we're active
 		if (d.active) {
-			var activeButton = '<button class="btn-mini btn-success toggle-device-active"><i class="icon-fire"></i></button>';
+			var activeButton = '<button class="btn-mini btn-success toggle-device-active"><i class="icon-off"></i></button>';
 		} else {
-			var activeButton = '<button class="btn-mini btn-danger toggle-device-active"><i class="icon-remove"></i></button>';
+			var activeButton = '<button class="btn-mini btn-danger toggle-device-active"><i class="icon-fire"></i></button>';
 		}
 
 		var append = '<tr id="'+d._id+'"><td>'+activeButton+'</td><td>'+d._id+'</td><td>'+d.plants.length+'</td><td>'+d.type+'</td><td>'+d.mood+'</td><td>'+d.date+'</td></tr>';
@@ -43,19 +43,20 @@ $('.device-table > tbody > tr').live('click', function() {
 		if ($('#'+device_id+'-plants').length) {
 			// console.log('hiding row');
 			$('#'+device_id+'-plants').remove();
+			return;
 		} else {
 
 			// otherwise let's build up all the data to display it
 
 			// table header and closing tags
-			var plantPre = '<table class="table plant-table"><thead><tr><th width="25%">Plant ID</th><th width="7%">Index</th><th width="28%">Created</th><th width="14%">Mood</th><th width="26%">Touch</th></tr></thead><tbody>';
+			var plantPre = '<table class="table plant-table"><thead><tr><th width="23%">Plant ID</th><th width="7%">Index</th><th width="20%">Created</th><th width="11%">Mood</th><th width="8%">Touch</th><th width="22%">Cap Slider</th><th width="7%">Val</th></tr></thead><tbody>';
 			var plantPost = '</tbody></table>';
 
 			// loop through results and generate a new table row for each
 			var plantString = '';
 			for (var i = 0; i < data.length; i++) {
 				var d = data[i];
-				plantString += '<tr><td>'+d._id+'</td><td>'+d.index+'</td><td>'+d.created+'</td><td>'+d.mood+'</td><td>'+d.touch+'</td></tr>';
+				plantString += '<tr><td>'+d._id+'</td><td>'+d.index+'</td><td>'+(new Date(d.created)).toLocaleString()+'</td><td>'+d.mood+'</td><td>'+d.touch+'</td><td><input type="range" min="0" max="15000" step="1"></td><td>16813</td></tr>';
 			}
 
 			// now grab all the settings data
@@ -135,12 +136,12 @@ $('.toggle-device-active').live('click', function() {
 	if (active) {
 		$.get('/update', data, function(data) {
 			$(button).addClass('btn-danger').removeClass('btn-success');
-			$(button).children('i').addClass('icon-remove').removeClass('icon-fire');
+			$(button).children('i').addClass('icon-fire').removeClass('icon-off');
 		});
 	} else {
 		$.get('/update', data, function(data) {
 			$(button).addClass('btn-success').removeClass('btn-danger');
-			$(button).children('i').addClass('icon-fire').removeClass('icon-remove');
+			$(button).children('i').addClass('icon-off').removeClass('icon-fire');
 		});
 	}
 
@@ -179,6 +180,12 @@ $('.toggle-sensor-active').live('click', function() {
 	
 });
 
+$('input[type=range]').live('change', function() {
 
+	$(this).tooltip('destroy').tooltip({ animation: false, title: $(this).val() }).tooltip('show');
+
+	// $(this).tooltip('destroy');
+	// $(this).tooltip({ title: $(this).val() }).show();
+});
 
 });
