@@ -26,6 +26,7 @@ for (var i = 0; i < hashtags.length; i++) {
 
 // Set up keywords to respond to
 var waterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', 'sprinkler', 'sprinkers', 'mist', 'misty'];
+// shower, showers, precipitation
 var plantKeywords = [
 	{
 		"type": "tomatoes",

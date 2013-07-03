@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+var deviceSettings = {};
+
 // Connect to socket.io server & set up event handlers
 var socket = io.connect('http://localhost:8080');
 
@@ -197,6 +199,7 @@ function populate(socket, data){
 
 function buildSettings(data) {
 
+
 	// GENERATE TABLE FOR SENSORS
 
 	// table header and closing tags
@@ -240,6 +243,10 @@ function buildSettings(data) {
 	$('#'+d.device_id+'-plants .sensor-table').remove();
 	$('#'+d.device_id+'-plants .plant-table').after(append);
 
+	// store data in global var. get rid of extraneous stuff
+	delete data['_id'];
+	deviceSettings[data.device_id] = data;
+
 }
 
 
@@ -262,47 +269,66 @@ $('.device-table > tbody > tr').live('click', function() {
 
 $('input[type=text]').live('change', function() {
 	var device_id = $(this).parents('[id$=plants]').attr('id').substring(0, 24);
+	var sensor = $(this).attr('data-sensor');
+	var property = $(this).attr('name');
 
-	var data = {
-		device_id: device_id,
-		sensor: $(this).attr('data-sensor'),
-		property: $(this).attr('name'),
-		val: $(this).val()
-	}
+	var val = $(this).val();
+	if (val.indexOf('.') > -1)
+		val = parseFloat(val);
+	else
+		val = parseInt(val);
 
-	console.log(data);
+	deviceSettings[device_id][sensor][property] = val;
+	socket.emit('settings', deviceSettings[device_id]);
 
-	// $.get('/update', data);
-})
-
-$('.toggle-device-control').live('click', function() {
-	var button = this;
-	var device_id = $(button).parents('tr').attr('id');
-	var active = $(button).hasClass('btn-danger');
-
-	var data = {
-		device_id: device_id,
-		active: !active
-	};
-
-	// console.log(data);
-	
-	if (active) {
-		$.get('/update', data, function(data) {
-			$(button).addClass('btn-success').removeClass('btn-danger');
-			$(button).children('i').addClass('icon-off').removeClass('icon-fire');
-		});
-	} else {
-		$.get('/update', data, function(data) {
-			$(button).addClass('btn-danger').removeClass('btn-success');
-			$(button).children('i').addClass('icon-fire').removeClass('icon-off');
-		});
-	}
-
-	// return false here to prevent the even bubbling up to parent elements
-	// i.e., don't trigger the parent <tr>'s click, which will toggle the row being shown
-	return false;
 });
+
+$('.toggle-sensor-active').live('click', function() {
+	var device_id = $(this).parents('[id$=plants]').attr('id').substring(0, 24);
+	var sensor = $(this).attr('data-sensor');
+	var active = !$(this).hasClass('btn-success');
+
+	deviceSettings[device_id][sensor]['active'] = active;
+	socket.emit('settings', deviceSettings[device_id]);
+
+	if (active) {
+		$(this).addClass('btn-success').removeClass('btn-danger');
+		$(this).children('i').addClass('icon-ok').removeClass('icon-remove');
+	} else {
+		$(this).addClass('btn-danger').removeClass('btn-success');
+		$(this).children('i').addClass('icon-remove').removeClass('icon-ok');
+	}
+
+});
+
+// $('.toggle-device-control').live('click', function() {
+// 	var button = this;
+// 	var device_id = $(button).parents('tr').attr('id');
+// 	var active = !$(button).hasClass('btn-success');
+
+// 	var data = {
+// 		device_id: device_id,
+// 		active: !active
+// 	};
+
+// 	// console.log(data);
+	
+// 	if (active) {
+// 		$.get('/update', data, function(data) {
+// 			$(button).addClass('btn-success').removeClass('btn-danger');
+// 			$(button).children('i').addClass('icon-off').removeClass('icon-fire');
+// 		});
+// 	} else {
+// 		$.get('/update', data, function(data) {
+// 			$(button).addClass('btn-danger').removeClass('btn-success');
+// 			$(button).children('i').addClass('icon-fire').removeClass('icon-off');
+// 		});
+// 	}
+
+// 	// return false here to prevent the even bubbling up to parent elements
+// 	// i.e., don't trigger the parent <tr>'s click, which will toggle the row being shown
+// 	return false;
+// });
 
 
 

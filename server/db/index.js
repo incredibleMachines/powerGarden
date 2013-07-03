@@ -65,6 +65,21 @@ DB.prototype.settingsForDevice = function(connection_id, device_id, callback) {
 	});
 }
 
+DB.prototype.updateSettings = function(data, callback) {
+	// console.log(data);
+	// kind of hacky here...
+	// data.device_id comes in as a string
+	// convert it to an ObjectId() in order to find the settings document
+	var obj = { device_id: new BSON.ObjectID(String(data.device_id)) };
+
+	// then take ObjectId() and store it back into the data object so it gets inserted
+	// into the db as the object and not the string
+	data.device_id = obj.device_id;
+	settingsDb.update(obj, data, function(err, count) {
+		callback();
+	});
+}
+
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */

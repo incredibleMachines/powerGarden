@@ -88,12 +88,20 @@ browserio.sockets.on('connection',function(browserSocket){
 		browserSocket.broadcast.emit('control', msg);
 		
 	});
+
 	browserSocket.on('ignore',function(msg){
 		console.log(msg);
 		clients['client-'+msg.connection_id].socket.emit('ignore',msg);
 		browserSocket.broadcast.emit('ignore', msg);
 			
 		
+	});
+
+	browserSocket.on('settings',function(msg){
+		// console.log(msg);
+		database.updateSettings(msg, function() {
+			browserSocket.broadcast.emit('settings', msg);
+		});
 	});
 	
 	browserSocket.on('disconnect',function(){
