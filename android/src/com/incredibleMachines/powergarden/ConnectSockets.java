@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import com.victorint.android.usb.interfaces.Connectable;
 
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,9 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.app.Activity;
+import android.app.Service;
+import android.content.Intent;
 
 public class ConnectSockets extends Activity implements Connectable {
-	   private static final String TAG = "ConnectSocketsView";
+	   private static final String TAG = "ConnectSockets Activity";
 	   static EditText mHostname;
 	   static EditText mPort;
 	   static TextView mStatusline;
@@ -34,12 +37,6 @@ public class ConnectSockets extends Activity implements Connectable {
 	   static Spinner mplantList;
 	   
 	   static LinearLayout mLinearLayout;
-
-//	   private void alert(String message) {
-//	      Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-//	      toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
-//	      toast.show();
-//	   }
 
 	   private void loadPrefs() {
 
@@ -75,9 +72,11 @@ public class ConnectSockets extends Activity implements Connectable {
 	   }
 
 	   private void setButtonConnect() {
-	      mHostname.setEnabled(true);
-	      mPort.setEnabled(true);
-	      mStart.setText("Connect");
+		   if(!PowerGarden.bConnected){
+			   mHostname.setEnabled(true);
+			   mPort.setEnabled(true);
+			   mStart.setText("Connect");
+		   }
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
 	        	Log.d(TAG, "Clicked Connect");
@@ -178,10 +177,11 @@ public class ConnectSockets extends Activity implements Connectable {
 	    mplantList.setAdapter(adapter);
 	    
 	    loadPrefs();
-
-	    setButtonConnect();
-	    setupSendButton();
-		
+	    
+	    //if(!PowerGarden.bConnected){
+	    	setButtonConnect();
+	    	setupSendButton();
+	   // }
 	}
 
 	@Override
@@ -216,6 +216,7 @@ public class ConnectSockets extends Activity implements Connectable {
 
 	@Override
 	public void signalToUi(int type, Object data) {
+		Log.d(TAG, "ConnectSockets signalToUi");
 
 		Runnable myrun = null;
 		if(type == PowerGarden.SocketConnected){

@@ -44,7 +44,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 1 sense: "
+                       android:text="plant 0 sense: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -65,14 +65,14 @@
                        android:id="@+id/seekBar1"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="10000" />
+                       android:max="15000" />
 
                    <TextView
                        android:id="@+id/bar1text"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -85,7 +85,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 2 sense: "
+                       android:text="plant 1 sense: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -106,14 +106,14 @@
                        android:id="@+id/seekBar2"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="10000" />
+                       android:max="15000" />
 
                    <TextView
                        android:id="@+id/bar2text"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -126,7 +126,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 3 sense: "
+                       android:text="plant 2 sense: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -147,14 +147,14 @@
                        android:id="@+id/seekBar3"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="10000" />
+                       android:max="15000" />
 
                    <TextView
                        android:id="@+id/bar3text"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -167,7 +167,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 4 sense: "
+                       android:text="plant 3 sense: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -188,14 +188,14 @@
                        android:id="@+id/seekBar4"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="10000" />
+                       android:max="15000" />
 
                    <TextView
                        android:id="@+id/bar4text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
            </LinearLayout>
@@ -214,7 +214,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 5 sense: "
+                       android:text="plant 4 sense: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -235,14 +235,14 @@
                        android:id="@+id/seekBar5"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="10000" />
+                       android:max="15000" />
 
                    <TextView
                        android:id="@+id/bar5text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -255,7 +255,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 6 sense: "
+                       android:text="plant 5 sense: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -276,14 +276,14 @@
                        android:id="@+id/seekBar6"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="10000" />
+                       android:max="15000" />
 
                    <TextView
                        android:id="@+id/bar6text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -296,7 +296,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 7 sense: "
+                       android:text="plant 6 sense: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -317,14 +317,14 @@
                        android:id="@+id/seekBar7"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="10000" />
+                       android:max="15000" />
 
                    <TextView
                        android:id="@+id/bar7text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -337,7 +337,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 8 sense: "
+                       android:text="plant 7 sense: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -358,14 +358,14 @@
                        android:id="@+id/seekBar8"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="10000" />
+                       android:max="15000" />
 
                    <TextView
                        android:id="@+id/bar8text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
            </LinearLayout>
@@ -396,7 +396,7 @@
                        android:id="@+id/tempval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -415,7 +415,7 @@
                        android:id="@+id/humval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -434,7 +434,7 @@
                        android:id="@+id/moistval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -461,7 +461,7 @@
                        android:id="@+id/distanceval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -480,15 +480,48 @@
                        android:id="@+id/lightval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="10000"
+                       android:text="15000"
                        android:textSize="26dp" />
                </LinearLayout>
-
+               <LinearLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content" >
+                   
+                              <TextView
+                   android:id="@+id/range_thresh_title"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Range Thresh:  "
+                   android:textAppearance="?android:attr/textAppearanceMedium" />
+               <TextView
+                   android:id="@+id/range_thresh"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="0"
+                   android:textAppearance="?android:attr/textAppearanceMedium"
+                   android:layout_marginRight="40dp" />
+                   
+               <TextView
+                   android:id="@+id/stream_mode_title"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Stream Mode:  "
+                   android:textAppearance="?android:attr/textAppearanceMedium" />
+               <TextView
+                   android:id="@+id/stream_mode"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="OFF"
+                   android:textAppearance="?android:attr/textAppearanceMedium"
+                   android:layout_marginRight="40dp" />
                <Button
                    android:id="@+id/close"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="Close Debug" />
+
+
+               </LinearLayout>
 
            </LinearLayout>
        </LinearLayout>
