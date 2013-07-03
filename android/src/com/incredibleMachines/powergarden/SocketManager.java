@@ -1,5 +1,7 @@
 package com.incredibleMachines.powergarden;
 
+import java.util.ArrayList;
+
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
@@ -13,18 +15,35 @@ import com.victorint.android.usb.interfaces.Connectable;
 
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
-public class SocketManager implements  IOCallback {
+public class SocketManager  implements  IOCallback {
 
 	private SocketIO socket;
 
 	private static String TAG = "SocketManager";
 	private Connectable callbackActivity;
+	private Connectable presentationCallback;
 	
 	SocketManager(){
 		//connectToServer();
 	}
+	
+	public void registerViewableCallback (Connectable _callback){
+		presentationCallback = _callback;
+	}
+	
 	public void authDevice (String type, String device_id, int num_plants, String plant_type, Connectable _callback){
 		callbackActivity = _callback;
 		try {
@@ -64,10 +83,22 @@ public class SocketManager implements  IOCallback {
 	public void updateData(String type, String device_id, JSONObject json, Connectable _callback){
 		callbackActivity = _callback;
 		
+		
 		try{
 			socket.emit(type, 
 					new JSONObject().put("device_id", device_id).put("data", json)
 					);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendMonkey(String type, String device_id, JSONObject json, Connectable _callback){
+		callbackActivity = _callback;
+		
+		try{
+			socket.emit(type, json);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -166,13 +197,16 @@ public class SocketManager implements  IOCallback {
 							PowerGarden.Device.plants[thisPlantIndex].threshold = thisValue;
 							PowerGarden.savePref("threshVal_"+Integer.toString(thisPlantIndex), Integer.toString(PowerGarden.Device.plants[thisPlantIndex].threshold));
 							
-							callbackActivity.signalToUi(PowerGarden.ThreshChange, thisType);
+							callbackActivity.signalToUi(PowerGarden.ThreshChange, thisPlantIndex);
+							if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.ThreshChange, thisPlantIndex);
+							
 						} else {
 							Log.d(TAG, "RANGE thresh update: thisValue = "+Integer.toString(thisValue));
 							PowerGarden.Device.distanceThreshold = thisValue;
 							PowerGarden.savePref("rangeThresh", Integer.toString(PowerGarden.Device.distanceThreshold));
 							
 							callbackActivity.signalToUi(PowerGarden.ThreshChange, thisType);
+							if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.ThreshChange, "-1");
 						}
 					}
 				}
@@ -197,10 +231,15 @@ public class SocketManager implements  IOCallback {
 //					System.out.println(PowerGarden.Device.ID);
 					
 					if(j.has("message")){
-						PowerGarden.Device.messageCopy = j.getString("message");
-						Log.d(TAG, "received 'message'");
-						Log.d(TAG, PowerGarden.Device.messageCopy);
-						callbackActivity.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
+						JSONObject thisMsg = j.getJSONObject("message");
+						if(thisMsg.has("touches")){
+							PowerGarden.Device.messageCopy = thisMsg.getString("touches");
+							Log.d(TAG, "received 'message'");
+							Log.d(TAG, PowerGarden.Device.messageCopy);
+							callbackActivity.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
+							if(presentationCallback != null)
+								presentationCallback.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
+						}
 					} else Log.wtf(TAG, "NO 'message' received");
 					
 					if(j.has("mood")){
@@ -217,12 +256,12 @@ public class SocketManager implements  IOCallback {
 			//**** stream control update ****//
 			else if(event.equals("control")){
 				
-				boolean enabled;
 				int thisPlantIndex = 0;
 				if(j.has("stream")){
 					PowerGarden.Device.datastream_mode = Boolean.parseBoolean(j.getString("stream"));
 					Log.d(TAG, "datastream_mode set to: "+j.getString("stream"));
 					callbackActivity.signalToUi(PowerGarden.StreamModeUpdate, PowerGarden.Device.ID);
+					if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.StreamModeUpdate, PowerGarden.Device.datastream_mode);
 				}
 			}
 			
@@ -230,7 +269,6 @@ public class SocketManager implements  IOCallback {
 			//**** stream control update ****//
 			else if(event.equals("ignore")){
 				
-				boolean enabled;
 				int thisPlantIndex = 0;
 				if(j.has("ignore")){
 					if(j.has("plant_index")){
@@ -240,6 +278,7 @@ public class SocketManager implements  IOCallback {
 						Log.d(TAG, "set ignore to " + j.getString("ignore")+" on plant "+j.getString("plant_index"));
 					}
 					callbackActivity.signalToUi(PowerGarden.PlantIgnore, thisPlantIndex);
+					if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.PlantIgnore, thisPlantIndex);
 				}
 			}
 			
@@ -260,126 +299,15 @@ public class SocketManager implements  IOCallback {
 				callbackActivity.signalToUi(PowerGarden.Unrecognized, PowerGarden.Device.ID);
 			}
 			
-			//**** control message ****  *** FUTURE ***//
-//			else if(event.equals("control")){
-//				//https://docs.google.com/a/incrediblemachines.net/document/d/1ue7jnC6fR7SFgvZNny9MtHGbP_Sm8F-FrgUELhT9OKo/edit
-//				if(j.has("distance_thresh")){
-//					PowerGarden.Device.distanceThreshold = Integer.parseInt(j.getString("distance_thresh"));
-//				}
-//				if(j.has("cap_thresh")){
-//					JSONObject thresholds = new JSONObject();
-//					thresholds = j.getJSONObject("cap_thresh");
-//					for(int i=0; i<PowerGarden.Device.PlantNum; i++){
-//						if (thresholds.has(Integer.toString(i))){
-//							PowerGarden.Device.plants[i].threshold = Integer.parseInt(thresholds.getString(Integer.toString(i)));
-//							PowerGarden.savePref("threshVal_"+Integer.toString(i), Integer.toString(i)); //set the thresh to sharedPref
-//							callbackActivity.signalToUi(PowerGarden.ControlChange, PowerGarden.Device.ID);
-//						}
-//					}
-//				}
-//				if(j.has("datastream_mode")){
-//					PowerGarden.Device.datastream_mode = Boolean.parseBoolean(j.getString("datastream_mode"));
-//				}
-//				
-//				//**** NEEDS TO BE IMPLEMENTED HERE:
-//				//callbackActivity.signalToUi(PowerGarden.ControlChange, PowerGarden.Device.ID);
-//			}
-			
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 	
-	
-
-	/**** PREVIOUS WORKING VERSION ****/
-//	public void on(String event, IOAcknowledge ack, Object... args) {
-//		
-//		System.out.println("Server triggered event '" + event + "'");
-//		Log.d(TAG, "INCOMING MESSAGE: "+args[0].toString());
-//		PowerGarden.serverResponseRaw = args[0].toString();
-//		JSONObject j;
-////		try {
-////			//j = new JSONObject("{null}");
-////		} catch (JSONException e2) {
-////			// TODO Auto-generated catch block
-////			e2.printStackTrace();
-////		}
-//		try {
-//			j = new JSONObject(args[0].toString() );
-//		} catch (JSONException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		
-//		if(event.equals("register")){
-//			//System.out.println("HERE");
-//			//PowerGarden.Device.ID = j.getString("device_id");
-//			try {
-//				//JSONObject j = new JSONObject(args[0].toString() );
-//				if(PowerGarden.Device.ID == null){
-//					PowerGarden.Device.ID = j.getString("device_id");
-//					PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
-//				}else{
-//					//SOMETHING IS FUCKED
-//					PowerGarden.Device.ID = j.getString("device_id");
-//					PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
-//				}
-//				
-//				//System.out.println(PowerGarden.Device.ID);
-//			
-//				callbackActivity.signalToUi(PowerGarden.Registered, PowerGarden.Device.ID);
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			//System.out.println(args[0]);
-//			//System.out.println(String.valueOf(args));
-//			//System.out.println(args.toString());
-//			
-//		}else if(event.equals("planted")){
-//			System.out.println(args.toString());
-//		}else if(event.equals("update")){
-//			try {
-//				//JSONObject j = new JSONObject(args[0].toString() );
-//				if(!PowerGarden.Device.ID.contentEquals(j.getString("device_id"))){
-//					Log.e(TAG, "DEVICE ID MISMATCH");
-//					Log.e(TAG, "PowerGarden.Device.ID: "+ PowerGarden.Device.ID);
-//					Log.e(TAG, "incoming Device.ID: "+ j.getString("device_id"));
-//					
-//				}
-//				//PowerGarden.Device.ID = j.getString("device_id");
-//				PowerGarden.Device.deviceMood = j.getString("mood");
-//				PowerGarden.Device.messageCopy = j.getString("message");
-////				PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
-////				System.out.println(PowerGarden.Device.ID);
-//				
-//				if(j.has("message")){
-//					PowerGarden.Device.messageCopy = j.getString("message");
-//					Log.wtf(TAG, "received 'message'");
-//					Log.wtf(TAG, PowerGarden.Device.messageCopy);
-//					callbackActivity.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
-//				} else Log.wtf(TAG, "NO 'message' received");
-//				
-//				if(j.has("mood")){
-//					//do something yo
-//				}
-//				
-//				
-//				callbackActivity.signalToUi(PowerGarden.Updated, PowerGarden.Device.ID);
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		
-//	}
-
-	
 	void closeUpShop(){
 		//sendSessionEnd();
 		socket.disconnect();
 	}
+
 }

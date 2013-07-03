@@ -251,9 +251,12 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 			if(message.plant_type) resp.plant_type = message.plant_type;
 			resp.mood = mood;
 			//console.log(JSON.stringify(storedMood['tomato']['moisture']['high'][0]));
-			resp.message={ 	moisture: storedMood['tomato']['moisture'][mood.moisture][Math.round(Math.random(storedMood['tomato']['moisture'][mood.moisture].length))], 
-							touches: storedMood['tomato']['touches'][mood.touches][Math.round(Math.random(storedMood['tomato']['touches'][mood.touches].length))] 
+			//console.log(connection.plant_slug);
+
+			resp.message={ 	moisture: storedMood[connection.plant_slug]['moisture'][mood.moisture][Math.round(Math.random(storedMood[connection.plant_slug]['moisture'][mood.moisture].length))], 
+							touches: storedMood[connection.plant_slug]['touches'][mood.touches][Math.round(Math.random(storedMood[connection.plant_slug]['touches'][mood.touches].length))] 
 							};
+
 			console.log(JSON.stringify(resp));
 			connection.socket.emit('update',resp);
 			//signal device with mood and updated text
@@ -279,7 +282,7 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 	//return ID, status - connected, rejoined
 	if(message.device_id == "set_id"){
 	
-		console.log("New Device - Logging Now");		
+		console.log("New Device - Logging Now");
 		this.logDevice(message,connection,this);
 	
 	}else{
@@ -301,7 +304,10 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 					result.connection_id = connection.id;
 
 					console.log("[Device Already Registered]");
+					
+					connection.plant_type = message.plant_type;		
 					connection.device_id = message.device_id;
+					_db.setSlug(connection);
 					//assignPlantData(result,connection);
 					_db.setActive(connection, true);
 
@@ -462,11 +468,16 @@ DB.prototype.logDevice = function(message,connection,_db){
 		if(err) console.error(err); //throw err;
 		
 		connection.device_id = doc[0]._id;
+		connection.plant_type = message.plant_type;
+		
+		_db.setSlug(connection);
+		
 		console.log('Created Record: '+connection.device_id);
 		console.log("plants.length: "+message.num_plants);
 		for(var i = 0; i<message.num_plants; i++) _db.createPlant(message,connection,i,_db);
 		
 		_db.createSettings(message,connection,_db);
+
 		
 		// var res = { device_id: connection.device_id, connection_id: connection.id };
 
@@ -514,8 +525,24 @@ DB.prototype.updateDocument = function(collection,id,json){
 //no upsert 
 }
 
+DB.prototype.setSlug=function(connection){
+	
+	if(connection.plant_type == "Cherry Tomatoes" || connection.plant_type == "Tomatoes"){
+		connection.plant_slug = 'tomatoes';
+	}else if(connection.plant_type == "Orange Carrots" || connection.plant_type == "Purple Carrots"){
+		connection.plant_slug = 'carrots';
+	}else if(connection.plant_type == "Celery"){
+		connection.plant_slug = 'celery';
+	}else if(connection.plant_type == "Beets"){
+		connection.plant_slug = 'beets';
+	}else if(connection.plant_type == "Bell Peppers"){
+		connection.plant_slug = 'peppers';
+	}
+	
+}
+
 var storedMood = {
-    tomato: {
+    tomatoes: {
         moisture: {
             high: [
                 "Being TOO generous with the water can drown the tomatoes. Let's give 'em a break, shall we?",
@@ -593,7 +620,7 @@ var storedMood = {
         },
         
     },
-    pepper: {
+    peppers: {
         moisture: {
             high: [
                 "Uh oh, the peppers have had too much water. Better let their soil dry out a bit.",

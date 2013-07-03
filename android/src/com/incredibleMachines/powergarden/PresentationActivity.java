@@ -48,6 +48,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	@Override
 	public void onResume(){
 		super.onResume();
+		Log.d(TAG, "onResume");
 		//setContentView(R.layout.activity_presentation);
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
 		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
@@ -81,6 +82,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	@Override
 	public void signalToUi(int type, Object data){
 		super.signalToUi(type, data);
+		Log.d(TAG, "PresentationActivty signalToUi");
 		Log.d(TAG, "GOT CALLBACK: " + Integer.toString(type));
 		if(data != null) Log.d(TAG, "DATA: " + data.toString());
 

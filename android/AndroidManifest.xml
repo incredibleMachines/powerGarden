@@ -25,7 +25,7 @@
         <activity
             android:name="com.incredibleMachines.powergarden.PresentationActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name" android:screenOrientation="landscape"
+            android:label="@string/app_name" android:screenOrientation="reverseLandscape"
             android:theme="@style/FullscreenTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +40,7 @@
             android:windowSoftInputMode="stateHidden">
         </activity>
         
-        <activity android:name=".StartServiceActivity" android:screenOrientation="landscape" 
+        <activity android:name=".StartServiceActivity" android:screenOrientation="reverseLandscape" 
             android:label="@string/starter_app_name" android:launchMode="singleInstance" 
             android:theme="@android:style/Theme.NoDisplay"
         	android:excludeFromRecents="true">                  
@@ -55,6 +55,7 @@
 
         <service android:name=".ArduinoUsbService"  /> 
         <!-- <service android:name=".ArduinoUsbService" android:process=":remote" /> -->    
+        <service android:name=".SocketManager" />
 		<uses-library android:name="com.android.future.usb.accessory" />
     
     </application>
