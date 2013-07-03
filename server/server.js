@@ -101,6 +101,7 @@ browserio.sockets.on('connection',function(browserSocket){
 	browserSocket.on('settings',function(msg){
 		// console.log(msg);
 		database.updateSettings(msg, function() {
+			clients['client-'+msg.connection_id].socket.emit('settings',msg);
 			browserSocket.broadcast.emit('settings', msg);
 		});
 	});

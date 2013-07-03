@@ -291,7 +291,7 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-	DB.prototype.routeRegister = function(message,connection){
+DB.prototype.routeRegister = function(message,connection){
 	//check for ID in DB
 	//if ID exists
 	//return ID, status - connected, rejoined
@@ -332,6 +332,7 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 
 					// Find settings and emit them for connected browsers
 					_db.settingsForDevice(connection.id, connection.device_id, function(result) {
+						connection.socket.emit('settings', result);
 						_db.browserIO.emit('settings', result);
 					});
 
@@ -448,8 +449,8 @@ DB.prototype.checkPlantTouches = function(obj,connection, signalToDevice, _db ){
 		});
 		
 		if(signalToDevice==true) {	//console.log(json);
-									connection.socket.emit('touch', json);
-									}
+			connection.socket.emit('touch', json);
+		}
 	
 	});
 	
@@ -492,7 +493,6 @@ DB.prototype.logDevice = function(message,connection,_db){
 		for(var i = 0; i<message.num_plants; i++) _db.createPlant(message,connection,i,_db);
 		
 		_db.createSettings(message,connection,_db);
-
 		
 		// var res = { device_id: connection.device_id, connection_id: connection.id };
 
@@ -521,6 +521,7 @@ DB.prototype.createSettings = function(message,connection,_db){
 	settingsDb.insert(obj,{safe:true},function(err){
 		if(err) console.error(err);
 
+		connection.socket.emit('settings', obj);
 		_db.browserIO.emit('settings', obj);
 	});
 	
