@@ -5,6 +5,7 @@
 var io = require('socket.io').listen(9000).set('log level', 2);
 var DB = require('./db/index');
 var pgtwitter = require('./pgtwitter/index');
+// var pump = require('./pump/index');
 var colors = require('colors');
 
 
@@ -219,6 +220,8 @@ function twitterCallback(data) {
 	} else {
 
 		// User is providing water
+
+		// pump.turnOnSprinklers(15);
 
 		if (!data.plants) {
 			// No mention of a specific plant

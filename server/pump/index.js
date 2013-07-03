@@ -53,7 +53,7 @@ function writeToClents(message) {
 	if (!pumpClients.length) return;
 
 	for (var i = 0; i < pumpClients.length; i++) {
-		console.log("[PUMP] Writing, checking index "+ i +" of length "+ pumpClients.length);
+		// console.log("[PUMP] Writing, checking index "+ i +" of length "+ pumpClients.length);
 		var socket = pumpClients[i];
 
 		socket.write(message);
