@@ -143,13 +143,13 @@ io.sockets.on('connection', function (socket) {
 	socket.on('update', function (msg) {
 	    console.log('[INBOUND REQUEST]'.warn+' [UPDATE] '.help + JSON.stringify(msg).input);
 	    database.routeUpdate(msg,connection);
-	  
+		browserio.sockets.emit('update',msg);
 	});
 	
 	socket.on('touch',function(msg){
 		console.log('[INBOUND REQUEST]'.warn+' [TOUCH] '.info + JSON.stringify(msg).input);
 		database.plantTouch(msg,connection);
-		  
+		browserio.sockets.emit('touch',msg);
 	});
 	
 	socket.on('threshold',function(msg){

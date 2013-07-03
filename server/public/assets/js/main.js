@@ -41,11 +41,9 @@ socket.on('control',function(data){
 		$elem.removeClass('btn-warning');
 		$elem.children('i').addClass('icon-off').removeClass('icon-fire');
 	}
-	//console.log(data);
 });
+
 socket.on('ignore',function(data){
-	//console.log(data);
-	
 	var $elem = $('button.plant-'+data.plant_index+'.disablePlant.client-'+data.connection_id);
 	if(data.ignore) {
 		// $(this).html('Disable');
@@ -61,29 +59,28 @@ socket.on('ignore',function(data){
 });
 
 socket.on('threshold',function(data){
-	//console.log(data);
-	
 	if(data.type=='cap'){
 		var input = $('input.plant-'+data.plant_index+'.cap.client-'+data.connection_id);
 		input.val(data.value);
 		// input.tooltip('destroy').tooltip({ animation: false, title: data.value }).tooltip('show');
 		$('td.plant-'+data.plant_index+'.value.client-'+data.connection_id).html(data.value)
 	}
-	// else if(data.type=='range'){
-	// 	$('input.range.client-'+data.connection_id).val(data.value);
+});
 
-	// }
+socket.on('update',function(data){
+	var device_id = data.device_id;
+	var readings = data.data;
+
+	for (var key in readings) {
+		if (key == 'timestamp') continue;
+		$('#'+device_id+'-plants .sensor-table .reading.'+key).html(readings[key]);
+	}
+
 });
 
 socket.on('stream',function(data){
-	//console.log(data);
-	
-	//$("section."+data.connection_id)
-	
-	$.each(data.cap_val, function(key, val){
-	
+	$.each(data.cap_val, function(key, val){	
 		$('.plant-'+key+'.incoming.client-'+data.connection_id).html(val);
-		
 	});
 	
 });
@@ -203,7 +200,7 @@ function buildSettings(data) {
 	// GENERATE TABLE FOR SENSORS
 
 	// table header and closing tags
-	var settingsPre = '<table class="table table-condensed sensor-table"><thead><tr><th>Active</th><th>Property</th><th>Low Threshold</th><th>High Threshold</th><th>Window</th></tr></thead><tbody>';
+	var settingsPre = '<table class="table table-condensed sensor-table"><thead><tr><th>Active</th><th>Property</th><th>Reading</th><th>Low Threshold</th><th>High Threshold</th><th>Window</th></tr></thead><tbody>';
 	var settingsPost = '</tbody></table>';
 
 	// expected result is a list with only one element, so grab just the first one
@@ -235,7 +232,7 @@ function buildSettings(data) {
 		}
 
 
-		settingsString += '<tr><td>'+activeButton+'</td><td>'+key+'</td><td><input class="input-small" type="text" name="low" placeholder="low" value="'+d[key].low+'" data-sensor="'+key+'"></td><td>'+highString+'</td><td>'+windowString+'</td></tr>'
+		settingsString += '<tr><td>'+activeButton+'</td><td>'+key+'</td><td class="'+key+' reading"></td><td><input class="input-small" type="text" name="low" placeholder="low" value="'+d[key].low+'" data-sensor="'+key+'"></td><td>'+highString+'</td><td>'+windowString+'</td></tr>'
 	}
 
 	var append = settingsPre + settingsString + settingsPost;
