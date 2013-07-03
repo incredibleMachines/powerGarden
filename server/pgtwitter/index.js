@@ -17,6 +17,8 @@ var handle = 'IncMachinesDev';
 var hashtags = ['IncMachinesDev', 'PowerGarden', 'ThePowerGarden'];
 var trackString = handle + ',' + hashtags.join(',');
 
+var ustreamLink = 'http://ustre.am/10WaX';
+
 var handleRegex = new RegExp('@'+handle, 'i');
 var hashtagRegexes = [];
 hashtagRegexes.push( new RegExp('#'+handle, 'i') );
@@ -189,11 +191,17 @@ var updateStatus = function(text, options) {
 	options.place_id = '1d9a5370a355ab0c';
 	options.display_coordinates = true;
 
+	// Check if there's room to attach the ustream link
+	// 140 (twitter max) - 1 (space between message and url) - 22 (length of t.co wrapped urls)
+	text = text.trim();
+	if (text.length <= (140 - 1 - 22)) {
+		text += ' ' + ustreamLink;
+	}
+
 	twitter.updateStatus(text, options, function (err, data) {
 		if (err) {
 			console.log('[Post Twitter Update] Error Posting Status:');
 			console.log(err);
-			console.log(data);
 		}
 
 		//console.log(JSON.stringify(data));
