@@ -1,0 +1,309 @@
+$(document).ready(function() {
+
+// Connect to socket.io server & set up event handlers
+var socket = io.connect('http://localhost:8080');
+
+// init gets sent for each tablet device when the browser connects
+socket.on('init', function(data){
+	populate(socket, data);
+});
+
+// when a tablet connects to the server. same format as above.
+socket.on('device_conn', function(data){
+	populate(socket, data);
+});
+socket.on('settings', function(data) {
+	buildSettings(data);
+})
+
+// when a tablet disconnects
+socket.on('device_disconn',function(data){
+	// remove table rows for device & the sub-data (plants & settings)
+	$('tr#'+data.device_id).remove();
+	$('tr#'+data.device_id+'-plants').remove();
+	for(var i = 0; i < connections.length;i++){
+		if(connections[i]== data.device_id){
+			connections.splice(i,1);
+			break;
+		}
+	}
+});
+
+socket.on('control',function(data){
+	var $elem = $('button.control.client-'+data.connection_id);
+	if(data.stream) {
+		$elem.addClass('btn-danger');
+		$elem.children('i').addClass('icon-fire').removeClass('icon-off');
+	} else {
+		// $(this).html('Control Off');
+		$elem.removeClass('btn-danger');
+		$elem.children('i').addClass('icon-off').removeClass('icon-fire');
+	}
+	//console.log(data);
+});
+socket.on('ignore',function(data){
+	//console.log(data);
+	
+	var $elem = $('button.plant-'+data.plant_index+'.disablePlant.client-'+data.connection_id);
+	if(data.ignore) {
+		// $(this).html('Disable');
+		$elem.addClass('btn-danger').removeClass('btn-success');
+		$elem.children('i').addClass('icon-remove').removeClass('icon-ok');
+	} else {
+		// $(this).html('Enable');
+		$elem.addClass('btn-success').removeClass('btn-danger');
+		$elem.children('i').addClass('icon-ok').removeClass('icon-remove');
+	}
+	$elem.data('ignore',data.ignore);
+	
+});
+
+socket.on('threshold',function(data){
+	//console.log(data);
+	
+	if(data.type=='cap'){
+		var input = $('input.plant-'+data.plant_index+'.cap.client-'+data.connection_id);
+		input.val(data.value);
+		// input.tooltip('destroy').tooltip({ animation: false, title: data.value }).tooltip('show');
+		$('td.plant-'+data.plant_index+'.value.client-'+data.connection_id).html(data.value)
+	}
+	// else if(data.type=='range'){
+	// 	$('input.range.client-'+data.connection_id).val(data.value);
+
+	// }
+});
+
+socket.on('stream',function(data){
+	//console.log(data);
+	
+	//$("section."+data.connection_id)
+	
+	$.each(data.cap_val, function(key, val){
+	
+		$('.plant-'+key+'.incoming.client-'+data.connection_id).html(val);
+		
+	});
+	
+});
+
+socket.on('disconnect',function(data){
+	$('.device-table > tbody').html('');
+});
+
+var connections = [];
+
+function populate(socket, data){
+	
+	if( $.inArray(data.device_id, connections) == -1 ) {
+		connections.push(data.device_id);
+		var deviceControl = false;
+
+		// GENERATE TABLE ROW FOR DEVICE
+		if (deviceControl) {
+			var activeButton = '<button class="btn-mini btn-danger control client-'+data.connection_id+'"><i class="icon-fire"></i></button>';
+		} else {
+			var activeButton = '<button class="btn-mini control client-'+data.connection_id+'"><i class="icon-off"></i></button>';
+		}
+
+		var append = '<tr id="'+data.device_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td>'+activeButton+'</td><td>'+data.device_id+'</td><td>'+data.plants.length+'</td><td>'+data.type+'</td><td>'+data.mood.touches+'</td><td>'+data.mood.moisture+'</td><td>'+(new Date(data.date)).toLocaleString()+'</td></tr>';
+		$('.device-table > tbody').append(append);
+
+
+
+		// GENERATE TABLE ROW WHICH HOLDS DEVICE-RELATED DATA
+		// embedded table for plants
+		// embedded table for settings
+
+		// GENERATE TABLE FOR PLANTS
+
+		// the actual table row that appended to the main devices table, in which our two tables are placed
+		var commonPre = '<tr id="'+data.device_id+'-plants" class="client-'+data.connection_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'" style="display: none;"><td></td><td colspan="6">';
+		var commonPost = '</td></tr>';
+
+		// table header and closing tags
+		var plantPre = '<table class="table plant-table"><thead><tr><th width="5%">Active</th><th width="20%">Plant ID</th><th width="7%">Index</th><th width="11%">Mood</th><th width="8%">Touch</th><th width="22%">Cap Slider</th><th width="7%">Threshold</th><th width="20%">Incoming</th></tr></thead><tbody>';
+		var plantPost = '</tbody></table>';
+
+		// loop through results and generate a new table row for each
+		var plantString = '';
+		for (var i = 0; i < data.plants.length; i++) {
+			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td><button class="btn-mini btn-success plant-'+i+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+i+'"><i class="icon-ok"></i></button></td><td>'+data.plants[i]._id+'</td><td>'+data.plants[i].index+'</td><td>TODO</td><td>TODO</td><td><input type="range" min="0" max="15000" step="1" class="plant-'+i+' cap client-'+data.connection_id+'" data-plant_index="'+i+'"></td><td class="plant-'+i+' value client-'+data.connection_id+'"></td><td class="plant-'+i+' incoming client-'+data.connection_id+'"></td></tr>';
+		}
+
+
+		// build it and append it
+		var string = commonPre + plantPre + plantString + plantPost + /* settingsPre + settingsString + settingsPost + */ commonPost;
+		$('tr#'+data.device_id).after(string);
+
+
+		$('input.cap.client-'+data.connection_id).change(function() {
+			var connection = $(this).parents('tr').data('connection');
+			var device = $(this).parents('tr').data('device');
+			var plant = $(this).data('plant_index');
+			var val = $(this).val();
+			var json = { value: val, type:'cap', connection_id: connection, device_id:device, plant_index: plant};
+
+			socket.emit('threshold', json);
+			$('.plant-'+plant+'.value.client-'+connection).html(val);
+			// $(this).tooltip('destroy').tooltip({ animation: false, title: val }).tooltip('show');
+
+		});
+
+		$('button.control.client-'+data.connection_id).click(function(){ 
+			deviceControl = !deviceControl;
+
+			if(deviceControl) {
+				// $(this).html('Control On');
+				$(this).addClass('btn-danger');
+				$(this).children('i').addClass('icon-fire').removeClass('icon-off');
+			} else {
+				// $(this).html('Control Off');
+				$(this).removeClass('btn-danger');
+				$(this).children('i').addClass('icon-off').removeClass('icon-fire');
+			}
+
+			var connection = $(this).parents('tr').data('connection');
+			var device = $(this).parents('tr').data('device');
+			socket.emit('control', {device_id:device, connection_id:connection, stream:deviceControl });
+			return false;
+		});
+
+		$('button.disablePlant.client-'+data.connection_id).on("click",function(){
+			var index = $(this).data('plant_index');
+			var bool = $(this).data('ignore');
+
+			bool = !bool;
+			$(this).data('ignore',bool);
+
+			var connection = $(this).parents('tr').data('connection');
+			var device = $(this).parents('tr').data('device');
+
+			if(bool) {
+				// $(this).html('Disable');
+				$(this).addClass('btn-danger').removeClass('btn-success');
+				$(this).children('i').addClass('icon-remove').removeClass('icon-ok');
+			} else {
+				// $(this).html('Enable');
+				$(this).addClass('btn-success').removeClass('btn-danger');
+				$(this).children('i').addClass('icon-ok').removeClass('icon-remove');
+			}
+			
+			socket.emit('ignore', {	device_id:device, connection_id:connection, plant_index:index, ignore:bool});
+
+			
+		});	
+	}
+}
+
+function buildSettings(data) {
+
+	// GENERATE TABLE FOR SENSORS
+
+	// table header and closing tags
+	var settingsPre = '<table class="table table-condensed sensor-table"><thead><tr><th>Active</th><th>Property</th><th>Low Threshold</th><th>High Threshold</th><th>Window</th></tr></thead><tbody>';
+	var settingsPost = '</tbody></table>';
+
+	// expected result is a list with only one element, so grab just the first one
+	// loop through the object keys and generate table rows
+	var settingsString = '';
+	var d = data;
+	for (var key in d) {
+
+		// ignore keys that aren't objects, e.g. _id and device_id which are strings
+		if (typeof(d[key]) != 'object') continue;
+
+		// generate code for whether or not we're active
+		if (d[key].active) {
+			var activeButton = '<button class="btn-mini btn-success toggle-sensor-active" data-sensor="'+key+'""><i class="icon-ok"></i></button>';
+		} else {
+			var activeButton = '<button class="btn-mini btn-danger toggle-sensor-active" data-sensor="'+key+'""><i class="icon-remove"></i></button>';
+		}
+
+		if (d[key].hasOwnProperty('high')) {
+			var highString = '<input class="input-small" type="text" name="high" placeholder="high" value="'+d[key].high+'" data-sensor="'+key+'">';
+		} else {
+			var highString = '';
+		}
+
+		if (d[key].hasOwnProperty('window')) {
+			var windowString = '<input class="input-small" type="text" name="window" placeholder="window" value="'+d[key].window+'" data-sensor="'+key+'">';
+		} else {
+			var windowString = '';
+		}
+
+
+		settingsString += '<tr><td>'+activeButton+'</td><td>'+key+'</td><td><input class="input-small" type="text" name="low" placeholder="low" value="'+d[key].low+'" data-sensor="'+key+'"></td><td>'+highString+'</td><td>'+windowString+'</td></tr>'
+	}
+
+	var append = settingsPre + settingsString + settingsPost;
+
+	$('#'+d.device_id+'-plants .sensor-table').remove();
+	$('#'+d.device_id+'-plants .plant-table').after(append);
+
+}
+
+
+$('.device-table > tbody > tr').live('click', function() {
+
+	var device_id = this.id;
+	var sel = this;
+
+	// we only want rows for devices, not the rows that contain plant data for an expanded device
+	// perfect this check based on id...we only care about rows with an id that don't contain "-plants"
+	// device row id: 51cca0844188e27904000001
+	// plant data row id : 51cca0844188e27904000001-plants
+	if (device_id.indexOf('plants') > -1)
+		return;
+
+	$('#'+device_id+'-plants').toggle();
+	return;
+
+});
+
+$('input[type=text]').live('change', function() {
+	var device_id = $(this).parents('[id$=plants]').attr('id').substring(0, 24);
+
+	var data = {
+		device_id: device_id,
+		sensor: $(this).attr('data-sensor'),
+		property: $(this).attr('name'),
+		val: $(this).val()
+	}
+
+	console.log(data);
+
+	// $.get('/update', data);
+})
+
+$('.toggle-device-control').live('click', function() {
+	var button = this;
+	var device_id = $(button).parents('tr').attr('id');
+	var active = $(button).hasClass('btn-danger');
+
+	var data = {
+		device_id: device_id,
+		active: !active
+	};
+
+	// console.log(data);
+	
+	if (active) {
+		$.get('/update', data, function(data) {
+			$(button).addClass('btn-success').removeClass('btn-danger');
+			$(button).children('i').addClass('icon-off').removeClass('icon-fire');
+		});
+	} else {
+		$.get('/update', data, function(data) {
+			$(button).addClass('btn-danger').removeClass('btn-success');
+			$(button).children('i').addClass('icon-fire').removeClass('icon-off');
+		});
+	}
+
+	// return false here to prevent the even bubbling up to parent elements
+	// i.e., don't trigger the parent <tr>'s click, which will toggle the row being shown
+	return false;
+});
+
+
+
+});

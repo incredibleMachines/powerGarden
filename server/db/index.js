@@ -45,6 +45,27 @@ function DB(browserSockets){
 module.exports = DB;
 
 
+DB.prototype.deviceInfo = function(connection_id, device_id, callback) {
+	// console.log('Checking device info for: ' + device_id);
+	var obj = {	_id: new BSON.ObjectID( String(device_id)) };
+	devicesDb.findOne(obj, function(err, res) {
+		res.connection_id = connection_id;
+		res.device_id = device_id;
+		callback(res);
+	});
+}
+
+DB.prototype.settingsForDevice = function(connection_id, device_id, callback) {
+	// console.log('Checking settings for: ' + device_id);
+	var obj = {	device_id: new BSON.ObjectID( String(device_id)) };
+	settingsDb.findOne(obj, function(err, res) {
+		res.connection_id = connection_id;
+		res.device_id = device_id;
+		callback(res);
+	});
+}
+
+
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
@@ -276,14 +297,23 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 					
 				}else{
 					
-					var res = { "device_id": message.device_id, "connection_id": connection.id };
+					result.device_id = message.device_id;
+					result.connection_id = connection.id;
+
 					console.log("[Device Already Registered]");
 					connection.device_id = message.device_id;
 					//assignPlantData(result,connection);
 					_db.setActive(connection, true);
-					
-					_db.browserIO.emit('device_conn', res);
-					connection.socket.emit('register', res);
+
+					// Emit connection/register events
+					_db.browserIO.emit('device_conn', result);
+					connection.socket.emit('register', result);
+
+					// Find settings and emit them for connected browsers
+					_db.settingsForDevice(connection.id, connection.device_id, function(result) {
+						_db.browserIO.emit('settings', result);
+					});
+
 					//connection.socket.send(JSON.stringify(res));	
 				}
 				
@@ -427,7 +457,7 @@ DB.prototype.createPlant = function(message,connection,plant_index,_db){
 /* ******************************************************************************************* */
 
 DB.prototype.logDevice = function(message,connection,_db){
-	var obj = {date: new Date(), plants: [], type: message.plant_type, active: true, mood: 'born'};
+	var obj = {date: new Date(), plants: [], type: message.plant_type, active: true, mood: { touches:'born', moisture: 'born'} };
 	devicesDb.insert(obj, {safe:true}, function(err,doc){
 		if(err) console.error(err); //throw err;
 		
@@ -438,10 +468,14 @@ DB.prototype.logDevice = function(message,connection,_db){
 		
 		_db.createSettings(message,connection,_db);
 		
-		var res = { device_id: connection.device_id, connection_id: connection.id };
+		// var res = { device_id: connection.device_id, connection_id: connection.id };
+
+		obj.connection_id = connection.id;
+		obj.device_id = connection.device_id;
+
 		//connection.socket.send(JSON.stringify(res));
-		connection.socket.emit('register',res);
-		_db.browserIO.emit('device_conn', res);
+		connection.socket.emit('register', obj);
+		_db.browserIO.emit('device_conn', obj);
 	});	
 }
 /* ******************************************************************************************* */
@@ -455,9 +489,13 @@ DB.prototype.createSettings = function(message,connection,_db){
 	obj.temp = {active: false, low: 15, high:35};
 	obj.moisture = {active: true, low:0, high:100};
 	obj.light = {active: false, low:400, high: 1000};	
+	obj.touch = {active: true, low:10, high: 30, window: 1};
+	obj.range = {active: false, low: 50};
 	
 	settingsDb.insert(obj,{safe:true},function(err){
 		if(err) console.error(err);
+
+		_db.browserIO.emit('settings', obj);
 	});
 	
 }

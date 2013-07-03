@@ -47,6 +47,7 @@ var browsers = {};
 
 app.use(express.favicon(__dirname+'/public/favicon.ico'));
 app.use(express.static(__dirname+'/public'));
+//app.use(express.static('../website'));
 
 
 
@@ -60,11 +61,17 @@ browserio.sockets.on('connection',function(browserSocket){
 	var browserConnection = new Connection( ++browserClientID, 'set_id', browserSocket);
 	var connectKey = 'browser-'+browserClientID;
 	browsers[connectKey]=browserConnection;
-	
-	
-	for(var key in clients){
-	
-		browserSocket.emit('init', {connection_id: clients[key]['id'], device_id: clients[key]['device_id']});	
+
+	for(var key in clients) {
+		// console.log('Calling deviceInfo() for: ' + clients[key]['device_id']);
+		database.deviceInfo(clients[key]['id'], clients[key]['device_id'], function(result) {
+			browserSocket.emit('init', result);
+		});
+
+		// console.log('Calling settingsForDevice() for: ' + clients[key]['device_id']);
+		database.settingsForDevice(clients[key]['id'], clients[key]['device_id'], function(result) {
+			browserSocket.emit('settings', result);
+		});
 	}
 	//browserSocket.emit('init', clients);
 	browserSocket.on('threshold',function(msg){
@@ -136,9 +143,13 @@ io.sockets.on('connection', function (socket) {
 	socket.on('threshold',function(msg){
 		msg.connection_id = connection.id;
 		browserio.sockets.emit('threshold',msg);
-		
 	});
-	
+
+	socket.on('ignore',function(msg){
+		msg.connection_id = connection.id;
+		browserio.sockets.emit('ignore',msg);
+	});
+
 	socket.on('stream',function(msg){
 		msg.connection_id = connection.id;
 		browserio.sockets.emit('stream',msg);
