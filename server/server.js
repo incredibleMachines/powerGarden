@@ -57,10 +57,11 @@ var browserClientID = 0;
 
 browserio.sockets.on('connection',function(browserSocket){
 	
-	console.log('connection incoming');
 	var browserConnection = new Connection( ++browserClientID, 'set_id', browserSocket);
 	var connectKey = 'browser-'+browserClientID;
 	browsers[connectKey]=browserConnection;
+
+	console.log("[BROWSER CONN]".help+" connection.id %s".input, browserConnection.id);
 
 	for(var key in clients) {
 		// console.log('Calling deviceInfo() for: ' + clients[key]['device_id']);
@@ -106,7 +107,7 @@ browserio.sockets.on('connection',function(browserSocket){
 	
 	browserSocket.on('disconnect',function(){
 		delete browsers['browser'+browserConnection.id];
-		console.log("[BROWSER DISCONN]".error+"connection.id %s".input, browserConnection.id);
+		console.log("[BROWSER DISCONN]".error+" connection.id %s".input, browserConnection.id);
 
 	});
 	
