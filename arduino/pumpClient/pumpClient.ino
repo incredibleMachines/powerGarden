@@ -12,11 +12,11 @@
 WiFly wifly;
 
 // Network settings
-const char mySSID[] = "The_Internet";
-const char myPassword[] = "JustMach1n3";
+const char mySSID[] = "localnet";
+const char myPassword[] = "ep%9JuC13";
 
 // Server settings
-char site[] = "192.168.0.7";
+char site[] = "10.0.1.2";
 int port = 9001;
 
 // Pins for devices
@@ -33,6 +33,7 @@ int reconnectInterval = 30 * 1000;
 
 void setup()
 {
+  char buf[32];
 
   // Pull pin 11 high, necessary for Visualight board
   pinMode(wiflyPin, OUTPUT);
@@ -59,6 +60,7 @@ void setup()
     wifly.setPassphrase(myPassword);
     wifly.setJoin(WIFLY_WLAN_JOIN_AUTO);
     wifly.enableDHCP();
+    wifly.save();
 
     if (wifly.join()) {
       Serial.println("Joined wifi network");
@@ -70,6 +72,16 @@ void setup()
   else {
     Serial.println("Already joined network");
   }
+
+  Serial.print("MAC: ");
+  Serial.println(wifly.getMAC(buf, sizeof(buf)));
+  Serial.print("IP: ");
+  Serial.println(wifly.getIP(buf, sizeof(buf)));
+  Serial.print("Netmask: ");
+  Serial.println(wifly.getNetmask(buf, sizeof(buf)));
+  Serial.print("Gateway: ");
+  Serial.println(wifly.getGateway(buf, sizeof(buf)));
+
 
   wifly.setDeviceID("Wifly-WebClient");
 
@@ -95,9 +107,9 @@ void loop() {
   // Apparently wifly.isAssociated is ALWAYS returning false, so just ignore this check
   //  if(wifly.isAssociated()) {
   if (wifly.isConnected() == false) {
-    Serial.println("Not connected to network, trying to connect...");
+    Serial.println("Not connected to server, trying to connect...");
     if (wifly.open(site, port)) {
-      Serial.println("Opened network connection.");
+      Serial.println("Opened connection.");
     } 
     else {
       Serial.println("Failed to open connection.");
@@ -182,6 +194,7 @@ void loop() {
   }
 
 }
+
 
 
 
