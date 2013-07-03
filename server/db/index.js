@@ -314,17 +314,23 @@ DB.prototype.routeRegister = function(message,connection){
 					_db.logDevice(message,connection,_db);
 					
 				}else{
+
+					console.log("[Device Already Registered]");
+
+					// Update plant type in db if what was sent in register is differen than what we have
+					if (message.plant_type != result.type) {
+						result.type = message.plant_type;
+						_db.updateDocument(devicesDb, message.device_id, { $set: { type: message.plant_type }})
+					}
 					
 					result.device_id = message.device_id;
 					result.connection_id = connection.id;
-
-					console.log("[Device Already Registered]");
 					
 					connection.plant_type = message.plant_type;		
 					connection.device_id = message.device_id;
 					_db.setSlug(connection);
-					//assignPlantData(result,connection);
 					_db.setActive(connection, true);
+					//assignPlantData(result,connection);
 
 					// Emit connection/register events
 					_db.browserIO.emit('device_conn', result);
