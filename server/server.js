@@ -201,8 +201,69 @@ function Connection(_id, _device_id,_socket){
 
 function twitterCallback(data) {
 
-	if (!data.water) {
+	// here just for debugging. this will exist further down in the logic
+	pump.turnOnSprinklers(15);
 
+	if (data.water) {
+
+		// User is trying to provide water
+
+		/*
+		// look up water needs of all devices
+		// average most recent moisture reading for each device?
+		// determine dry|content|wet for each device and then average those?
+		if (PLANTS NEED WATER) {
+
+			// FIGURE OUT HOW LONG TO RUN PUMP FOR
+			// thresholds for moisture readings and settings for diff lengths
+			// e.g. plants don't need lots of water, run for 5 seconds
+			// or plants need lots of water, run for 30 seconds
+			var average = CALCULATE_AVERAGE_WATER_NEEDS();
+
+			if (average <= SOME_LOW_THRESHOLD) {
+				 var pumpDuration = 5;
+			} else if (average <= SOME_HIGH_THRESHOLD) {
+				var pumpDuration = 15;
+			} else {
+				var pumpDuration = 30;
+			}
+
+			// ADD TIME FOR PRIMING
+			// look up last time we ran pump, add some time if it's been a while
+			// stored where? different document type in db.settings?
+			var lastTimestamp = QUERY_LAST_SPRINKLER_TIMESTAMP()
+			if (lastTimestamp < 10_MINUTES_AGO) {
+				pumpDuration += 3;
+			}
+
+			// pump.turnOnSprinklers(pumpDuration);
+
+			// TWITTER RESPONSE
+			// pgtwitter.updateStatus('message here')
+
+
+		} else {
+
+			// TWITTER RESPONSE
+			// pgtwitter.updateStatus('message here')
+	
+		}
+		*/
+		
+
+		if (!data.plants) {
+			// No mention of a specific plant
+			// Send thanks for water from garden
+			console.log('[Twitter Stream] Thanks for water from garden');
+			// pgtwitter.updateStatus('message here')
+		} else {
+			// User mentioned a specific plant
+			// Send thanks for water from the plant
+			console.log('[Twitter Stream] Thanks for water from ' + data.plants.join(' & '));
+			// pgtwitter.updateStatus('message here')
+		}
+
+	} else {
 		// Not providing water
 
 		if (!data.plants) {
@@ -216,24 +277,7 @@ function twitterCallback(data) {
 			console.log('[Twitter Stream] Thanks for attention from ' + data.plants.join(' & '));
 			// pgtwitter.updateStatus('Thanks for the good vibes @' + data.user + '! The ' + data.plants.join(' & ') + ' are loving it!', { in_reply_to_status_id: data.id });
 		}
-
-	} else {
-
-		// User is providing water
-
-		// pump.turnOnSprinklers(15);
-
-		if (!data.plants) {
-			// No mention of a specific plant
-			// Send thanks for water from garden
-			console.log('[Twitter Stream] Thanks for water from garden');
-			// pgtwitter.updateStatus('message here')
-		} else {
-			// User mentioned a specific plant
-			// Send thanks for water from the plant
-			console.log('[Twitter Stream] Thanks for water from ' + data.plants.join(' & '));
-			// pgtwitter.updateStatus('message here')
-		}
+	
 	}
 }
 
