@@ -34,11 +34,11 @@ socket.on('device_disconn',function(data){
 socket.on('control',function(data){
 	var $elem = $('button.control.client-'+data.connection_id);
 	if(data.stream) {
-		$elem.addClass('btn-danger');
+		$elem.addClass('btn-warning');
 		$elem.children('i').addClass('icon-fire').removeClass('icon-off');
 	} else {
 		// $(this).html('Control Off');
-		$elem.removeClass('btn-danger');
+		$elem.removeClass('btn-warning');
 		$elem.children('i').addClass('icon-off').removeClass('icon-fire');
 	}
 	//console.log(data);
@@ -156,11 +156,11 @@ function populate(socket, data){
 
 			if(deviceControl) {
 				// $(this).html('Control On');
-				$(this).addClass('btn-danger');
+				$(this).addClass('btn-warning');
 				$(this).children('i').addClass('icon-fire').removeClass('icon-off');
 			} else {
 				// $(this).html('Control Off');
-				$(this).removeClass('btn-danger');
+				$(this).removeClass('btn-warning');
 				$(this).children('i').addClass('icon-off').removeClass('icon-fire');
 			}
 
