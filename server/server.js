@@ -2,7 +2,7 @@
 /* Pull in required modules						 								 			   */
 /* ******************************************************************************************* */
 
-var io = require('socket.io').listen(9000).set('log level', 2);
+var io = require('socket.io').listen(9000).set('heartbeat timeout', 45).set('heartbeat invterval', 20).set('log level', 2);
 var DB = require('./db/index');
 var pgtwitter = require('./pgtwitter/index');
 // var pump = require('./pump/index');
@@ -210,44 +210,37 @@ function twitterCallback(data) {
 
 		/*
 		// look up water needs of all devices
-		// average most recent moisture reading for each device?
-		// determine dry|content|wet for each device and then average those?
-		if (PLANTS NEED WATER) {
+		database.calculateGardenWaterNeeds(function(pumpDuration) {
+			// console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
 
-			// FIGURE OUT HOW LONG TO RUN PUMP FOR
-			// thresholds for moisture readings and settings for diff lengths
-			// e.g. plants don't need lots of water, run for 5 seconds
-			// or plants need lots of water, run for 30 seconds
-			var average = CALCULATE_AVERAGE_WATER_NEEDS();
+			if (pumpDuration > 0) {
 
-			if (average <= SOME_LOW_THRESHOLD) {
-				 var pumpDuration = 5;
-			} else if (average <= SOME_HIGH_THRESHOLD) {
-				var pumpDuration = 15;
+				// add time for priming
+				database.neededTimeForPriming(function(primingDuration) {
+
+					pumpDuration += primingDuration;
+
+					// log needs to happen after neededTimeForPriming()!
+					// otherwise we insert a timestamp and then calculate off it, meaning
+					// we will never need to prime since we just ran
+					database.logPump(pumpDuration);
+					pump.turnOnSprinklers(pumpDuration);
+
+					// TWITTER RESPONSE
+					// pgtwitter.updateStatus('message here')
+
+				});
+
 			} else {
-				var pumpDuration = 30;
+
+				// TWITTER RESPONSE
+				// pgtwitter.updateStatus('message here')
+		
 			}
 
-			// ADD TIME FOR PRIMING
-			// look up last time we ran pump, add some time if it's been a while
-			// stored where? different document type in db.settings?
-			var lastTimestamp = QUERY_LAST_SPRINKLER_TIMESTAMP()
-			if (lastTimestamp < 10_MINUTES_AGO) {
-				pumpDuration += 3;
-			}
-
-			// pump.turnOnSprinklers(pumpDuration);
-
-			// TWITTER RESPONSE
-			// pgtwitter.updateStatus('message here')
+		});
 
 
-		} else {
-
-			// TWITTER RESPONSE
-			// pgtwitter.updateStatus('message here')
-	
-		}
 		*/
 		
 
