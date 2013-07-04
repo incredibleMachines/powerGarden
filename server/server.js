@@ -226,16 +226,40 @@ function twitterCallback(data) {
 					database.logPump(pumpDuration);
 					pump.turnOnSprinklers(pumpDuration);
 
+
 					// TWITTER RESPONSE
-					// pgtwitter.updateStatus('message here')
+
+					if (!data.plants) {
+						// No mention of a specific plant
+						// Send thanks for water from garden
+						console.log('[Twitter Stream] Thanks for water from garden');
+						// pgtwitter.updateStatus('message here')
+					} else {
+						// User mentioned a specific plant
+						// Send thanks for water from the plant
+						console.log('[Twitter Stream] Thanks for water from ' + data.plants.join(' & '));
+						// pgtwitter.updateStatus('message here')
+					}
 
 				});
 
 			} else {
 
 				// TWITTER RESPONSE
-				// pgtwitter.updateStatus('message here')
-		
+
+				if (!data.plants) {
+					// No mention of a specific plant
+					// Send too much water from garden
+					console.log('[Twitter Stream] Too much water from garden');
+					// pgtwitter.updateStatus('message here')
+				} else {
+					// User mentioned a specific plant
+					// Send too much water from the plant
+					console.log('[Twitter Stream] Too much water from ' + data.plants.join(' & '));
+					// pgtwitter.updateStatus('message here')
+				}
+
+
 			}
 
 		});
@@ -244,17 +268,6 @@ function twitterCallback(data) {
 		*/
 		
 
-		if (!data.plants) {
-			// No mention of a specific plant
-			// Send thanks for water from garden
-			console.log('[Twitter Stream] Thanks for water from garden');
-			// pgtwitter.updateStatus('message here')
-		} else {
-			// User mentioned a specific plant
-			// Send thanks for water from the plant
-			console.log('[Twitter Stream] Thanks for water from ' + data.plants.join(' & '));
-			// pgtwitter.updateStatus('message here')
-		}
 
 	} else {
 		// Not providing water
