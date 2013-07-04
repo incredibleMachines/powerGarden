@@ -16,6 +16,8 @@ function DB(browserSockets){
 	this.plantsDb;
 	this.touchesDb;
 	this.settingsDb;
+	this.moodDb;
+	this.pumpDb;
 	this.twitter;
 	this.browserIO = browserSockets;
 	
@@ -38,6 +40,8 @@ function DB(browserSockets){
 		this.dataDb = db.collection('data');
 		this.touchesDb = db.collection('touches');
 		this.settingsDb = db.collection('settings');
+		this.moodDb = db.collection('mood');
+		this.pumpDb = db.collection('pump');
 	});
 		
 }
@@ -46,7 +50,11 @@ module.exports = DB;
 
 
 DB.prototype.deviceInfo = function(connection_id, device_id, callback) {
-	// console.log('Checking device info for: ' + device_id);
+	if (device_id == 'set_id')
+		console.log('[BROWSER]'.help + ' Aborting device info for: '.input + device_id);
+	else
+		console.log('[BROWSER]'.help + ' Checking device info for: '.input + device_id);
+
 	var obj = {	_id: new BSON.ObjectID( String(device_id)) };
 	devicesDb.findOne(obj, function(err, res) {
 		res.connection_id = connection_id;
@@ -253,12 +261,19 @@ DB.prototype.processMood = function(message,connection,mood,_db){
 				mood.touches = 'low';
 
 			}
+
 			var update = {$set: {mood: mood}} ;
 			console.log(update);
 			devicesDb.update({_id:device.device_id},update, function(err){ 
-						console.log('updated'); 
-						if(err)console.error(err);
-					});
+				console.log('updated'); 
+				if(err)console.error(err);
+			});
+
+			var moodObj = { device_id: device.device_id, mood: mood, timestamp: new Date() };
+			moodDb.insert(moodObj, function(err){
+				if(err) console.error(err) //throw err;
+			});
+
 			//console.log(Object.keys(touchesMood).length)
 			console.log("[TOUCHES MOOD]".debug+" "+JSON.stringify(touchesMood).data);
 			var resp = {};
@@ -561,6 +576,68 @@ DB.prototype.setSlug=function(connection){
 		connection.plant_slug = 'peppers';
 	}
 	
+}
+
+DB.prototype.calculateGardenWaterNeeds = function(callback) {
+
+	// Amount of time to increase the sprinkler duration length for different moisture moods
+	var durations = {
+		low: 5,
+		content: 2,
+		high: 0
+	}
+	var duration = 0;
+
+	console.log('calculateGardenWaterNeeds: checking db');
+	devicesDb.find({ active: true }).toArray( function(err,res) {
+		if (err) console.error(err);
+		
+		for (var i = 0; i < res.length; i++) {
+			console.log('calculateGardenWaterNeeds: '+i+': '+JSON.stringify(res[i]));
+			if (res[i].mood == 'born') continue;
+
+			// Increase amount according to above map
+			duration += durations[res[i].mood.moisture];
+		}
+
+		// Pass result to the callback
+		console.log('calculateGardenWaterNeeds: returning '+duration);
+		callback(duration);
+	});
+}
+
+DB.prototype.logPump(duration) {
+	var obj = { duration: duration, timestamp: new Date() };
+	pumpDb.insert(obj, function(err){
+		if(err) console.error(err) //throw err;
+	});
+}
+
+DB.prototype.neededTimeForPriming = function(callback) {
+
+	// check if the pump was run within the last x minutes
+	// pass the callback either an amout of added time needed for priming, or 0
+
+	var minutes = 10;
+	var addedTime = 5;
+
+	var time = new Date();
+	time.setMinutes( time.getMinutes() - minutes );		
+
+	var recent = {
+		timestamp: { $gte: time }
+	};
+				  
+	pumpDb.find(recent).toArray( function(err,res){
+		if(err) console.error(err);
+
+		if (res.length)
+			callback(addedTime);
+		else
+			callback(0);
+
+	});
+
 }
 
 var storedMood = {
