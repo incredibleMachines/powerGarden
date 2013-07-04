@@ -1,11 +1,14 @@
 package com.incredibleMachines.powergarden;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
 import io.socket.SocketIOException;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,13 +31,16 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 
-public class SocketManager  implements  IOCallback {
+public class SocketManager extends TimerTask  implements  IOCallback {
 
 	private SocketIO socket;
+	private static long connectTimeout  = 5000;
 
 	private static String TAG = "SocketManager";
 	private Connectable callbackActivity;
 	private Connectable presentationCallback;
+	final private Timer backgroundTimer = new Timer("backgroundTimer");
+
 	
 	SocketManager(){
 		//connectToServer();
@@ -117,6 +123,7 @@ public class SocketManager  implements  IOCallback {
 			//todo: read this from a text file
 				socket = new SocketIO();
 				socket.connect("http://"+host+":"+port+"/", this);
+				backgroundTimer.schedule(this, connectTimeout);
 				
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -125,6 +132,7 @@ public class SocketManager  implements  IOCallback {
 	
 	@Override
 	public void onMessage(JSONObject json, IOAcknowledge ack) {
+		Log.d(TAG,"On Message: ");
 		try {
 			System.out.println("Server said:" + json.toString(2));
 		} catch (JSONException e) {
@@ -141,6 +149,20 @@ public class SocketManager  implements  IOCallback {
 	public void onError(SocketIOException socketIOException) {
 		System.out.println("an Error occured");
 		socketIOException.printStackTrace();
+		Log.d(TAG,"ERROR MESSAGE: "+socketIOException.getMessage());
+		if(socketIOException.getMessage().equals("1+0")){
+			PowerGarden.bConnected = false;
+			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+		}
+		if(socketIOException.getMessage().equals("Timeout Error")){
+			PowerGarden.bConnected = false;
+			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+		}
+		if(socketIOException.getMessage().equals("Error while handshaking")){
+			PowerGarden.bConnected = false;
+			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+		}
+		//Error while handshaking
 	}
 
 	@Override
@@ -308,6 +330,14 @@ public class SocketManager  implements  IOCallback {
 	void closeUpShop(){
 		//sendSessionEnd();
 		socket.disconnect();
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		Log.e(TAG,"CONNECT TIMED OUT");
+		connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+		
 	}
 
 }

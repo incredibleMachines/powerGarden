@@ -149,7 +149,7 @@ class IOConnection implements IOCallback {
 		@Override
 		public void run() {
 			error(new SocketIOException(
-					"Timeout Error. No heartbeat from server within life time of the socket. closing.",
+					"Timeout Error",
 					lastException));
 		}
 	}
