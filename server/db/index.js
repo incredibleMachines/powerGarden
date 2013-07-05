@@ -606,7 +606,7 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 	});
 }
 
-DB.prototype.logPump(duration) {
+DB.prototype.logPump = function(duration) {
 	var obj = { duration: duration, timestamp: new Date() };
 	pumpDb.insert(obj, function(err){
 		if(err) console.error(err) //throw err;

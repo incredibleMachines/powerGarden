@@ -72,7 +72,7 @@ public class StartServiceActivity extends Activity {
         
         Log.d(TAG, "onCreate entered");
         mUsbManager = UsbManager.getInstance(this);
-		startServiceIntent = new Intent(this, com.incredibleMachines.powergarden.ArduinoUsbService.class);
+		startServiceIntent = new Intent(this, com.incredibleMachines.powergarden.util.ArduinoUsbService.class);
 		
 		mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(
 				ACTION_USB_PERMISSION), 0);

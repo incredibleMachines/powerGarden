@@ -14,12 +14,16 @@ Circuits At Home, LTD
 Web      :  http://www.circuitsathome.com
 e-mail   :  support@circuitsathome.com
 */
-package com.incredibleMachines.powergarden;
+package com.incredibleMachines.powergarden.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import com.android.future.usb.UsbManager;
+import com.incredibleMachines.powergarden.R;
+import com.incredibleMachines.powergarden.R.id;
+import com.incredibleMachines.powergarden.R.menu;
+import com.incredibleMachines.powergarden.R.string;
 import com.victorint.android.usb.interfaces.Connectable;
 import com.victorint.android.usb.interfaces.Viewable;
 
@@ -368,12 +372,12 @@ public abstract class UsbActivity extends Activity implements Connectable {
  		logMessage("On Connect Menu");
  		doUnbindService();
  		
-    	Intent stopServiceIntent = new Intent(this, com.incredibleMachines.powergarden.ArduinoUsbService.class);
+    	Intent stopServiceIntent = new Intent(this, com.incredibleMachines.powergarden.util.ArduinoUsbService.class);
     	this.stopService(stopServiceIntent);
 
     	SystemClock.sleep(1500);
     	
-    	Intent startServiceIntent = new Intent(this, com.incredibleMachines.powergarden.ArduinoUsbService.class);
+    	Intent startServiceIntent = new Intent(this, com.incredibleMachines.powergarden.util.ArduinoUsbService.class);
     	startService(startServiceIntent);
 
     	SystemClock.sleep(1500);
