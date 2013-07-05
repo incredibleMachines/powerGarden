@@ -50,11 +50,9 @@ module.exports = DB;
 
 
 DB.prototype.deviceInfo = function(connection_id, device_id, callback) {
-	if (device_id == 'set_id')
-		console.log('[BROWSER]'.help + ' Aborting device info for: '.input + device_id);
-	else
-		console.log('[BROWSER]'.help + ' Checking device info for: '.input + device_id);
+	if (device_id == 'set_id') return;
 
+	// console.log('Device info for: ' + device_id);
 	var obj = {	_id: new BSON.ObjectID( String(device_id)) };
 	devicesDb.findOne(obj, function(err, res) {
 		res.connection_id = connection_id;
@@ -64,6 +62,8 @@ DB.prototype.deviceInfo = function(connection_id, device_id, callback) {
 }
 
 DB.prototype.settingsForDevice = function(connection_id, device_id, callback) {
+	if (device_id == 'set_id') return;
+
 	// console.log('Checking settings for: ' + device_id);
 	var obj = {	device_id: new BSON.ObjectID( String(device_id)) };
 	settingsDb.findOne(obj, function(err, res) {
@@ -619,7 +619,7 @@ DB.prototype.neededTimeForPriming = function(callback) {
 	// pass the callback either an amout of added time needed for priming, or 0
 
 	var minutes = 10;
-	var addedTime = 5;
+	var addedTime = 3;
 
 	var time = new Date();
 	time.setMinutes( time.getMinutes() - minutes );		
@@ -631,10 +631,13 @@ DB.prototype.neededTimeForPriming = function(callback) {
 	pumpDb.find(recent).toArray( function(err,res){
 		if(err) console.error(err);
 
-		if (res.length)
-			callback(addedTime);
-		else
+		if (res.length) {
+			console.log('[PUMP] Pump ran within last '+minutes+' minutes, no priming needed.');
 			callback(0);
+		} else {
+			console.log('[PUMP] Pump  NOT ran within last '+minutes+' minutes, adding '+addedTime+' seconds.');
+			callback(addedTime);
+		}
 
 	});
 

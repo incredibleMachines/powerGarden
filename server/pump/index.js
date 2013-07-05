@@ -64,7 +64,7 @@ exports.turnOnSprinklers = function(_duration) {
 	var duration = _duration || 15;
 	var message = '1,' + duration * 1000;
 	writeToClents(message);
-	console.log('[PUMP] ['+pumpClients.length+'] Turning on sprinklers...');
+	console.log('[PUMP] ['+pumpClients.length+'] Sprinklers ON: ' + duration);
 
 	clearTimeout(turnOffTimer);
 	turnOffTimer = setTimeout(this.turnOffSprinklers, duration * 1000);
@@ -73,5 +73,5 @@ exports.turnOnSprinklers = function(_duration) {
 exports.turnOffSprinklers = function() {
 	var message = '0,0';
 	writeToClents(message);
-	console.log('[PUMP] ['+pumpClients.length+'] Turning off sprinklers!');
+	console.log('[PUMP] ['+pumpClients.length+'] Sprinklers OFF');
 }
