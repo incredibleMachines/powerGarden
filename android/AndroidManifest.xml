@@ -53,7 +53,7 @@
                 android:resource="@xml/accessory_filter" />
         </activity>
 
-        <service android:name=".ArduinoUsbService"  /> 
+        <service android:name="com.incredibleMachines.powergarden.util.ArduinoUsbService"  /> 
         <!-- <service android:name=".ArduinoUsbService" android:process=":remote" /> -->    
         <service android:name=".SocketManager" />
 		<uses-library android:name="com.android.future.usb.accessory" />

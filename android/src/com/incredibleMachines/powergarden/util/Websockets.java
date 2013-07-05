@@ -1,4 +1,4 @@
-package com.incredibleMachines.powergarden;
+package com.incredibleMachines.powergarden.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;

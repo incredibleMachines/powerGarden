@@ -14,7 +14,7 @@ Circuits At Home, LTD
 Web      :  http://www.circuitsathome.com
 e-mail   :  support@circuitsathome.com
 */
-package com.incredibleMachines.powergarden;
+package com.incredibleMachines.powergarden.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

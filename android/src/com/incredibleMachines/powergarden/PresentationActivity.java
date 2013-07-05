@@ -2,6 +2,7 @@ package com.incredibleMachines.powergarden;
 
 import com.incredibleMachines.powergarden.R.color;
 import com.incredibleMachines.powergarden.util.SystemUiHider;
+import com.incredibleMachines.powergarden.util.UsbActivity;
 import com.victorint.android.usb.interfaces.Connectable;
 
 import android.annotation.TargetApi;

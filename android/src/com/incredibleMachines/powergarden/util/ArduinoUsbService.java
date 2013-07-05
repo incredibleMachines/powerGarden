@@ -14,7 +14,7 @@ Circuits At Home, LTD
 Web      :  http://www.circuitsathome.com
 e-mail   :  support@circuitsathome.com
 */
-package com.incredibleMachines.powergarden;
+package com.incredibleMachines.powergarden.util;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -27,6 +27,10 @@ import java.util.Arrays;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
+import com.incredibleMachines.powergarden.PresentationActivity;
+import com.incredibleMachines.powergarden.R;
+import com.incredibleMachines.powergarden.R.drawable;
+import com.incredibleMachines.powergarden.R.string;
 
 import android.app.IntentService;
 import android.app.Notification;
