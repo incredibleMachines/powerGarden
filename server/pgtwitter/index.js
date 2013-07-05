@@ -2,7 +2,8 @@
 /* Pull in required modules						 								 			   */
 /* ******************************************************************************************* */
 
-var ntwitter = require('ntwitter');
+// var ntwitter = require('ntwitter');
+var ImmortalNTwitter = require('immortal-ntwitter');
 
 
 /* ******************************************************************************************* */
@@ -60,7 +61,8 @@ var start = function(_callback) {
 
 	callback = _callback;
 
-	twitter = new ntwitter({
+	// twitter = new ntwitter({
+	twitter = ImmortalNTwitter.create({
 		consumer_key: 'bTc9jPplp8SegUtH9EGhTA',
 		consumer_secret: 'Tin9GFVUfqZKVzLCrKRrMAl9Y3TX7IlxiIVRSW0OWU',
 		access_token_key: '1534210819-fSgoQxNsrkY8ORr2t4w6f6jjuQecnY0V8wN5cnm',
@@ -68,26 +70,27 @@ var start = function(_callback) {
 	});
 
 	// Connect!
-	twitter.stream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {
-		console.log('[Twitter Stream] Connected');
+	// twitter.stream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {
+	twitter.immortalStream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {
+		console.log('[TWITTER] Connected');
 
 		// Process with our callback
 		stream.on('data', processesTwitterStreamData);
 
 		// Deal with errors
 		stream.on('error', function(error, code){
-			console.error('[Twitter Stream] Error: ' + code);
+			console.error('[TWITTER] Error! Code: ' + code);
 			console.error(error);
 			//throw error;
 		});
 		stream.on('end', function (response) {
 			// Handle a disconnection
-			console.log('[Twitter Stream] End:');
+			console.log('[TWITTER] End:');
 			console.log(response);
 		});
 		stream.on('destroy', function (response) {
 			// Handle a 'silent' disconnection from Twitter, no end/error event fired
-			console.log('[Twitter Stream] Destroy:');
+			console.log('[TWITTER] Destroy:');
 			console.log(response);
 		});
 
@@ -104,6 +107,18 @@ exports.start = start;
 var processesTwitterStreamData = function(data) {
 	// console.log(data);
 
+	// First check if we got a disconnect or a falling behind message
+	if (data.disconnect) {
+		console.error('[TWITTER] Received disconnect!');
+		console.error(data);
+		return;
+	}
+	if (data.warning) {
+		console.error('[TWITTER] Received warning!');
+		console.error(data);
+		return;
+	}
+
 	// Make sure necessary data exists before continuing
 	if (!data.id_str) return;
 	if (!data.text) return;
@@ -119,13 +134,13 @@ var processesTwitterStreamData = function(data) {
 	var hashtagMatched = false;
 	for (var i = 0; i < hashtagRegexes.length; i++) {
 		if (hashtagRegexes[i].test(text)) {
-			//console.log("[Twitter Stream] Match on regex: " + hashtagRegexes[i]);
+			//console.log("[TWITTER] Match on regex: " + hashtagRegexes[i]);
 			hashtagMatched = true;
 			break;
 		}
 	}
 	if (!handleRegex.test(text) && !hashtagMatched) {
-		console.log("[Twitter Stream] No match on handles or hashtags, returning.")
+		console.log("[TWITTER] No match on handles or hashtags, returning.")
 		return;
 	}
 
@@ -140,7 +155,7 @@ var processesTwitterStreamData = function(data) {
 		// Use whole word regex-matching
 		if (new RegExp("\\b" + waterKeywords[i] + "\\b", "i").test(text)) {
 			foundWaterKeyword = true;
-			console.log('[Twitter Stream] Water match! ' + waterKeywords[i]);
+			console.log('[TWITTER] Water match! ' + waterKeywords[i]);
 			break;
 		}
 	}
@@ -152,7 +167,7 @@ var processesTwitterStreamData = function(data) {
 			if (new RegExp("\\b" + plantKeywords[i].keywords[j] + "\\b", "i").test(text)) {
 				foundPlantKeyword = true;
 				mentionedPlants.push(plantKeywords[i].type);
-				console.log('[Twitter Stream] Plant match! ' + plantKeywords[i].type + ': ' + plantKeywords[i].keywords[j]);
+				console.log('[TWITTER] Plant match! ' + plantKeywords[i].type + ': ' + plantKeywords[i].keywords[j]);
 
 				// break out of inner loop and continue searching for plants
 				break;
