@@ -74,11 +74,12 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 			}
 	}
 	
-	public void plantTouch(String type, String device_id, int plant_index, int cap_val, Connectable _callback){
+	public void plantTouch(String type, String device_id, int plant_index, int cap_val, String mood, Connectable _callback){
 		callbackActivity = _callback;
+
 		try{
 			socket.emit(type, 
-					new JSONObject().put("device_id", device_id).put("plant_index", plant_index).put("cap_val", cap_val) //added capval here
+					new JSONObject().put("device_id", device_id).put("plant_index", plant_index).put("cap_val", cap_val).put("mood", mood) //added capval here
 					);
 			
 		}catch(Exception e){
@@ -88,11 +89,18 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	
 	public void updateData(String type, String device_id, JSONObject json, Connectable _callback){
 		callbackActivity = _callback;
-		
+		JSONObject data = new JSONObject();
+		JSONObject plants = new JSONObject();
+		JSONObject state = new JSONObject();
 		
 		try{
+			for(int i=0; i<PowerGarden.Device.PlantNum; i++){
+				plants.put(Integer.toString(i), PowerGarden.Device.plants[i].state);
+			}
+			data.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light);
+			state.put("moisture", PowerGarden.Device.getDeviceMoisture()).put("plants", plants);
 			socket.emit(type, 
-					new JSONObject().put("device_id", device_id).put("data", json)
+					new JSONObject().put("device_id", device_id).put("plant_type", PowerGarden.Device.plantType ).put("data", data).put("state", state)
 					);
 			
 		}catch(Exception e){
@@ -276,10 +284,10 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 			}
 
 			//**** stream control update ****//
-			else if(event.equals("control")){
+			else if(event.equals("firehose")){
 				
 				int thisPlantIndex = 0;
-				if(j.has("stream")){
+				if(j.has("firehose")){
 					PowerGarden.Device.datastream_mode = Boolean.parseBoolean(j.getString("stream"));
 					Log.d(TAG, "datastream_mode set to: "+j.getString("stream"));
 					callbackActivity.signalToUi(PowerGarden.StreamModeUpdate, PowerGarden.Device.ID);
@@ -303,14 +311,27 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 					if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.PlantIgnore, thisPlantIndex);
 				}
 			}
+
+			//**** settings ****//
+			else if(event.equals("settings")){
+				
+				if(j.has("mood")){
+					if(j.has("index")){
+						//Log.wtf(TAG, "mood set to: " + j.getString("mood"));
+						//PowerGarden.Device.plants[Integer.parseInt(j.getString("index"))].mood = j.getString("mood");
+					}
+				}
+				callbackActivity.signalToUi(PowerGarden.Settings, PowerGarden.Device.ID);
+				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.Settings, PowerGarden.Device.ID);
+			}
 			
-			//**** touched ****//
+			//**** touched ****//  DEPRECATED, never used
 			else if(event.equals("touch")){
 				
 				if(j.has("mood")){
 					if(j.has("index")){
-						Log.wtf(TAG, "mood set to: " + j.getString("mood"));
-						PowerGarden.Device.plants[Integer.parseInt(j.getString("index"))].mood = j.getString("mood");
+						//Log.wtf(TAG, "mood set to: " + j.getString("mood"));
+						PowerGarden.Device.plants[Integer.parseInt(j.getString("index"))].state = j.getString("mood");
 					}
 				}
 				callbackActivity.signalToUi(PowerGarden.Touched, PowerGarden.Device.ID);

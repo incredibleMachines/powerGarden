@@ -7,6 +7,7 @@ import com.victorint.android.usb.interfaces.Connectable;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -51,33 +52,33 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		super.onResume();
 		Log.d(TAG, "onResume");
 		//setContentView(R.layout.activity_presentation);
-		wrapper = (FrameLayout) findViewById(R.id.wrapper);
-		plantCopy = (TextView) findViewById(R.id.fullscreen_content);
-		
-		//plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
-		plantCopy.setText(PowerGarden.Device.messageCopy);
-		setTextViewFont(PowerGarden.italiaBook, plantCopy);
-//		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
-		
-		if(PowerGarden.Device.plantType.contains("Cherry")){
-			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
-		} else if(PowerGarden.Device.plantType.contains("Beets")){
-			wrapper.setBackgroundResource(R.drawable.beet_bg);
-		} else if(PowerGarden.Device.plantType.contains("Celery")){
-			wrapper.setBackgroundResource(R.drawable.celery_bg);
-		} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
-			wrapper.setBackgroundResource(R.drawable.tomato_bg);
-		} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
-			wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
-		} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
-			wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
-		} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
-			wrapper.setBackgroundResource(R.drawable.pepper_bg);
-		}  else if(PowerGarden.Device.plantType == null){
-			wrapper.setBackgroundColor(color.default_background);
-		} else {
-			wrapper.setBackgroundColor(color.default_background);
-		}
+//		wrapper = (FrameLayout) findViewById(R.id.wrapper);
+//		plantCopy = (TextView) findViewById(R.id.stage_copy);
+//		
+//		//plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+//		plantCopy.setText(PowerGarden.Device.messageCopy);
+//		setTextViewFont(PowerGarden.italiaBook, plantCopy);
+////		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
+//		
+//		if(PowerGarden.Device.plantType.contains("Cherry")){
+//			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
+//		} else if(PowerGarden.Device.plantType.contains("Beets")){
+//			wrapper.setBackgroundResource(R.drawable.beet_bg);
+//		} else if(PowerGarden.Device.plantType.contains("Celery")){
+//			wrapper.setBackgroundResource(R.drawable.celery_bg);
+//		} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
+//			wrapper.setBackgroundResource(R.drawable.tomato_bg);
+//		} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
+//			wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
+//		} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
+//			wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
+//		} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
+//			wrapper.setBackgroundResource(R.drawable.pepper_bg);
+//		}  else if(PowerGarden.Device.plantType == null){
+//			wrapper.setBackgroundColor(color.default_background);
+//		} else {
+//			wrapper.setBackgroundColor(color.default_background);
+//		}
 	}
 	
 	@Override
@@ -157,7 +158,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    }
 	    
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		final View contentView = findViewById(R.id.fullscreen_content);
+		final View contentView = findViewById(R.id.stage_copy);
 		
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
@@ -336,14 +337,21 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 
 	
 	public void resetView(){
+		Log.d(TAG, "resetView");
 		setContentView(R.layout.activity_presentation);
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		final View contentView = findViewById(R.id.fullscreen_content);
+		final View contentView = findViewById(R.id.stage_copy);
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
-		//plantCopy = (TextView) findViewById(R.id.fullscreen_content);
+		plantCopy = (TextView) findViewById(R.id.stage_copy);
 		
 		plantCopy.setText(PowerGarden.Device.messageCopy);
-		setTextViewFont(PowerGarden.italiaBook, plantCopy);
+		plantCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+		setTextViewFont(PowerGarden.interstateBold, plantCopy);
+		
+		int msgLength = PowerGarden.Device.messageCopy.length();
+		plantCopy.setTextSize((int)(1/(msgLength*.0004f)*3));
+		plantCopy.setLineSpacing(3, 1);
+		plantCopy.setAllCaps(true);
 		
 		if(PowerGarden.Device.plantType.contains("Cherry")){
 			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);

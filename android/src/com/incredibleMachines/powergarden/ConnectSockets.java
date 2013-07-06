@@ -104,7 +104,8 @@ public class ConnectSockets extends Activity implements Connectable {
            mSendTouch.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 	        	   //PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );
-	        	   PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, (int) (Math.random()*8), (int) (Math.random()*2500), ConnectSockets.this );
+				int plantNum = (int) (Math.random()*8);
+	        	   PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, ConnectSockets.this );
 			}
            });
            
@@ -123,7 +124,7 @@ public class ConnectSockets extends Activity implements Connectable {
         		   			j.put("moisture", tempMoist).put("temp", tempTemp).put("humidity", tempHumidity).put("light", tempLight).put("timestamp", time );
         		   		}
         		   		else {
-        		   			j.put("moisture", PowerGarden.moisture).put("temp", PowerGarden.temp).put("humidity", PowerGarden.hum).put("light", PowerGarden.light).put("timestamp", time );
+        		   			j.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light).put("timestamp", time );
         		   		}
         		   	} catch (JSONException e) {
         		   		e.printStackTrace();
@@ -290,6 +291,17 @@ public class ConnectSockets extends Activity implements Connectable {
 				
 				public void run(){
 					mStatusline.setText("server says PLANT IGNORE\n\n " + Integer.toString(type_) + " : "+PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};			
+		}
+		
+		else if (type == PowerGarden.Settings){
+			final int type_ = type;
+			myrun = new Runnable(){
+				
+				public void run(){
+					mStatusline.setText("server says SETTINGS UPDATE\n\n " + Integer.toString(type_) + " : "+PowerGarden.serverResponseRaw);
 					//saveDevicePrefs();
 				}
 			};			
