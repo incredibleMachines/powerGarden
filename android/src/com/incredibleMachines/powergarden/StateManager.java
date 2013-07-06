@@ -25,32 +25,17 @@ public class StateManager extends Activity {
 		
 		for(int i=0; i<PowerGarden.Device.PlantNum; i++){
 			
-//			for(int j=0; j < PowerGarden.Device.plants[i].touchTimestamps.length; j++){ //go through entre vector of touch timestamps for this plant 
-//				
-//				//if any of them happened before changeDur (3 min?) then remove them from the vector
-//				if(System.currentTimeMillis() - (long) PowerGarden.Device.plants[i].touchTimestamps[j] > PowerGarden.plantStateChangeDur ){
-//					
-//					Log.d("touchStamps.removing: ", Long.toString(PowerGarden.Device.plants[i].touchTimestamps[j]));
-//					PowerGarden.Device.plants[i].touchTimestamps[j] = 0L;
-////					PowerGarden.Device.plants[i].touchStamps.remove(j); //
-////					j--;
-//				}
-//				
-//				//int touchesThisPeriod = PowerGarden.Device.plants[i].touchStamps.size();
-//				//Log.d("touchesThisPeriod: ", Integer.toString(touchesThisPeriod));
-//			}
-			
 			//compare last touched timestamp of this plant -- if it's been more than 3 min, then lower 
-//			if(System.currentTimeMillis() - PowerGarden.Device.plants[i].touchedTimestamp > PowerGarden.plantStateChangeDur){
-//				if (PowerGarden.Device.plants[i].stateIndex > 0){
-//					PowerGarden.Device.plants[i].stateIndex =  PowerGarden.Device.plants[i].stateIndex - 1;
-//					//set timestamp to now, will take another changeDur to lower again
-//					PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis(); 
-//				}
-//				else
-//					PowerGarden.Device.plants[i].stateIndex = 0; //stay at 0 if we're already at 0
-//			}
-//			
+			if(System.currentTimeMillis() - PowerGarden.Device.plants[i].touchedTimestamp > PowerGarden.plantStateChangeDur){
+				if (PowerGarden.Device.plants[i].stateIndex > 0){
+					PowerGarden.Device.plants[i].stateIndex =  PowerGarden.Device.plants[i].stateIndex - 1;
+					//set timestamp to now, will take another changeDur to lower again
+					PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis(); 
+				}
+				else
+					PowerGarden.Device.plants[i].stateIndex = 0; //stay at 0 if we're already at 0
+			}
+	
 			for(int j=0; j < PowerGarden.Device.plants[i].touchStamps.size(); j++){ //go through entre vector of touch timestamps for this plant 
 				
 				//if any of them happened before changeDur (3 min?) then remove them from the vector
