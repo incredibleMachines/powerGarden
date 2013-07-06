@@ -31,13 +31,13 @@ socket.on('device_disconn',function(data){
 	}
 });
 
-socket.on('control',function(data){
-	var $elem = $('button.control.client-'+data.connection_id);
+socket.on('firehose',function(data){
+	var $elem = $('button.firehose.client-'+data.connection_id);
 	if(data.stream) {
 		$elem.addClass('btn-warning');
 		$elem.children('i').addClass('icon-fire').removeClass('icon-off');
 	} else {
-		// $(this).html('Control Off');
+		// $(this).html('firehose Off');
 		$elem.removeClass('btn-warning');
 		$elem.children('i').addClass('icon-off').removeClass('icon-fire');
 	}
@@ -95,13 +95,13 @@ function populate(socket, data){
 	
 	if( $.inArray(data.device_id, connections) == -1 ) {
 		connections.push(data.device_id);
-		var deviceControl = false;
+		var deviceFirehose = false;
 
 		// GENERATE TABLE ROW FOR DEVICE
-		if (deviceControl) {
-			var activeButton = '<button class="btn-mini btn-danger control client-'+data.connection_id+'"><i class="icon-fire"></i></button>';
+		if (deviceFirehose) {
+			var activeButton = '<button class="btn-mini btn-danger firehose client-'+data.connection_id+'"><i class="icon-fire"></i></button>';
 		} else {
-			var activeButton = '<button class="btn-mini control client-'+data.connection_id+'"><i class="icon-off"></i></button>';
+			var activeButton = '<button class="btn-mini firehose client-'+data.connection_id+'"><i class="icon-off"></i></button>';
 		}
 
 		var append = '<tr id="'+data.device_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td>'+activeButton+'</td><td>'+data.device_id+'</td><td>'+data.plants.length+'</td><td>'+data.type+'</td><td>'+data.mood.touches+'</td><td>'+data.mood.moisture+'</td><td>'+(new Date(data.date)).toLocaleString()+'</td></tr>';
@@ -125,8 +125,10 @@ function populate(socket, data){
 
 		// loop through results and generate a new table row for each
 		var plantString = '';
+		console.log(data.plants);
 		for (var i = 0; i < data.plants.length; i++) {
-			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td><button class="btn-mini btn-success plant-'+i+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+i+'"><i class="icon-ok"></i></button></td><td>'+data.plants[i]._id+'</td><td>'+data.plants[i].index+'</td><td>TODO</td><td>TODO</td><td><input type="range" min="0" max="15000" step="1" class="plant-'+i+' cap client-'+data.connection_id+'" data-plant_index="'+i+'"></td><td class="plant-'+i+' value client-'+data.connection_id+'"></td><td class="plant-'+i+' incoming client-'+data.connection_id+'"></td></tr>';
+			var j = data.plants[i].index;
+			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td><button class="btn-mini btn-success plant-'+j+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+j+'"><i class="icon-ok"></i></button></td><td>'+data.plants[i]._id+'</td><td>'+j+'</td><td>TODO</td><td>TODO</td><td><input type="range" min="0" max="15000" step="1" class="plant-'+j+' cap client-'+data.connection_id+'" data-plant_index="'+j+'"></td><td class="plant-'+j+' value client-'+data.connection_id+'"></td><td class="plant-'+j+' incoming client-'+data.connection_id+'"></td></tr>';
 		}
 
 
@@ -148,22 +150,22 @@ function populate(socket, data){
 
 		});
 
-		$('button.control.client-'+data.connection_id).click(function(){ 
-			deviceControl = !deviceControl;
+		$('button.firehose.client-'+data.connection_id).click(function(){ 
+			deviceFirehose = !deviceFirehose;
 
-			if(deviceControl) {
-				// $(this).html('Control On');
+			if(deviceFirehose) {
+				// $(this).html('firehose On');
 				$(this).addClass('btn-warning');
 				$(this).children('i').addClass('icon-fire').removeClass('icon-off');
 			} else {
-				// $(this).html('Control Off');
+				// $(this).html('firehose Off');
 				$(this).removeClass('btn-warning');
 				$(this).children('i').addClass('icon-off').removeClass('icon-fire');
 			}
 
 			var connection = $(this).parents('tr').data('connection');
 			var device = $(this).parents('tr').data('device');
-			socket.emit('control', {device_id:device, connection_id:connection, stream:deviceControl });
+			socket.emit('firehose', {device_id:device, connection_id:connection, stream:deviceFirehose });
 			return false;
 		});
 

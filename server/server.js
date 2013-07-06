@@ -41,7 +41,7 @@ var browsers = {};
 
 
 //Connect to twitter, pass callback for responding to tweets
-// pgtwitter.start(twitterCallback);
+pgtwitter.start(twitterCallback);
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -126,6 +126,15 @@ var database = new DB(browserio.sockets);
 /* ******************************************************************************************* */
 var clientID = 0;
 
+// testing auto kickoff if no register within 5 sec. doesn't really help issue of tablets connecting multiple times
+// function terminateUnregisteredClients() {
+// 	for(var key in clients) {
+// 		if (clients[key]['device_id'] == 'set_id') {
+// 			console.log('Killing %s, %s:', clients[key].id, clients[key].device_id);
+// 			clients[key].socket.disconnect();
+// 		}
+// 	}
+// }
 
 io.sockets.on('connection', function (socket) {
   //io.sockets.emit('this', { will: 'be received by everyone'});
@@ -135,6 +144,8 @@ io.sockets.on('connection', function (socket) {
 
 	console.log("[NEW CONN]".help+" connection.device_id %s".data,connection.device_id);
 	
+	// setTimeout(terminateUnregisteredClients, 5000);
+
 	//browserio.sockets.emit('device_conn',connectKey);
 	
 	socket.on('register', function (msg) {
@@ -173,8 +184,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('disconnect', function () {
 	  /* io.sockets.emit('user disconnected'); */
   	  
-	  console.log("[CLIENT DISCONN]".error+"connection.id %s".input, connection.id);
-	  console.log("[CLIENT DISCONN]".error+"connection.device_id %s".input, connection.device_id);
+	  console.log("[CLIENT DISCONN]".error+"connection.id %s, connection.device_id %s".input, connection.id, connection.device_id);
 	  
 	  var res = {device_id: connection.device_id, connection_id: connection.id};
 	  
@@ -208,7 +218,7 @@ function twitterCallback(data) {
 	// pump.turnOnSprinklers(15);
 
 	if (data.water) {
-		console.log('User providing water');
+		// console.log('User providing water');
 
 		// User is trying to provide water
 
@@ -289,7 +299,7 @@ function twitterCallback(data) {
 
 	function processResponses(plant, responses) {
 		// console.log('Plant targeted: ' + plant);
-		if (data.emit) console.log('Emits also to: ' + data.emit);
+		// if (data.emit) console.log('Emits also to: ' + data.emit);
 		// console.log('Potential responses are...');
 		// console.log(responses);
 
@@ -308,7 +318,8 @@ function twitterCallback(data) {
 					device_id: clients[key].device_id,
 					user_name: data.user_name,
 					text: responses[index],
-					plant_type: plant
+					plant_type: plant,
+					watering: data.water ? true : false
 				}
 				clients[key].socket.emit('tweet', obj);
 				// console.log('Sending tweet event to: plant_type: '+clients[key].plant_type+', plant_slug: '+clients[key].plant_slug);
