@@ -97,43 +97,55 @@ DB.prototype.routeUpdate = function(message,connection){
 	if(message.device_id != connection.device_id) { 
 		console.error('[UPDATE ERROR] '.error+"\t\t message.device_id=%s connection.device_id=%s".data, message.device_id, connection.device_id );/*error error;*/ 
 	}else{
-		 
-		//console.log("GOT MESSAGE.DATA :: "+JSON.stringify(message.data));
-			
-		var obj = {	'device_id': new BSON.ObjectID( String(message.device_id)), 
-					'moisture':message.data.moisture, 
-					'temp': message.data.temp, 
-					'humidity':message.data.humidity, 
-					'light': message.data.light,
-					'timestamp': new Date()
-				};
-				
-		var minutes = 15; //may need to be reset
-		var time = new Date();
-		time.setMinutes( time.getMinutes()-minutes );		
-		
-		var _db = this;
-		
+
+		var obj = {
+			device_id: new BSON.ObjectID( String(message.device_id) ),
+			timestamp: new Date(),
+			state: message.state,
+			data: message.data,
+			plant_type: message.plant_type
+		}
+
 		dataDb.insert(obj, {safe:true}, function(err,doc){
-			if(err) console.error(err);//throw err;
+			if(err) console.error(err);//throw err;	
+		});
+
+		// console.log("GOT MESSAGE.DATA :: "+JSON.stringify(message.data));
 			
-			//check the last values and determine mood of plant 
-			//update plants/device if necessary
-			var recent = {
-							device_id : obj.device_id,
-							timestamp: { $gte: time }
-						  };
+		// var obj = {	'device_id': new BSON.ObjectID( String(message.device_id)), 
+		// 			'moisture':message.data.moisture, 
+		// 			'temp': message.data.temp, 
+		// 			'humidity':message.data.humidity, 
+		// 			'light': message.data.light,
+		// 			'timestamp': new Date()
+		// 		};
+				
+		// var minutes = 15; //may need to be reset
+		// var time = new Date();
+		// time.setMinutes( time.getMinutes()-minutes );		
+		
+		// var _db = this;
+		
+		// dataDb.insert(obj, {safe:true}, function(err,doc){
+		// 	if(err) console.error(err);//throw err;
+			
+		// 	//check the last values and determine mood of plant 
+		// 	//update plants/device if necessary
+		// 	var recent = {
+		// 					device_id : obj.device_id,
+		// 					timestamp: { $gte: time }
+		// 				  };
 						  
-			dataDb.find(recent).toArray( function(err,res){
-				//console.log(res);
-				if(err) console.error(err);
-				//console.log(res.length);
-				_db.calcDeviceMood(message,connection,res,_db);
+		// 	dataDb.find(recent).toArray( function(err,res){
+		// 		//console.log(res);
+		// 		if(err) console.error(err);
+		// 		//console.log(res.length);
+		// 		_db.calcDeviceMood(message,connection,res,_db);
 			
-			});
+		// 	});
 			
 		
-		});	
+		// });	
 	}
 }
 /* ******************************************************************************************* */
