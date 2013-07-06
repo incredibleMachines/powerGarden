@@ -126,9 +126,10 @@ DB.prototype.routeRegister = function(message,connection){
 					console.log("[Device Already Registered]");
 
 					// Update plant type in db if what was sent in register is different than what we have
-					if (message.plant_type != result.type) {
-						result.type = message.plant_type;
-						_db.updateDocument(devicesDb, message.device_id, { $set: { type: message.plant_type }})
+					var plant_slug = _db.determineSlug(message.plant_type);
+					if (plant_slug != result.plant_type) {
+						result.plant_type = plant_slug;
+						_db.updateDocument(devicesDb, message.device_id, { $set: { plant_type: plant_slug }});
 					}
 
 					result.connection_id = connection.id;
@@ -136,7 +137,7 @@ DB.prototype.routeRegister = function(message,connection){
 
 					connection.plant_type = message.plant_type;		
 					connection.device_id = message.device_id;
-					_db.setSlug(connection);
+					connection.plant_slug = plant_slug;
 					_db.setActive(connection, true);
 					//assignPlantData(result,connection);
 
@@ -170,38 +171,54 @@ DB.prototype.setActive = function(connection,state){
 	this.updateDocument(devicesDb,connection.device_id, json);
 }
 
-DB.prototype.setSlug=function(connection){
-	
-	// if(connection.plant_type == "Cherry Tomatoes" || connection.plant_type == "Tomatoes"){
-	if(connection.plant_type == "Tomatoes"){
-		connection.plant_slug = 'tomatoes';
-	}else if(connection.plant_type == "Cherry Tomatoes"){
-		connection.plant_slug = 'cherry_tomatoes';
-	// }else if(connection.plant_type == "Orange Carrots" || connection.plant_type == "Purple Carrots"){
-		// connection.plant_slug = 'carrots';
-	}else if(connection.plant_type == "Orange Carrots"){
-		connection.plant_slug = 'orange_carrots';
-	}else if(connection.plant_type == "Purple Carrots"){
-		connection.plant_slug = 'purple_carrots';
-	}else if(connection.plant_type == "Celery"){
-		connection.plant_slug = 'celery';
-	}else if(connection.plant_type == "Beets"){
-		connection.plant_slug = 'beets';
-	}else if(connection.plant_type == "Bell Peppers"){
-		connection.plant_slug = 'peppers';
+DB.prototype.determineSlug = function(plant_type) {
+
+	var plant_slug;
+
+	switch (plant_type) {
+		case 'Tomatoes':
+			plant_slug = 'tomatoes'; break;
+		case 'Cherry Tomatoes':
+			plant_slug = 'cherry_tomatoes'; break;
+		case 'Orange Carrots':
+			plant_slug = 'orange_carrots'; break;
+		case 'Purple Carrots':
+			plant_slug = 'purple_carrots'; break;
+		case 'Celery':
+			plant_slug = 'celery'; break;
+		case 'Beets':
+			plant_slug = 'beets'; break;
+		case 'Bell Peppers':
+			plant_slug = 'peppers'; break;
+
+		default:
+			plant_slug = plant_type; break;
 	}
-	
+
+	return plant_slug;
+
+	// if(connection.plant_type == "Cherry Tomatoes" || connection.plant_type == "Tomatoes"){
+	//	plant_slug = 'tomatoes';
+	// }else if(plant_type == "Orange Carrots" || plant_type == "Purple Carrots"){
+		// plant_slug = 'carrots';
+}
+
+// Can probably deprecate this now. Not called from anywhere
+DB.prototype.setSlug=function(connection){
+	connection.plant_slug = this.determineSlug(connection.plant_type);
 }
 
 DB.prototype.logDevice = function(message,connection,_db){
-	var obj = { date: new Date(), plants: [], type: message.plant_type, active: true, state: { touch:'born', moisture: 'born'} };
+
+	var plant_slug = this.determineSlug(message.plant_type);
+	var obj = { date: new Date(), plants: [], plant_type: plant_slug, active: true, state: {touch:'born', moisture: 'born'} };
+
 	devicesDb.insert(obj, {safe:true}, function(err,doc){
 		if(err) console.error(err); //throw err;
 		
 		connection.device_id = doc[0]._id;
 		connection.plant_type = message.plant_type;
-		
-		_db.setSlug(connection);
+		connection.plant_slug = plant_slug;
 		
 		console.log('Created Record: '+connection.device_id);
 		console.log("plants.length: "+message.num_plants);
@@ -331,20 +348,26 @@ DB.prototype.routeTouch = function(message,connection){
 	//console.log("[PLANT TOUCH] ".info +JSON.stringify(obj));
 
 	// increment lifetime touch count for plant in db.plants
-	var json = {$inc : {touch: 1}};
+	var json = { $inc: {touch: 1}, $set: {state: message.state} };
 	plantsDb.update(obj, json,function(err){
 		if(err) console.error(err);//throw err; 
 	});	
 	
 	// set up object to insert into db.touches
-	obj.timestamp = new Date();
-	obj.cap_val = message.cap_val;
+	var touchObj = {
+		device_id: new BSON.ObjectID(String(message.device_id)),
+		timestamp: new Date(),
+		index: message.plant_index,
+		cap_val: message.cap_val,
+		count: message.count, 
+		state: message.state
+	};
 	
 	// console.log(obj.timestamp);	
 	// var _db = this;
 
 	// console.log(time);
-	touchesDb.insert(obj, function(err){
+	touchesDb.insert(touchObj, function(err){
 		if(err) console.error(err) //throw err;
 		
 		// DEPRECATED. THIS GETS CALCULATED ON THE TABLETS
@@ -352,7 +375,6 @@ DB.prototype.routeTouch = function(message,connection){
 		
 	});
 
-	//this.twitter.twitterRef.gotTouched();
 }
 
 

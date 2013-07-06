@@ -104,7 +104,7 @@ function populate(socket, data){
 			var activeButton = '<button class="btn-mini firehose client-'+data.connection_id+'"><i class="icon-off"></i></button>';
 		}
 
-		var append = '<tr id="'+data.device_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td>'+activeButton+'</td><td>'+data.device_id+'</td><td>'+data.plants.length+'</td><td>'+data.type+'</td><td>'+data.mood.touches+'</td><td>'+data.mood.moisture+'</td><td>'+(new Date(data.date)).toLocaleString()+'</td></tr>';
+		var append = '<tr id="'+data.device_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td>'+activeButton+'</td><td>'+data.device_id+'</td><td>'+data.plants.length+'</td><td>'+data.plant_type+'</td><td>'+data.state.touch+'</td><td>'+data.state.moisture+'</td><td>'+(new Date(data.date)).toLocaleString()+'</td></tr>';
 		$('.device-table > tbody').append(append);
 
 
@@ -125,7 +125,7 @@ function populate(socket, data){
 
 		// loop through results and generate a new table row for each
 		var plantString = '';
-		console.log(data.plants);
+		// console.log(data.plants);
 		for (var i = 0; i < data.plants.length; i++) {
 			var j = data.plants[i].index;
 			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td><button class="btn-mini btn-success plant-'+j+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+j+'"><i class="icon-ok"></i></button></td><td>'+data.plants[i]._id+'</td><td>'+j+'</td><td>TODO</td><td>TODO</td><td><input type="range" min="0" max="15000" step="1" class="plant-'+j+' cap client-'+data.connection_id+'" data-plant_index="'+j+'"></td><td class="plant-'+j+' value client-'+data.connection_id+'"></td><td class="plant-'+j+' incoming client-'+data.connection_id+'"></td></tr>';
