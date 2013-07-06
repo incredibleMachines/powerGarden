@@ -209,7 +209,13 @@
                 "If the tomatoes keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Did you know that the tomato's official name is Solanum lycopersicum. That's Latin for… well, tomato?",
+            "The first European explorers of the Americas actually mistook the tomato for a new breed of eggplant.",
+            "Tomatoes are very friendly plants. They have mutually benefit growing relationships with carrot, asparagus, and a variety of herbs",
+            "Loaded with Vitamins A and C, tomatoes are also a great source of dietary fiber and disease-fighting antioxidants. Oh tomato, what can’t you do?"
+        ]
     },
     "cherry_tomatoes": {
         "touchRequest": {
@@ -337,7 +343,13 @@
                 "If the tomatoes keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Did you know that the tomato's official name is Solanum lycopersicum. That's Latin for… well, tomato?",
+            "The first European explorers of the Americas actually mistook the tomato for a new breed of eggplant.",
+            "Tomatoes are very friendly plants. They have mutually benefit growing relationships with carrot, asparagus, and a variety of herbs",
+            "Loaded with Vitamins A and C, tomatoes are also a great source of dietary fiber and disease-fighting antioxidants. Oh tomato, what can’t you do?"
+        ]
     },
     "peppers": {
         "touchRequest": {
@@ -456,7 +468,10 @@
                 "Water droplets look neat on a pepper's waxy peel, but too much and these guy will be in trouble…"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Like carrots, red bell peppers contain loads of beta carotene for healthy vision. And up to three times as much Vitamin C as an orange. Lots to love about bell peppers."
+        ]
     },
     "celery": {
         "touchRequest": {
@@ -604,7 +619,10 @@
                 "If the celery keeps getting this much water, it's gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "It’s not just a simple green stalk. Studies show that celery can lower cholesterol and reduce cell damage caused by free radicals. Studies also show that celery is perfect with tomato juice."
+        ]
     },
     "orange_carrots": {
         "touchRequest": {
@@ -759,7 +777,11 @@
                 "If the carrots keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Everyone knows that carrots have Vitamin A. But did you know they also contain iron and Vitamins B6, E, C and K (and more)? Yep. A carrot is nature’s vitamin store.",
+            "Among many health benefits, purple carrots have supercharged antioxidant abilities. Plus they’re purple, which is obviously kind of cool in itself."
+        ]
     },
     "purple_carrots": {
         "touchRequest": {
@@ -914,7 +936,11 @@
                 "If the carrots keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Everyone knows that carrots have Vitamin A. But did you know they also contain iron and Vitamins B6, E, C and K (and more)? Yep. A carrot is nature’s vitamin store.",
+            "Among many health benefits, purple carrots have supercharged antioxidant abilities. Plus they’re purple, which is obviously kind of cool in itself."
+        ]
     },
     "beets": {
         "touchRequest": {
@@ -1071,6 +1097,9 @@
                 "That's not how you make beet juice! Cut back on the water, will ya?"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "High in fiber, red beets reduce cholesterol. They also contain nutrients that act as natural anti-inflammatory agents. Way to be, red beets."
+        ]
     }
 }
