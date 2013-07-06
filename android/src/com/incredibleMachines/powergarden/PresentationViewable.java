@@ -510,8 +510,8 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 		PowerGarden.italiaBook = Typeface.createFromAsset(activity_.getAssets(),"fonts/italiaBook.ttf");
 		PowerGarden.interstateBold = Typeface.createFromAsset(activity_.getAssets(), "fonts/Interstate-BoldCondensed.ttf");
 		
-		plantCopy = (TextView) activity_.findViewById(R.id.fullscreen_content);
-		setTextViewFont(PowerGarden.italiaBook, plantCopy);
+//		plantCopy = (TextView) activity_.findViewById(R.id.stage_copy);
+//		setTextViewFont(PowerGarden.italiaBook, plantCopy);
 		
 		//for 'factoids':
 		//setTextViewFont(interstateBold, plantCopy);
