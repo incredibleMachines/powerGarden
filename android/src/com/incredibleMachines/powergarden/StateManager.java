@@ -6,8 +6,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Random;
 import java.util.TimerTask;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -15,7 +18,8 @@ import android.content.Context;
 import android.util.Log;
 
 public class StateManager extends Activity {
-
+	
+	
 	StateManager(){
 		int i = 0;
 	}
@@ -54,11 +58,13 @@ public class StateManager extends Activity {
 			Log.d("FINAL TOUCHES THIS PERIOD FOR "+Integer.toString(i)+": ", Integer.toString(touchesThisPeriod));
 			
 			if (touchesThisPeriod < 3)
-				PowerGarden.Device.plants[i].state = PowerGarden.plantState[0]; //lonely
+				PowerGarden.deviceStateIndex = 0; //lonely
 			else if(touchesThisPeriod < 15)
-				PowerGarden.Device.plants[i].state = PowerGarden.plantState[1]; //content
+				PowerGarden.deviceStateIndex = 1; //content
 			else if(touchesThisPeriod >=15 )
-				PowerGarden.Device.plants[i].state = PowerGarden.plantState[2]; //
+				PowerGarden.deviceStateIndex = 2;; //worked_up
+				
+			PowerGarden.Device.plants[i].state = PowerGarden.plantState[PowerGarden.deviceStateIndex]; //lonely
 		}
 	}
 	
@@ -103,5 +109,81 @@ public class StateManager extends Activity {
 		
 		return thisState;
 	}
+	
+	
+	public static String getDeviceMoisture(){
+		String currMoisture = "null";
+		if (PowerGarden.Device.moisture <= PowerGarden.Device.moistureLowThresh){
+			currMoisture = "low";
+		}
+		else if (PowerGarden.Device.moisture >= PowerGarden.Device.moistureHighThresh){
+			currMoisture = "high";
+		} else 
+			currMoisture = "medium";
+		return currMoisture;
+	}
+
+	public boolean updateDeviceState() {
+		if(PowerGarden.Device.deviceState.contains(PowerGarden.stateManager.getDeviceState())){
+			return false;
+		} else {
+			PowerGarden.Device.deviceState = PowerGarden.stateManager.getDeviceState();
+			return true; //true if there is a change to device state 
+		}
+	}
+	
+	public String updateCopy() {
+		String thisCopy = "null";
+
+		JSONArray thisPlantCopy = new JSONArray();
+		
+		
+		try {
+			String thisCopyType = PowerGarden.copyType[PowerGarden.deviceStateIndex];
+			
+			thisPlantCopy = PowerGarden.dialogue.getJSONObject("garden").getJSONObject(PowerGarden.Device.plantType)
+					.getJSONObject(thisCopyType).getJSONArray("stage_copy");
+			
+
+			int numLinesCopy = thisPlantCopy.length();
+			int[] orderArray = new int[numLinesCopy];
+			//String[] randomizedCopy = new String[numLinesCopy];
+			
+			
+			for(int i=0; i<numLinesCopy; i++){
+				orderArray[i] = i; //initialize array
+				shuffleArray(orderArray);
+			}
+			
+			for(int i=0; i<numLinesCopy; i++){
+				Log.d("Randomized Copy Index "+Integer.toString(i), (String) thisPlantCopy.get(i));
+			}
+
+		
+		} catch (JSONException e) {
+
+			e.printStackTrace();
+		}
+		
+		return thisCopy;
+	}
+	
+	public void updateAudio() throws JSONException{
+		
+	}
+	
+	  // Implementing FisherÐYates shuffle
+	  static void shuffleArray(int[] ar)
+	  {
+	    Random rnd = new Random();
+	    for (int i = ar.length - 1; i >= 0; i--)
+	    {
+	      int index = rnd.nextInt(i + 1);
+	      // Simple swap
+	      int a = ar[index];
+	      ar[index] = ar[i];
+	      ar[i] = a;
+	    }
+	  }
 }
 

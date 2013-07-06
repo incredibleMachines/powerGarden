@@ -14,8 +14,13 @@ public class PowerGarden {
     public static StateManager stateManager = new StateManager();
 	
     public static String[] plantState = {"lonely", "content", "worked_up"};
+    public static int plantStateIndex = 0;
+    public static String[] deviceState = {"low", "medium", "high"};
+    public static int deviceStateIndex = 0;
     
     public static JSONObject dialogue;// = new JSONObject();
+    public static String[] copyType = {"touchRequest", "touchResponseGood", "touchResponseBad", 
+    									"waterRequest", "waterRequestGood", "waterRequestBad"};
     
     public static long plantStateChangeDur = 30000L;
         
@@ -78,7 +83,7 @@ public class PowerGarden {
 		static String connectionID;
 		static String host;
 		static String port;
-		static String deviceMood;
+	    static String deviceState = "low";
 		
 		//--- plants
 		static int PlantNum = 8;
@@ -99,20 +104,6 @@ public class PowerGarden {
 		static int distanceThreshold; //distance at which we'll send a PING to server
 		static int moistureLowThresh = 300;
 		static int moistureHighThresh = 800;
-		
-		
-		public static String getDeviceMoisture(){
-			String currMoisture = "null";
-			if (PowerGarden.Device.moisture <= PowerGarden.Device.moistureLowThresh){
-				currMoisture = "low";
-			}
-			else if (PowerGarden.Device.moisture >= PowerGarden.Device.moistureHighThresh){
-				currMoisture = "high";
-			} else 
-				currMoisture = "medium";
-			return currMoisture;
-		}
-		
 		
 	}
 }

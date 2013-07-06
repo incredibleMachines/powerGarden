@@ -101,9 +101,9 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 				plants.put("state", PowerGarden.Device.plants[i].state).put("index",Integer.toString(i));
 			}
 			data.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light);
-			state.put("moisture", PowerGarden.Device.getDeviceMoisture()).put("touch", StateManager.getDeviceState()).put("plants", plants);
+			state.put("moisture", PowerGarden.stateManager.getDeviceMoisture()).put("touch", StateManager.getDeviceState()).put("plants", plants);
 			socket.emit(type, 
-					new JSONObject().put("device_id", device_id).put("plant_type", PowerGarden.Device.plantType ).put("data", data).put("state", state)
+					new JSONObject().put("device_id", device_id).put("plant_type", PowerGarden.Device.plantType).put("data", data).put("state", state)
 					);
 			
 		}catch(Exception e){
@@ -247,44 +247,44 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 			}
 			
 			
-			//**** update ****//
-			else if(event.equals("update")){
-				try {
-					//JSONObject j = new JSONObject(args[0].toString() );
-					if(!PowerGarden.Device.ID.contentEquals(j.getString("device_id"))){
-						Log.e(TAG, "DEVICE ID MISMATCH");
-						Log.e(TAG, "PowerGarden.Device.ID: "+ PowerGarden.Device.ID);
-						Log.e(TAG, "incoming Device.ID: "+ j.getString("device_id"));
-						
-					}
-					//PowerGarden.Device.ID = j.getString("device_id");
-					PowerGarden.Device.deviceMood = j.getString("mood");
-					PowerGarden.Device.messageCopy = j.getString("message");
-//					PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
-//					System.out.println(PowerGarden.Device.ID);
-					
-					if(j.has("message")){
-						JSONObject thisMsg = j.getJSONObject("message");
-						if(thisMsg.has("touches")){
-							PowerGarden.Device.messageCopy = thisMsg.getString("touches");
-							Log.d(TAG, "received 'message'");
-							Log.d(TAG, PowerGarden.Device.messageCopy);
-							callbackActivity.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
-							if(presentationCallback != null)
-								presentationCallback.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
-						}
-					} else Log.wtf(TAG, "NO 'message' received");
-					
-					if(j.has("mood")){
-						//do something yo
-					}
-					
-					callbackActivity.signalToUi(PowerGarden.Updated, PowerGarden.Device.ID);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			//**** update ****// //--- DEPRECATED ---
+//			else if(event.equals("update")){
+//				try {
+//					//JSONObject j = new JSONObject(args[0].toString() );
+//					if(!PowerGarden.Device.ID.contentEquals(j.getString("device_id"))){
+//						Log.e(TAG, "DEVICE ID MISMATCH");
+//						Log.e(TAG, "PowerGarden.Device.ID: "+ PowerGarden.Device.ID);
+//						Log.e(TAG, "incoming Device.ID: "+ j.getString("device_id"));
+//						
+//					}
+//					//PowerGarden.Device.ID = j.getString("device_id");
+//					//PowerGarden.Device.deviceMood = j.getString("mood");
+//					//PowerGarden.Device.messageCopy = j.getString("message");
+////					PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
+////					System.out.println(PowerGarden.Device.ID);
+//					
+//					if(j.has("message")){
+//						JSONObject thisMsg = j.getJSONObject("message");
+//						if(thisMsg.has("touches")){
+//							PowerGarden.Device.messageCopy = thisMsg.getString("touches");
+//							Log.d(TAG, "received 'message'");
+//							Log.d(TAG, PowerGarden.Device.messageCopy);
+//							callbackActivity.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
+//							if(presentationCallback != null)
+//								presentationCallback.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
+//						}
+//					} else Log.wtf(TAG, "NO 'message' received");
+//					
+//					if(j.has("mood")){
+//						//do something yo
+//					}
+//					
+//					callbackActivity.signalToUi(PowerGarden.Updated, PowerGarden.Device.ID);
+//				} catch (JSONException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
 
 			//**** stream control update ****//
 			else if(event.equals("firehose")){

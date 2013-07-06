@@ -24,7 +24,6 @@ import com.victorint.android.usb.interfaces.Viewable;
 public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSeekBarChangeListener  {
 	private static String TAG = "PresentationViewable";
 	//private Activity activity_;
-	StateManager stateManager;
 	
 	private PresentationActivity activity_;
 	private int messageLevel_			= 22;
@@ -203,18 +202,20 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 										PowerGarden.Device.plants[i].triggered = true;
 										
 										//play correct sound for this plant here
-										activity_.playAudio(i); //right now just a single array of "cherrytomato_audio[i]"
+										activity_.playAudio(i); //right now just a single array of "cherrytomato_aPoudio[i]"
 										
 										PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis();
 										
 										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp);
 										
-										stateManager.updatePlantStates();
+										PowerGarden.stateManager.updatePlantStates();
 										
 										//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
 										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
-										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), "worked_up", 88, PresentationViewable.this );	
-										
+										//PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), "worked_up", 88, PresentationViewable.this );	
+										if (PowerGarden.stateManager.updateDeviceState() ){
+											PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+										}
 										
 									}
 									
@@ -311,6 +312,8 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 				//objTest(new Object({"light",PowerGarden.light}));
 				//objTest(new Monkey("string",49));
 				//sendUpdateData("update",new Monkey("light",PowerGarden.Device.light),new Monkey("temperature",PowerGarden.Device.temp),new Monkey("humidity",PowerGarden.Device.hum),new Monkey("moisture",PowerGarden.Device.moisture));
+				
+				PowerGarden.stateManager.updateDeviceState();
 				PowerGarden.SM.updateData("update", PowerGarden.Device.ID,  this);
 				final int distance = PowerGarden.Device.distance;
 				if(debugSensors){

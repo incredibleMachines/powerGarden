@@ -73,13 +73,13 @@
     <string name="connect_socket_header">Connect Web Sockets</string>
     <string name="socket_details">Garden Server Hostname / Port</string>
     <string-array name="plants_array">
-        <item>Cherry Tomatoes</item>
-        <item>Tomatoes</item>
-        <item>Orange Carrots</item>
-        <item>Purple Carrots</item>
-        <item>Beets</item>
-        <item>Celery</item>
-        <item>Bell Peppers</item>
+        <item>cherry_tomatoes</item>
+        <item>tomatoes</item>
+        <item>orange_carrots</item>
+        <item>purple_carrots</item>
+        <item>beets</item>
+        <item>celery</item>
+        <item>peppers</item>
     </string-array>
     
 </resources>
