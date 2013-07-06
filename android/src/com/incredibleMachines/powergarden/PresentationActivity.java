@@ -343,7 +343,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		//plantCopy = (TextView) findViewById(R.id.fullscreen_content);
 		
 		plantCopy.setText(PowerGarden.Device.messageCopy);
-		setTextViewFont(PowerGarden.italiaBook, plantCopy);
+		setTextViewFont(PowerGarden.interstateBold, plantCopy);
+		
 		
 		if(PowerGarden.Device.plantType.contains("Cherry")){
 			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);

@@ -296,6 +296,17 @@ public class ConnectSockets extends Activity implements Connectable {
 			};			
 		}
 		
+		else if (type == PowerGarden.Settings){
+			final int type_ = type;
+			myrun = new Runnable(){
+				
+				public void run(){
+					mStatusline.setText("server says SETTINGS UPDATE\n\n " + Integer.toString(type_) + " : "+PowerGarden.serverResponseRaw);
+					//saveDevicePrefs();
+				}
+			};			
+		}
+		
 		else if(type == PowerGarden.Unrecognized){ //impossibility?
 			final int type_ = type;
 			myrun = new Runnable(){

@@ -97,11 +97,8 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 			for(int i=0; i<PowerGarden.Device.PlantNum; i++){
 				plants.put(Integer.toString(i), PowerGarden.Device.plants[i].state);
 			}
-			
 			data.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light);
-			
 			state.put("moisture", PowerGarden.Device.getDeviceMoisture()).put("plants", plants);
-			
 			socket.emit(type, 
 					new JSONObject().put("device_id", device_id).put("plant_type", PowerGarden.Device.plantType ).put("data", data).put("state", state)
 					);
@@ -325,6 +322,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 					}
 				}
 				callbackActivity.signalToUi(PowerGarden.Settings, PowerGarden.Device.ID);
+				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.Settings, PowerGarden.Device.ID);
 			}
 			
 			//**** touched ****//  DEPRECATED, never used
