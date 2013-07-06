@@ -1,5 +1,17 @@
 package com.incredibleMachines.powergarden;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.incredibleMachines.powergarden.R.color;
 import com.incredibleMachines.powergarden.util.SystemUiHider;
 import com.incredibleMachines.powergarden.util.UsbActivity;
@@ -51,34 +63,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	public void onResume(){
 		super.onResume();
 		Log.d(TAG, "onResume");
-		//setContentView(R.layout.activity_presentation);
-//		wrapper = (FrameLayout) findViewById(R.id.wrapper);
-//		plantCopy = (TextView) findViewById(R.id.stage_copy);
-//		
-//		//plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
-//		plantCopy.setText(PowerGarden.Device.messageCopy);
-//		setTextViewFont(PowerGarden.italiaBook, plantCopy);
-////		plantCopy.setText(PowerGarden.Device.plantType.toString().toLowerCase());
-//		
-//		if(PowerGarden.Device.plantType.contains("Cherry")){
-//			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
-//		} else if(PowerGarden.Device.plantType.contains("Beets")){
-//			wrapper.setBackgroundResource(R.drawable.beet_bg);
-//		} else if(PowerGarden.Device.plantType.contains("Celery")){
-//			wrapper.setBackgroundResource(R.drawable.celery_bg);
-//		} else if(PowerGarden.Device.plantType.contains("Tomatoes")){
-//			wrapper.setBackgroundResource(R.drawable.tomato_bg);
-//		} else if(PowerGarden.Device.plantType.contains("Orange Carrots")){
-//			wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
-//		} else if(PowerGarden.Device.plantType.contains("Purple Carrots")){
-//			wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
-//		} else if(PowerGarden.Device.plantType.contains("Bell Peppers")){
-//			wrapper.setBackgroundResource(R.drawable.pepper_bg);
-//		}  else if(PowerGarden.Device.plantType == null){
-//			wrapper.setBackgroundColor(color.default_background);
-//		} else {
-//			wrapper.setBackgroundColor(color.default_background);
-//		}
+
+		resetView();
 	}
 	
 	@Override
@@ -92,6 +78,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		/*** connected ***/
 		if(type == PowerGarden.SocketConnected){
 			PowerGarden.bConnected = true;
+			Log.d(TAG, "bConnected = true;");
 			PowerGarden.Device.plantType = PowerGarden.getPrefString("plantType", null);
 			PowerGarden.Device.PlantNum = Integer.parseInt(PowerGarden.getPrefString("numPlants", null));
 			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
@@ -248,12 +235,23 @@ public class PresentationActivity extends UsbActivity implements Connectable{
         currentViewable_ = new PresentationViewable();
         currentViewable_.setActivity(this);
         
+		try {
+			loadDialogue();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
+		Log.d(TAG, "onPostCreate");
 		delayedHide(100);
+		
 		
 		//****** setup soundPool player ******//
 		
@@ -374,7 +372,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		}
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
-		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
+		mSystemUiHider = SystemUiHider.getInstance(this, contentView, 
 				HIDER_FLAGS);
 		mSystemUiHider.setup();
 		mSystemUiHider
@@ -460,6 +458,30 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			}
 		});
 	}
+	
+	
+	/*** happens onCreate -- load up .json file with all dialogue ***/
+	void loadDialogue() throws IOException, JSONException{
+		
+		InputStream is = getResources().openRawResource(R.raw.dialogue);
+		Writer writer = new StringWriter();
+		Reader reader = null;
+		char[] buffer = new char[1024];
+		try {
+			reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		    int n;
+		    while ((n = reader.read(buffer)) != -1) {
+		        writer.write(buffer, 0, n);
+		    }
+		} finally {
+			is.close();
+		}
+		PowerGarden.dialogue = new JSONObject(writer.toString());
+		
+		Log.d("LOADDIALOGUE", PowerGarden.dialogue.toString());
+	}
+	
+	
     public static void setTextViewFont(Typeface tf, TextView...params) {
         for (TextView tv : params) {
             tv.setTypeface(tf);

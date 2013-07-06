@@ -40,6 +40,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	private Connectable callbackActivity;
 	private Connectable presentationCallback;
 	final private Timer backgroundTimer = new Timer("backgroundTimer");
+	
 
 	
 	SocketManager(){
@@ -74,12 +75,14 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 			}
 	}
 	
-	public void plantTouch(String type, String device_id, int plant_index, int cap_val, String mood, Connectable _callback){
+	public void plantTouch(String type, String device_id, int plant_index, int cap_val, String state, long numTouches, Connectable _callback){
 		callbackActivity = _callback;
-
+		String thisState = PowerGarden.Device.plants[plant_index].state;
+		Log.d("plantTouch state: ", thisState);
+		
 		try{
 			socket.emit(type, 
-					new JSONObject().put("device_id", device_id).put("plant_index", plant_index).put("cap_val", cap_val).put("mood", mood) //added capval here
+					new JSONObject().put("device_id", device_id).put("plant_index", plant_index).put("cap_val", cap_val).put("state", thisState).put("count", numTouches) //added capval here
 					);
 			
 		}catch(Exception e){
@@ -87,7 +90,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 		}
 	}
 	
-	public void updateData(String type, String device_id, JSONObject json, Connectable _callback){
+	public void updateData(String type, String device_id, Connectable _callback){
 		callbackActivity = _callback;
 		JSONObject data = new JSONObject();
 		JSONObject plants = new JSONObject();
@@ -95,10 +98,10 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 		
 		try{
 			for(int i=0; i<PowerGarden.Device.PlantNum; i++){
-				plants.put(Integer.toString(i), PowerGarden.Device.plants[i].state);
+				plants.put("state", PowerGarden.Device.plants[i].state).put("index",Integer.toString(i));
 			}
 			data.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light);
-			state.put("moisture", PowerGarden.Device.getDeviceMoisture()).put("plants", plants);
+			state.put("moisture", PowerGarden.Device.getDeviceMoisture()).put("touch", StateManager.getDeviceState()).put("plants", plants);
 			socket.emit(type, 
 					new JSONObject().put("device_id", device_id).put("plant_type", PowerGarden.Device.plantType ).put("data", data).put("state", state)
 					);
@@ -160,15 +163,15 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 		Log.d(TAG,"ERROR MESSAGE: "+socketIOException.getMessage());
 		if(socketIOException.getMessage().equals("1+0")){
 			PowerGarden.bConnected = false;
-			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		if(socketIOException.getMessage().equals("Timeout Error")){
 			PowerGarden.bConnected = false;
-			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		if(socketIOException.getMessage().equals("Error while handshaking")){
 			PowerGarden.bConnected = false;
-			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		//Error while handshaking
 	}

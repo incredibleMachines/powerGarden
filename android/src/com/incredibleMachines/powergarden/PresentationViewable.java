@@ -4,18 +4,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +24,8 @@ import com.victorint.android.usb.interfaces.Viewable;
 public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSeekBarChangeListener  {
 	private static String TAG = "PresentationViewable";
 	//private Activity activity_;
+	private StateManager stateManager;
+	
 	private PresentationActivity activity_;
 	private int messageLevel_			= 22;
 	
@@ -76,6 +70,20 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 		
 		Runnable myrun = null;
 		if(bSetup){
+			if(type == PowerGarden.Settings){
+				Log.d(TAG, "from SignalToUi > type .Settings");
+				final Object _d = data;
+				myrun = new Runnable(){
+					public void run(){
+
+//						int index = Integer.valueOf(_d.toString());
+//						if (index >= 0){
+//							threshBarTextView[ index ].setText( Integer.toString(PowerGarden.Device.plants[ index ].threshold));
+//							threshBar[ index ].setProgress(PowerGarden.Device.plants[ index ].threshold);
+//						} else rangeThresh.setText(Integer.toString(PowerGarden.Device.distanceThreshold));
+					}
+				};
+			}
 			if(type == PowerGarden.ThreshChange){
 				Log.d(TAG, "from SignalToUi > type .ThreshChange");
 				final Object _d = data;
@@ -184,7 +192,7 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 								
 								if(PowerGarden.Device.plants[i].enabled){ //only if this plant is enabled
 									
-									if(System.currentTimeMillis() - PowerGarden.Device.plants[i].trig_timestamp > triggerTime){ //if we've hit trigger time max
+									if(System.currentTimeMillis() - PowerGarden.Device.plants[i].touchedTimestamp > triggerTime){ //if we've hit trigger time max
 										PowerGarden.Device.plants[i].triggered = false;
 									}
 									
@@ -197,16 +205,24 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 										//play correct sound for this plant here
 										activity_.playAudio(i); //right now just a single array of "cherrytomato_audio[i]"
 										
+										PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis();
+										
+										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp);	
+										
+										stateManager.updatePlantStates();
+										
 										//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
-										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PresentationViewable.this );
-										PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
+										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
+
+										
+										
 									}
 									
 									if(bSetup) plantValView[i].setText(String.valueOf(plantDisplay[i]));
 									
 									
 									if(PowerGarden.Device.datastream_mode == true) //this might be getting crazy
-										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PresentationViewable.this );
+										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
 									
 									if(PowerGarden.Device.plants[i].triggered) {
 										plantValView[i].setTextColor(Color.GREEN);
@@ -294,7 +310,8 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 				PowerGarden.Device.distance = Integer.parseInt(parseData[5]);
 				//objTest(new Object({"light",PowerGarden.light}));
 				//objTest(new Monkey("string",49));
-				sendUpdateData("update",new Monkey("light",PowerGarden.Device.light),new Monkey("temperature",PowerGarden.Device.temp),new Monkey("humidity",PowerGarden.Device.hum),new Monkey("moisture",PowerGarden.Device.moisture));
+				//sendUpdateData("update",new Monkey("light",PowerGarden.Device.light),new Monkey("temperature",PowerGarden.Device.temp),new Monkey("humidity",PowerGarden.Device.hum),new Monkey("moisture",PowerGarden.Device.moisture));
+				PowerGarden.SM.updateData("update", PowerGarden.Device.ID,  this);
 				final int distance = PowerGarden.Device.distance;
 				if(debugSensors){
 					Runnable runner = new Runnable(){
@@ -335,9 +352,12 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 		   		e.printStackTrace();
 		   	}
 		   //if(PowerGarden.bConnected)
-		   PowerGarden.SM.updateData(type, PowerGarden.Device.ID.toString(), j, this);
+		   PowerGarden.SM.updateData(type, PowerGarden.Device.ID.toString(), this);
 		}
 	}
+	
+	
+
 	
 	private void sendMonkey(String type, Monkey...monkey ){
 		Log.d(TAG, "DEVICE ID: "+PowerGarden.Device.ID + " Registered: " +PowerGarden.bRegistered);
@@ -370,7 +390,6 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 
 	}
 
-	
 	public void setupDebug(){
 		Log.d(TAG, "setupDebug");
 		//--- setup plant value views

@@ -1,14 +1,22 @@
 package com.incredibleMachines.powergarden;
 
+import java.lang.Character.UnicodeBlock;
+import java.util.Vector;
+
 public class PlantObject {
 	MedianFilter MF = new MedianFilter();
 	
 	public boolean enabled = true
 			;
 	public boolean triggered = false;
-    public long trig_timestamp = 0;
     public int threshold = 10000;
-    public String state;
+    
+    public String state = "lonely";
+    public int stateIndex; //0 = lonely  1 = content  2 = worked_up
+    
+    public long touchedTimestamp = 0;
+    
+    Vector<Long> touchStamps = new Vector<Long>(); //holds timestamps of all touches last X mins
     
     
 	//private static final String PREFS_NAME = "PowerGarden";

@@ -1,5 +1,7 @@
 package com.incredibleMachines.powergarden;
 
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -8,9 +10,15 @@ public class PowerGarden {
 
     static Typeface italiaBook;
     static Typeface interstateBold;
+    
+    //public static StateManager stateManager;
 	
     public static String[] plantState = {"lonely", "content", "worked_up"};
     
+    public static JSONObject dialogue;// = new JSONObject();
+    
+    public static long plantStateChangeDur = 30000L;
+        
 	//--- audio
 	public static final int numSounds = 8;
 	public static int[] cherryTomatoesAudio = new int [numSounds];
@@ -93,7 +101,6 @@ public class PowerGarden {
 		static int moistureHighThresh = 800;
 		
 		
-
 		public static String getDeviceMoisture(){
 			String currMoisture = "null";
 			if (PowerGarden.Device.moisture <= PowerGarden.Device.moistureLowThresh){
@@ -106,46 +113,6 @@ public class PowerGarden {
 			return currMoisture;
 		}
 		
-		public static String getDeviceState(){
-			String thisState = "null";
-			int numLonely = 0;
-			int numContent = 0;
-			int numWorkedUp = 0;
-			
-			for(int i=0; i<PowerGarden.Device.PlantNum; i++){
-				if (PowerGarden.Device.plants[i].state.contentEquals("lonely"))
-					numLonely++;
-				else if (PowerGarden.Device.plants[i].state.contentEquals("content"))
-					numContent++;
-				else if (PowerGarden.Device.plants[i].state.contentEquals("worked_up"))
-					numWorkedUp++;
-			}
-			
-			if(numLonely > numContent && numLonely > numWorkedUp)
-				thisState = "lonely";
-			else if(numWorkedUp > numContent && numWorkedUp > numLonely)
-				thisState = "worked_up";
-			else if(numContent > numWorkedUp && numContent > numLonely)
-				thisState = "content";
-			
-			if(numContent == numLonely) {
-				if(numContent > numWorkedUp) thisState = "content";
-				else thisState = "worked_up";
-			}
-				
-			if(numContent == numWorkedUp) {
-				if(numContent > numLonely) thisState = "content";
-				else thisState = "lonely";
-			}
-				
-			if(numWorkedUp == numLonely) {
-				if(numWorkedUp > numContent) thisState = "worked_up";
-				else thisState = "content";
-			}
-			
-			return thisState;
-		}
+		
 	}
-	
-
 }
