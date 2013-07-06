@@ -194,7 +194,7 @@ DB.prototype.setSlug=function(connection){
 }
 
 DB.prototype.logDevice = function(message,connection,_db){
-	var obj = {date: new Date(), plants: [], type: message.plant_type, active: true, mood: { touches:'born', moisture: 'born'} };
+	var obj = { date: new Date(), plants: [], type: message.plant_type, active: true, state: { touch:'born', moisture: 'born'} };
 	devicesDb.insert(obj, {safe:true}, function(err,doc){
 		if(err) console.error(err); //throw err;
 		
@@ -225,7 +225,7 @@ DB.prototype.createPlant = function(message,connection,plant_index,_db){
 	
 	//console.log("plant: "+ JSON.stringify(plant));
 	console.log('[CREATING PLANT]');
-	var obj = {created: new Date(), device_id:connection.device_id, index: plant_index, type: message.plant_type, mood: "born", touch:0 };
+	var obj = {created: new Date(), device_id:connection.device_id, index: plant_index, type: message.plant_type, state: "born", touch: 0 };
 	plantsDb.insert(obj,{safe:true},function(err,doc){
 		  if(err) console.error(err); //throw err;
 
