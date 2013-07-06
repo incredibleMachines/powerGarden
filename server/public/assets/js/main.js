@@ -139,10 +139,15 @@ function populate(socket, data){
 
 		// loop through results and generate a new table row for each
 		var plantString = '';
+
+		// sort the array first
+		var plants = [];
+		for (i = 0; i < data.plants.length; i++) { plants[data.plants[i].index] = data.plants[i] }
+			
 		// console.log(data.plants);
-		for (var i = 0; i < data.plants.length; i++) {
-			var j = data.plants[i].index;
-			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'" class="plant-'+j+'"><td><button class="btn-mini btn-success plant-'+j+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+j+'"><i class="icon-ok"></i></button></td><td>'+data.plants[i]._id+'</td><td>'+j+'</td><td class="state_touch"></td><td class="touch_count"></td><td><input type="range" min="0" max="15000" step="1" class="plant-'+j+' cap client-'+data.connection_id+'" data-plant_index="'+j+'"></td><td class="plant-'+j+' value client-'+data.connection_id+'"></td><td class="plant-'+j+' incoming client-'+data.connection_id+'"></td></tr>';
+		for (var i = 0; i < plants.length; i++) {
+			var j = plants[i].index;
+			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'" class="plant-'+j+'"><td><button class="btn-mini btn-success plant-'+j+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+j+'"><i class="icon-ok"></i></button></td><td>'+plants[i]._id+'</td><td>'+j+'</td><td class="state_touch"></td><td class="touch_count"></td><td><input type="range" min="0" max="15000" step="1" class="plant-'+j+' cap client-'+data.connection_id+'" data-plant_index="'+j+'"></td><td class="plant-'+j+' value client-'+data.connection_id+'"></td><td class="plant-'+j+' incoming client-'+data.connection_id+'"></td></tr>';
 		}
 
 
