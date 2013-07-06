@@ -25,7 +25,7 @@
    	    android:padding="12dip">
 	    	<TextView  
 		 		   	android:layout_width="fill_parent" 
-		   			android:layout_height="100dp" 
+		   			android:layout_height="120dp" 
 		   			android:textColor="@color/white" android:id="@+id/statusline" android:text="Ready." android:textSize="18dip" android:layout_marginBottom="24dip"/>
 	   		<!-- <TextView android:id="@+id/textView3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@color/lightgrey" android:text="Message to test with server"></TextView> -->
 	    	<!-- <EditText android:id="@+id/type" android:layout_width="match_parent" android:textColor="@color/darkgrey" android:text="connect" android:maxLines="1" android:layout_height="wrap_content"></EditText> -->

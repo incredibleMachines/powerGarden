@@ -73,10 +73,17 @@ public class ConnectSockets extends Activity implements Connectable {
 
 	   private void setButtonConnect() {
 		   if(!PowerGarden.bConnected){
+			   Log.d(TAG,"PowerGarden.bConnected = FALSE");
 			   mHostname.setEnabled(true);
 			   mPort.setEnabled(true);
 			   mStart.setText("Connect");
-		   }
+		   } 
+//		   else {
+//			   Log.d(TAG,"PowerGarden.bConnected = TRUE");
+//			   mHostname.setEnabled(false);
+//			   mPort.setEnabled(false);
+//			   mStart.setText("Disconnect");  
+//		   }
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
 	        	Log.d(TAG, "Clicked Connect");
@@ -104,8 +111,18 @@ public class ConnectSockets extends Activity implements Connectable {
            mSendTouch.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 	        	   //PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );
-				int plantNum = (int) (Math.random()*8);
-	        	   PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, ConnectSockets.this );
+				//int plantNum = (int) (Math.random()*7);
+				int plantNum = 1;
+				
+//				PowerGarden.Device.plants[plantNum].triggered = true;
+//				
+//				PowerGarden.Device.plants[plantNum].touchedTimestamp = System.currentTimeMillis();
+//				
+//				PowerGarden.Device.plants[plantNum].touchStamps.add(PowerGarden.Device.plants[plantNum].touchedTimestamp);	
+//				
+//				PowerGarden.stateManager.updatePlantStates();
+//				
+//	        	PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, PowerGarden.Device.plants[plantNum].touchStamps.size(), ConnectSockets.this );
 			}
            });
            
@@ -130,7 +147,7 @@ public class ConnectSockets extends Activity implements Connectable {
         		   		e.printStackTrace();
         		   	}
         		   PowerGarden.Device.plantType = mplantList.getSelectedItem().toString();
-        		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID, j, ConnectSockets.this);
+        		   PowerGarden.SM.updateData("update", PowerGarden.Device.ID, ConnectSockets.this);
         	   } 
            });
 	   }
@@ -138,13 +155,14 @@ public class ConnectSockets extends Activity implements Connectable {
 	      mHostname.setEnabled(false);
 	      mPort.setEnabled(false);
 	      mStart.setText("Disconnect");
-	      //mType.setText("register");
+	      PowerGarden.bConnected = false;
 	      mStart.setOnClickListener(new Button.OnClickListener() {
 	         public void onClick(View v) {
 	            PowerGarden.SM.closeUpShop();
 	            mSendMessage.setEnabled(false);
 	            mSendTouch.setEnabled(false);
 	            mSendUpdate.setEnabled(false);
+	            mStart.setText("Connect");
 	            setButtonConnect();
 	         }
 	      });
@@ -153,7 +171,8 @@ public class ConnectSockets extends Activity implements Connectable {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connect_sockets);
-		Log.d(TAG, "ConnectSockets Start");
+		Log.d(TAG, "ConnectSockets onCreate");
+		Log.d(TAG, "bConnected= " + String.valueOf(PowerGarden.bConnected));
 		//final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		//final View contentView = findViewById(R.id.fullscreen_content);
 		
@@ -167,7 +186,7 @@ public class ConnectSockets extends Activity implements Connectable {
 	    mSendMessage = (Button) findViewById(R.id.sendMsg);
 	    mSendTouch = (Button) findViewById(R.id.sendTouch);
 	    mSendUpdate=(Button) findViewById(R.id.sendUpdate);
-	    mSendMessage.setEnabled(false);
+	    
 	    mplantList = (Spinner) findViewById(R.id.type_plants);
 	    //mplantsView = (ListView) findViewById(R.id.plants);
 	    //mLinearLayout = (LinearLayout)findViewById(R.id.plants);
@@ -179,9 +198,12 @@ public class ConnectSockets extends Activity implements Connectable {
 	    
 	    loadPrefs();
 	    
-	    //if(!PowerGarden.bConnected){
+	    if(!PowerGarden.bConnected){
 	    	setButtonConnect();
-	    	setupSendButton();
+	    	mSendMessage.setEnabled(false);
+	    	
+	    } else setButtonDisconnect();
+	    setupSendButton();
 	   // }
 	}
 
