@@ -9,11 +9,8 @@ public class PowerGarden {
     static Typeface italiaBook;
     static Typeface interstateBold;
 	
+    public static String[] plantState = {"lonely", "content", "worked_up"};
     
-	public static int HAPPY = 1;
-	public static int DRY = 2;
-	public static int UNHAPPY = 3;
-
 	//--- audio
 	public static final int numSounds = 8;
 	public static int[] cherryTomatoesAudio = new int [numSounds];
@@ -40,24 +37,45 @@ public class PowerGarden {
 	
 	//--- this device
 	public static class Device{
-		static String ID = "set_id";
-		static String connectionID;
+		//--- plants
 		static int PlantNum = 8;
 		static String plantType = "Cherry Tomatoes"; //should be populated by prefs	
 		static PlantObject plants[] = new PlantObject[PlantNum];
+		
+		static boolean datastream_mode = false; //when this is true, we will stream all data as it comes in, to server.
+		
+		//--- global device sensors
+		public static int temp = 0;
+		public static int hum = 0;
+		public static int light = 0;
+		public static int moisture = 0;
+		public static int distance = 0;
+		static int distanceThreshold; //distance at which we'll send a PING to server		
+		
+		//--- connection stuff
+		static String ID = "set_id";
+		static String connectionID;
 		static String host;
 		static String port;
 		static String deviceMood;
 		static String messageCopy = plantType;
-		static int distanceThreshold; //distance at which we'll send a PING to server
-		static boolean datastream_mode = false; //when this is true, we will stream all data as it comes in, to server.
+		
+		public static String getDeviceMoisture(){
+			String currMoisture = "null";
+			
+			return currMoisture;
+		}
+
 	}
 	
 	//--- global socket vars
 	public static SocketManager SM;
+	public static String serverResponseRaw;
+	// socket status
 	public static int SocketConnected = 90;
 	public static int Connected = 91;
 	public static int Disconnected = 92;
+	// event types
 	public static int Registered = 93;
 	public static int Updated = 94;
 	public static int MessageUpdated = 95;
@@ -65,15 +83,11 @@ public class PowerGarden {
 	public static int ThreshChange = 97;
 	public static int StreamModeUpdate = 98;
 	public static int PlantIgnore = 99;
-	public static int Unrecognized = 100;
-	public static String serverResponseRaw;
+	public static int Settings = 100;
+	public static int Unrecognized = 101;
+	
 
-	//--- global sensors
-	public static int temp = 0;
-	public static int hum = 0;
-	public static int light = 0;
-	public static int moisture = 0;
-	public static int distance = 0;
+
 	
 	//--- app status
 	public static boolean bAudioPlaying = false;

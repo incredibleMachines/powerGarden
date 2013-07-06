@@ -191,13 +191,14 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 									if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
 										!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
 										
+										//*** TOUCHED ***//
 										PowerGarden.Device.plants[i].triggered = true;
 										
 										//play correct sound for this plant here
 										activity_.playAudio(i); //right now just a single array of "cherrytomato_audio[i]"
 										
 										//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
-										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
+										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PresentationViewable.this );
 										PowerGarden.Device.plants[i].trig_timestamp = System.currentTimeMillis();	
 									}
 									
@@ -205,7 +206,7 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 									
 									
 									if(PowerGarden.Device.datastream_mode == true) //this might be getting crazy
-										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PresentationViewable.this );
+										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PresentationViewable.this );
 									
 									if(PowerGarden.Device.plants[i].triggered) {
 										plantValView[i].setTextColor(Color.GREEN);
@@ -219,9 +220,9 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 					}
 			    //}
 			}else if(dataType.equalsIgnoreCase("L")){
-				PowerGarden.light = Integer.parseInt(parseData[1]);
+				PowerGarden.Device.light = Integer.parseInt(parseData[1]);
 				//createJson("light",PowerGarden.light);
-				final int light = PowerGarden.light;
+				final int light = PowerGarden.Device.light;
 				if(debugSensors){
 					Runnable runner = new Runnable(){
 						public void run() {
@@ -234,9 +235,9 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 					}
 			    }
 			}else if(dataType.equalsIgnoreCase("M")){
-				PowerGarden.moisture = Integer.parseInt(parseData[1]);
+				PowerGarden.Device.moisture = Integer.parseInt(parseData[1]);
 				//createJson("moisture",PowerGarden.moisture);
-				final int moisture = PowerGarden.moisture;
+				final int moisture = PowerGarden.Device.moisture;
 				if(debugSensors){
 					Runnable runner = new Runnable(){
 						public void run() {
@@ -250,11 +251,11 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 			    }
 			}else if(dataType.equalsIgnoreCase("T")){
 				Log.d(TAG, "GOT DATA MODE = "+dataType);
-				PowerGarden.temp = Integer.parseInt(parseData[1]);
-				PowerGarden.hum = Integer.parseInt(parseData[2]);
+				PowerGarden.Device.temp = Integer.parseInt(parseData[1]);
+				PowerGarden.Device.hum = Integer.parseInt(parseData[2]);
 				//createJson("temperature",PowerGarden.temp, "humidity", PowerGarden.hum);
-				final int temp = PowerGarden.temp;
-				final int hum = PowerGarden.hum;
+				final int temp = PowerGarden.Device.temp;
+				final int hum = PowerGarden.Device.hum;
 				if(debugSensors){
 					Runnable runner = new Runnable(){
 						public void run() {
@@ -269,9 +270,9 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 					}
 			    }
 			}else if(dataType.equalsIgnoreCase("R")){
-				PowerGarden.distance = Integer.parseInt(parseData[1]);
+				PowerGarden.Device.distance = Integer.parseInt(parseData[1]);
 				//createJson("distance",PowerGarden.distance);
-				final int distance = PowerGarden.distance;
+				final int distance = PowerGarden.Device.distance;
 				if(debugSensors){
 					Runnable runner = new Runnable(){
 						public void run() {
@@ -286,23 +287,23 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 			}else if(dataType.equalsIgnoreCase("D")){
 				//LIGHT, TEMP, HUM, MOIST, RANGE
 				Log.d(TAG, "received 'D' ! ");
-				PowerGarden.light = Integer.parseInt(parseData[1]);
-				PowerGarden.temp = Integer.parseInt(parseData[2]);
-				PowerGarden.hum = Integer.parseInt(parseData[3]);
-				PowerGarden.moisture = Integer.parseInt(parseData[4]);
-				PowerGarden.distance = Integer.parseInt(parseData[5]);
+				PowerGarden.Device.light = Integer.parseInt(parseData[1]);
+				PowerGarden.Device.temp = Integer.parseInt(parseData[2]);
+				PowerGarden.Device.hum = Integer.parseInt(parseData[3]);
+				PowerGarden.Device.moisture = Integer.parseInt(parseData[4]);
+				PowerGarden.Device.distance = Integer.parseInt(parseData[5]);
 				//objTest(new Object({"light",PowerGarden.light}));
 				//objTest(new Monkey("string",49));
-				sendJson("update",new Monkey("light",PowerGarden.light),new Monkey("temperature",PowerGarden.temp),new Monkey("humidity",PowerGarden.hum),new Monkey("moisture",PowerGarden.moisture));
-				final int distance = PowerGarden.distance;
+				sendUpdateData("update",new Monkey("light",PowerGarden.Device.light),new Monkey("temperature",PowerGarden.Device.temp),new Monkey("humidity",PowerGarden.Device.hum),new Monkey("moisture",PowerGarden.Device.moisture));
+				final int distance = PowerGarden.Device.distance;
 				if(debugSensors){
 					Runnable runner = new Runnable(){
 						public void run() {
-							distanceval.setText(String.valueOf(PowerGarden.distance));
-							lightval.setText(String.valueOf(PowerGarden.light));
-							moistval.setText(String.valueOf(PowerGarden.moisture));
-							humval.setText(String.valueOf(PowerGarden.hum));
-							tempval.setText(String.valueOf(PowerGarden.temp));
+							distanceval.setText(String.valueOf(PowerGarden.Device.distance));
+							lightval.setText(String.valueOf(PowerGarden.Device.light));
+							moistval.setText(String.valueOf(PowerGarden.Device.moisture));
+							humval.setText(String.valueOf(PowerGarden.Device.hum));
+							tempval.setText(String.valueOf(PowerGarden.Device.temp));
 						}
 					};
 					if(runner != null){
@@ -319,7 +320,7 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 		}
 	}
 
-	private void sendJson(String type, Monkey...monkey ){
+	private void sendUpdateData(String type, Monkey...monkey ){
 		Log.d(TAG, "DEVICE ID: "+PowerGarden.Device.ID + " Registered: " +PowerGarden.bRegistered);
 		if(PowerGarden.bRegistered){
 		JSONObject j = new JSONObject();
