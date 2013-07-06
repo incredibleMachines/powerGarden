@@ -46,8 +46,8 @@ public class StateManager extends Activity {
 					j--;
 				}
 				
-				int touchesThisPeriod = PowerGarden.Device.plants[i].touchStamps.size();
-				Log.d("touchesThisPeriod: ", Integer.toString(touchesThisPeriod));
+//				int touchesThisPeriod = PowerGarden.Device.plants[i].touchStamps.size();
+//				Log.d("touchesThisPeriod: ", Integer.toString(touchesThisPeriod));
 			}
 			
 			int touchesThisPeriod = PowerGarden.Device.plants[i].touchStamps.size();
