@@ -94,7 +94,7 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 						if (index >= 0){
 							threshBarTextView[ index ].setText( Integer.toString(PowerGarden.Device.plants[ index ].threshold));
 							threshBar[ index ].setProgress(PowerGarden.Device.plants[ index ].threshold);
-						} else rangeThresh.setText(Integer.toString(PowerGarden.Device.distanceThreshold));
+						} else rangeThresh.setText(Integer.toString(PowerGarden.Device.rangeLowThresh));
 					}
 				};
 			}
