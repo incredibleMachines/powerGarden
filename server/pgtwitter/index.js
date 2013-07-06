@@ -198,6 +198,14 @@ var processesTwitterStreamData = function(data) {
 		}
 	}
 
+	// Check if more than one plant was mentioned. If so, set logic back to same as
+	// not mentioning any plants, i.e. you're effectively talking to the entire garden
+	if (mentionedPlants.length > 1) {
+		console.log('Multiple plants detected: ' + mentionedPlants.join(', '));
+		mentionedPlants = [];
+		emitPlant = false;
+	}
+
 	// Build the data we pass to the callback
 	var result = {
 

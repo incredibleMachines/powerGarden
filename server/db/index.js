@@ -110,6 +110,10 @@ DB.prototype.routeUpdate = function(message,connection){
 			if(err) console.error(err);//throw err;	
 		});
 
+		devicesDb.update({ _id: obj.device_id }, { $set: { state: obj.state }}, function(err) {
+			if (err) console.error(err);
+		});
+
 		// console.log("GOT MESSAGE.DATA :: "+JSON.stringify(message.data));
 			
 		// var obj = {	'device_id': new BSON.ObjectID( String(message.device_id)), 
@@ -344,15 +348,15 @@ DB.prototype.routeRegister = function(message,connection){
 
 					console.log("[Device Already Registered]");
 
-					// Update plant type in db if what was sent in register is differen than what we have
+					// Update plant type in db if what was sent in register is different than what we have
 					if (message.plant_type != result.type) {
 						result.type = message.plant_type;
 						_db.updateDocument(devicesDb, message.device_id, { $set: { type: message.plant_type }})
 					}
-					
-					result.device_id = message.device_id;
+
 					result.connection_id = connection.id;
-					
+					result.device_id = message.device_id;
+
 					connection.plant_type = message.plant_type;		
 					connection.device_id = message.device_id;
 					_db.setSlug(connection);
@@ -603,7 +607,7 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 	// Amount of time to increase the sprinkler duration length for different moisture moods
 	var durations = {
 		low: 5,
-		content: 2,
+		medium: 2,
 		high: 0
 	}
 	var duration = 0;
@@ -616,10 +620,10 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 		
 		for (var i = 0; i < res.length; i++) {
 			// console.log('calculateGardenWaterNeeds: '+i+': '+JSON.stringify(res[i]));
-			if (res[i].mood == 'born') continue;
+			if (!res[i].state == 'born') continue;
 
 			// Increase amount according to above map
-			duration += durations[res[i].mood.moisture];
+			duration += durations[res[i].state.moisture];
 		}
 
 		// Pass result to the callback
