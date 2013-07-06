@@ -24,7 +24,7 @@ import com.victorint.android.usb.interfaces.Viewable;
 public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSeekBarChangeListener  {
 	private static String TAG = "PresentationViewable";
 	//private Activity activity_;
-	private StateManager stateManager;
+	StateManager stateManager;
 	
 	private PresentationActivity activity_;
 	private int messageLevel_			= 22;
@@ -207,13 +207,13 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 										
 										PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis();
 										
-										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp);	
+										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp);
 										
 										stateManager.updatePlantStates();
 										
 										//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
 										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
-
+										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), "worked_up", 88, PresentationViewable.this );	
 										
 										
 									}

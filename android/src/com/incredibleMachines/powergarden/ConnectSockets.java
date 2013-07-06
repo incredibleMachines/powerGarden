@@ -114,15 +114,15 @@ public class ConnectSockets extends Activity implements Connectable {
 				//int plantNum = (int) (Math.random()*7);
 				int plantNum = 1;
 				
-//				PowerGarden.Device.plants[plantNum].triggered = true;
+				PowerGarden.Device.plants[plantNum].triggered = true;
+				
+				PowerGarden.Device.plants[plantNum].touchedTimestamp = System.currentTimeMillis();
+				
+				PowerGarden.Device.plants[plantNum].touchStamps.add(PowerGarden.Device.plants[plantNum].touchedTimestamp);	
 //				
-//				PowerGarden.Device.plants[plantNum].touchedTimestamp = System.currentTimeMillis();
-//				
-//				PowerGarden.Device.plants[plantNum].touchStamps.add(PowerGarden.Device.plants[plantNum].touchedTimestamp);	
-//				
-//				PowerGarden.stateManager.updatePlantStates();
-//				
-//	        	PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, PowerGarden.Device.plants[plantNum].touchStamps.size(), ConnectSockets.this );
+				PowerGarden.stateManager.updatePlantStates();				
+				
+	        	PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, PowerGarden.Device.plants[plantNum].touchStamps.size(), ConnectSockets.this );
 			}
            });
            

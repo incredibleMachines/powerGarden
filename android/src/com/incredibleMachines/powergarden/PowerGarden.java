@@ -11,7 +11,7 @@ public class PowerGarden {
     static Typeface italiaBook;
     static Typeface interstateBold;
     
-    //public static StateManager stateManager;
+    public static StateManager stateManager = new StateManager();
 	
     public static String[] plantState = {"lonely", "content", "worked_up"};
     

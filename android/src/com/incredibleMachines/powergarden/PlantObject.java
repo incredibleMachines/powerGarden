@@ -16,6 +16,8 @@ public class PlantObject {
     
     public long touchedTimestamp = 0;
     
+    //public long[] touchTimestamps = new long[20];
+    
     Vector<Long> touchStamps = new Vector<Long>(); //holds timestamps of all touches last X mins
     
     
@@ -35,3 +37,5 @@ public class PlantObject {
     	return threshold;
     }
 }
+
+
