@@ -596,14 +596,14 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 	}
 	var duration = 0;
 
-	console.log('calculateGardenWaterNeeds: checking db');
+	// console.log('calculateGardenWaterNeeds: checking db');
 	devicesDb.find({ active: true }).toArray( function(err,res) {
 		if (err) console.error(err);
 
-		console.log('calculateGardenWaterNeeds inside active device query');
+		// console.log('calculateGardenWaterNeeds inside active device query');
 		
 		for (var i = 0; i < res.length; i++) {
-			console.log('calculateGardenWaterNeeds: '+i+': '+JSON.stringify(res[i]));
+			// console.log('calculateGardenWaterNeeds: '+i+': '+JSON.stringify(res[i]));
 			if (res[i].mood == 'born') continue;
 
 			// Increase amount according to above map
@@ -611,7 +611,7 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 		}
 
 		// Pass result to the callback
-		console.log('calculateGardenWaterNeeds: returning '+duration);
+		// console.log('calculateGardenWaterNeeds: returning '+duration);
 		callback(duration);
 	});
 }

@@ -214,7 +214,7 @@ function twitterCallback(data) {
 
 		// look up water needs of all devices
 		database.calculateGardenWaterNeeds(function(pumpDuration) {
-			console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
+			// console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
 
 			if (pumpDuration > 0) {
 
@@ -222,7 +222,7 @@ function twitterCallback(data) {
 
 				// add time for priming
 				database.neededTimeForPriming(function(primingDuration) {
-					console.log('Adding '+primingDuration+'to pump');
+					// console.log('Adding '+primingDuration+'to pump');
 
 					pumpDuration += primingDuration;
 
@@ -237,12 +237,12 @@ function twitterCallback(data) {
 					// Send appreciation for watering
 
 					if (!data.plants) {
-						console.log('Water tweeted at garden');
+						// console.log('Water tweeted at garden');
 						var plant = 'garden';
 					} else {
 						// Just pull the first mentioned one for now
 						var plant = data.plants[0];
-						console.log('Water tweeted at '+plant);
+						// console.log('Water tweeted at '+plant);
 					}
 
 					var responses = dialogue[plant].waterResponseGood.stage_copy;
@@ -256,12 +256,12 @@ function twitterCallback(data) {
 				// Tell them to hold off on watering
 
 				if (!data.plants) {
-					console.log('Water tweeted at garden BUT WE DON\'T NEED IT');
+					// console.log('Water tweeted at garden BUT WE DON\'T NEED IT');
 					var plant = 'garden';
 				} else {
 					// just pull the first mentioned one for now
 					var plant = data.plants[0];
-					console.log('Water tweeted at '+plant+' BUT WE DON\'T NEED IT');
+					// console.log('Water tweeted at '+plant+' BUT WE DON\'T NEED IT');
 				}
 
 				var responses = dialogue['garden'].waterResponseBad.stage_copy;
@@ -275,12 +275,12 @@ function twitterCallback(data) {
 		// Send thanks for attention
 
 		if (!data.plants) {
-			console.log('Attention tweeted at garden');
+			// console.log('Attention tweeted at garden');
 			var plant = 'garden';
 		} else {
 			// just pull the first mentioned one for now
 			var plant = data.plants[0];
-			console.log('Attention tweeted at '+plant);
+			// console.log('Attention tweeted at '+plant);
 		}
 
 		var responses = dialogue[plant].touchResponseGood.stage_copy;
@@ -288,10 +288,10 @@ function twitterCallback(data) {
 	}
 
 	function processResponses(plant, responses) {
-		console.log('Plant targeted: ' + plant);
+		// console.log('Plant targeted: ' + plant);
 		if (data.emit) console.log('Emits also to: ' + data.emit);
-		console.log('Potential responses are...');
-		console.log(responses);
+		// console.log('Potential responses are...');
+		// console.log(responses);
 
 		var index = Math.floor(Math.random()*responses.length);
 		var text = '@'+data.user_name + ' ' + responses[index];
@@ -302,7 +302,7 @@ function twitterCallback(data) {
 
 		// send a tweet event to appropriate tablets
 		for (var key in clients) {
-			console.log('key: '+key+', slug: '+clients[key].plant_slug+', emit: '+data.emit);
+			// console.log('key: '+key+', slug: '+clients[key].plant_slug+', emit: '+data.emit);
 			if (!data.plants || clients[key].plant_slug == plant || clients[key].plant_slug == data.emit) {
 				var obj = {
 					device_id: clients[key].device_id,
@@ -311,8 +311,8 @@ function twitterCallback(data) {
 					plant_type: plant
 				}
 				clients[key].socket.emit('tweet', obj);
-				console.log('Sending tweet event to: plant_type: '+clients[key].plant_type+', plant_slug: '+clients[key].plant_slug);
-				console.log(obj);
+				// console.log('Sending tweet event to: plant_type: '+clients[key].plant_type+', plant_slug: '+clients[key].plant_slug);
+				// console.log(obj);
 			}
 		}
 
