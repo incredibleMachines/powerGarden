@@ -63,7 +63,7 @@ socket.on('threshold',function(data){
 		var input = $('input.plant-'+data.plant_index+'.cap.client-'+data.connection_id);
 		input.val(data.value);
 		// input.tooltip('destroy').tooltip({ animation: false, title: data.value }).tooltip('show');
-		$('td.plant-'+data.plant_index+'.value.client-'+data.connection_id).html(data.value)
+		$('td.plant-'+data.plant_index+'.value.client-'+data.connection_id).html(data.value);
 	}
 });
 
@@ -143,7 +143,7 @@ function populate(socket, data){
 		// sort the array first
 		var plants = [];
 		for (i = 0; i < data.plants.length; i++) { plants[data.plants[i].index] = data.plants[i] }
-			
+
 		// console.log(data.plants);
 		for (var i = 0; i < plants.length; i++) {
 			var j = plants[i].index;
@@ -217,6 +217,13 @@ function populate(socket, data){
 
 function buildSettings(data) {
 
+	// Update values for capacitance thresholds in plant table first
+
+	for (var i = 0; i < data.cap_thresh.length; i++) {
+		var input = $('input.plant-'+data.cap_thresh[i].plant_index+'.cap.client-'+data.connection_id);
+		input.val(data.cap_thresh[i].value);
+		$('td.plant-'+data.cap_thresh[i].plant_index+'.value.client-'+data.connection_id).html(data.cap_thresh[i].value);
+	}
 
 	// GENERATE TABLE FOR SENSORS
 
@@ -224,7 +231,6 @@ function buildSettings(data) {
 	var settingsPre = '<table class="table table-condensed sensor-table"><thead><tr><th>Active</th><th>Property</th><th>Reading</th><th>Low Threshold</th><th>High Threshold</th><th>Window</th></tr></thead><tbody>';
 	var settingsPost = '</tbody></table>';
 
-	// expected result is a list with only one element, so grab just the first one
 	// loop through the object keys and generate table rows
 	var settingsString = '';
 	var d = data;
@@ -251,7 +257,6 @@ function buildSettings(data) {
 		} else {
 			var windowString = '';
 		}
-
 
 		settingsString += '<tr><td>'+activeButton+'</td><td>'+key+'</td><td class="'+key+' reading"></td><td><input class="input-small" type="text" name="low" placeholder="low" value="'+d[key].low+'" data-sensor="'+key+'"></td><td>'+highString+'</td><td>'+windowString+'</td></tr>'
 	}

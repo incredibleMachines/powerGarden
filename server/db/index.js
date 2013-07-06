@@ -93,6 +93,16 @@ DB.prototype.updateSettings = function(data, callback) {
 	});
 }
 
+DB.prototype.updateThreshold = function(data, callback) {
+
+	var obj = { device_id: new BSON.ObjectID(String(data.device_id)), 'cap_thresh.plant_index': data.plant_index };
+	var settingsObj = { $set: { 'cap_thresh.$.value': data.value } }
+
+	settingsDb.update(obj, settingsObj, function(err, count) {
+		callback();
+	});
+}
+
 
 
 /* ******************************************************************************************* */
@@ -224,7 +234,7 @@ DB.prototype.logDevice = function(message,connection,_db){
 		console.log("plants.length: "+message.num_plants);
 		for(var i = 0; i<message.num_plants; i++) _db.createPlant(message,connection,i,_db);
 		
-		_db.createSettings(message,connection,_db);
+		_db.createSettings(message,connection,_db,message.num_plants);
 		
 		// var res = { device_id: connection.device_id, connection_id: connection.id };
 
@@ -252,16 +262,23 @@ DB.prototype.createPlant = function(message,connection,plant_index,_db){
 	});
 }
 
-DB.prototype.createSettings = function(message,connection,_db){
-	
-	var obj = {};
-	obj.device_id = connection.device_id;
-	obj.humidity = { active: false, low: 10, high:60};
-	obj.temp = {active: false, low: 15, high:35};
-	obj.moisture = {active: true, low:0, high:100};
-	obj.light = {active: false, low:400, high: 1000};	
-	obj.touch = {active: true, low:10, high: 30, window: 1};
-	obj.range = {active: false, low: 50};
+DB.prototype.createSettings = function(message,connection,_db,num_plants){
+
+	var cap_thresh = [];
+	for (var i = 0; i < num_plants; i++) {
+		cap_thresh[i] = { plant_index: i, value: 1500 };
+	}
+
+	var obj = {
+		device_id: connection.device_id,
+		humidity: { active: false, low: 10, high:60},
+		temp: {active: false, low: 15, high:35},
+		moisture: {active: true, low:0, high:100},
+		light: {active: false, low:400, high: 1000},
+		touch: {active: true, low:10, high: 30, window: 1},
+		range: {active: false, low: 50},
+		cap_thresh: cap_thresh
+	};
 	
 	settingsDb.insert(obj,{safe:true},function(err){
 		if(err) console.error(err);

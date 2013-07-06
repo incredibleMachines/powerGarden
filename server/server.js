@@ -82,10 +82,10 @@ browserio.sockets.on('connection',function(browserSocket){
 	//browserSocket.emit('init', clients);
 	browserSocket.on('threshold',function(msg){
 		console.log(msg);
-		clients['client-'+msg.connection_id].socket.emit('threshold',msg);
-		browserSocket.broadcast.emit('threshold', msg);
-		
-		
+		database.updateSettings(msg, function() {
+			clients['client-'+msg.connection_id].socket.emit('threshold',msg);
+			browserSocket.broadcast.emit('threshold', msg);
+		});
 	});
 	browserSocket.on('firehose',function(msg){
 		console.log(msg);
@@ -98,8 +98,6 @@ browserio.sockets.on('connection',function(browserSocket){
 		console.log(msg);
 		clients['client-'+msg.connection_id].socket.emit('ignore',msg);
 		browserSocket.broadcast.emit('ignore', msg);
-			
-		
 	});
 
 	browserSocket.on('settings',function(msg){
