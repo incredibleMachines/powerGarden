@@ -68,9 +68,22 @@ socket.on('threshold',function(data){
 });
 
 socket.on('update',function(data){
+	console.log(data);
 	var device_id = data.device_id;
 	var readings = data.data;
+	var plants = data.state.plants;
 
+	// update device state for touch & moisture
+	$('#'+device_id+' .state_touch').html(data.state.touch);
+	$('#'+device_id+' .state_moisture').html(data.state.moisture);
+
+	// update plant info for touch state & count
+	for (var i = 0; i < plants.length; i++) {
+		$('#'+device_id+'-plants .plant-table .plant-'+plants[i].index+' .state_touch').html(plants[i].state);
+		// $('#'+device_id+'-plants .plant-table .plant-'+plants[i].index+' .touch_count').html(plants[i].count);
+	}
+
+	// update sensor readings
 	for (var key in readings) {
 		if (key == 'timestamp') continue;
 		$('#'+device_id+'-plants .sensor-table .reading.'+key).html(readings[key]);
@@ -104,7 +117,7 @@ function populate(socket, data){
 			var activeButton = '<button class="btn-mini firehose client-'+data.connection_id+'"><i class="icon-off"></i></button>';
 		}
 
-		var append = '<tr id="'+data.device_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td>'+activeButton+'</td><td>'+data.device_id+'</td><td>'+data.plants.length+'</td><td>'+data.plant_type+'</td><td>'+data.state.touch+'</td><td>'+data.state.moisture+'</td><td>'+(new Date(data.date)).toLocaleString()+'</td></tr>';
+		var append = '<tr id="'+data.device_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td>'+activeButton+'</td><td>'+data.device_id+'</td><td>'+data.plants.length+'</td><td class="plant_type">'+data.plant_type+'</td><td class="state_touch">'+data.state.touch+'</td><td class="state_moisture">'+data.state.moisture+'</td><td>'+(new Date(data.date)).toLocaleString()+'</td></tr>';
 		$('.device-table > tbody').append(append);
 
 
@@ -113,14 +126,15 @@ function populate(socket, data){
 		// embedded table for plants
 		// embedded table for settings
 
-		// GENERATE TABLE FOR PLANTS
-
-		// the actual table row that appended to the main devices table, in which our two tables are placed
+		// table row that is appended to the main devices table, in which our two tables are nested
 		var commonPre = '<tr id="'+data.device_id+'-plants" class="client-'+data.connection_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'" style="display: none;"><td></td><td colspan="6">';
 		var commonPost = '</td></tr>';
 
+
+		// GENERATE TABLE FOR PLANTS
+
 		// table header and closing tags
-		var plantPre = '<table class="table plant-table"><thead><tr><th width="5%">Active</th><th width="20%">Plant ID</th><th width="7%">Index</th><th width="11%">Mood</th><th width="8%">Touch</th><th width="22%">Cap Slider</th><th width="7%">Threshold</th><th width="20%">Incoming</th></tr></thead><tbody>';
+		var plantPre = '<table class="table plant-table"><thead><tr><th width="5%">Active</th><th width="20%">Plant ID</th><th width="7%">Index</th><th width="11%">State</th><th width="8%">Count</th><th width="22%">Cap Slider</th><th width="7%">Threshold</th><th width="20%">Incoming</th></tr></thead><tbody>';
 		var plantPost = '</tbody></table>';
 
 		// loop through results and generate a new table row for each
@@ -128,7 +142,7 @@ function populate(socket, data){
 		// console.log(data.plants);
 		for (var i = 0; i < data.plants.length; i++) {
 			var j = data.plants[i].index;
-			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td><button class="btn-mini btn-success plant-'+j+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+j+'"><i class="icon-ok"></i></button></td><td>'+data.plants[i]._id+'</td><td>'+j+'</td><td>TODO</td><td>TODO</td><td><input type="range" min="0" max="15000" step="1" class="plant-'+j+' cap client-'+data.connection_id+'" data-plant_index="'+j+'"></td><td class="plant-'+j+' value client-'+data.connection_id+'"></td><td class="plant-'+j+' incoming client-'+data.connection_id+'"></td></tr>';
+			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'" class="plant-'+j+'"><td><button class="btn-mini btn-success plant-'+j+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+j+'"><i class="icon-ok"></i></button></td><td>'+data.plants[i]._id+'</td><td>'+j+'</td><td class="state_touch"></td><td class="touch_count"></td><td><input type="range" min="0" max="15000" step="1" class="plant-'+j+' cap client-'+data.connection_id+'" data-plant_index="'+j+'"></td><td class="plant-'+j+' value client-'+data.connection_id+'"></td><td class="plant-'+j+' incoming client-'+data.connection_id+'"></td></tr>';
 		}
 
 

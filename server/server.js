@@ -256,7 +256,7 @@ function twitterCallback(data) {
 					}
 
 					var responses = dialogue[plant].waterResponseGood.stage_copy;
-					processResponses(plant, responses);
+					processResponses(plant, responses, true);
 				});
 
 			} else {
@@ -297,7 +297,7 @@ function twitterCallback(data) {
 		processResponses(plant, responses);
 	}
 
-	function processResponses(plant, responses) {
+	function processResponses(plant, responses, _watering) {
 		// console.log('Plant targeted: ' + plant);
 		// if (data.emit) console.log('Emits also to: ' + data.emit);
 		// console.log('Potential responses are...');
@@ -305,10 +305,10 @@ function twitterCallback(data) {
 
 		var index = Math.floor(Math.random()*responses.length);
 		var text = '@'+data.user_name + ' ' + responses[index];
+		var watering = _watering || false;
 
 		// tweet that b
-		//pgtwitter.updateStatus(text, { in_reply_to_status_id: data.id });
-		console.log('[TWITTER] [OUTBOUND] ' + text)
+		pgtwitter.updateStatus(text, { in_reply_to_status_id: data.id });
 
 		// send a tweet event to appropriate tablets
 		for (var key in clients) {
@@ -319,7 +319,7 @@ function twitterCallback(data) {
 					user_name: data.user_name,
 					text: responses[index],
 					plant_type: plant,
-					watering: data.water ? true : false
+					watering: watering
 				}
 				clients[key].socket.emit('tweet', obj);
 				// console.log('Sending tweet event to: plant_type: '+clients[key].plant_type+', plant_slug: '+clients[key].plant_slug);

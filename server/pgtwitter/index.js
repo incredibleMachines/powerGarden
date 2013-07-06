@@ -245,14 +245,16 @@ var updateStatus = function(text, options) {
 		text += ' ' + ustreamLink;
 	}
 
-	twitter.updateStatus(text, options, function (err, data) {
-		if (err) {
-			console.log('[Post Twitter Update] Error Posting Status:');
-			console.log(err);
-		}
 
-		//console.log(JSON.stringify(data));
-	});
+	console.log('[TWITTER] [OUTBOUND] ' + text + ', options: ' + JSON.stringify(options));
+	// twitter.updateStatus(text, options, function (err, data) {
+	// 	if (err) {
+	// 		console.log('[TWITTER] Error Posting Status:');
+	// 		console.log(err);
+	// 	}
+
+	// 	//console.log(JSON.stringify(data));
+	// });
 
 }
 exports.updateStatus = updateStatus;

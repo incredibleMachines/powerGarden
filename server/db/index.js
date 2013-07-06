@@ -16,7 +16,7 @@ function DB(browserSockets){
 	this.plantsDb;
 	this.touchesDb;
 	this.settingsDb;
-	this.moodDb;
+	// this.moodDb;
 	this.pumpDb;
 	this.twitter;
 	this.browserIO = browserSockets;
@@ -40,7 +40,7 @@ function DB(browserSockets){
 		this.dataDb = db.collection('data');
 		this.touchesDb = db.collection('touches');
 		this.settingsDb = db.collection('settings');
-		this.moodDb = db.collection('mood');
+		// this.moodDb = db.collection('mood');
 		this.pumpDb = db.collection('pump');
 	});
 		
@@ -415,7 +415,7 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 		
 		for (var i = 0; i < res.length; i++) {
 			// console.log('calculateGardenWaterNeeds: '+i+': '+JSON.stringify(res[i]));
-			if (!res[i].state == 'born') continue;
+			if (!res[i].state.moisture == 'born') continue;
 
 			// Increase amount according to above map
 			duration += durations[res[i].state.moisture];
