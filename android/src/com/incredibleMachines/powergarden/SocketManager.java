@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import com.incredibleMachines.powergarden.PowerGarden.Device;
 import com.victorint.android.usb.interfaces.Connectable;
 
 
@@ -235,8 +236,8 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 							
 						} else {
 							Log.d(TAG, "RANGE thresh update: thisValue = "+Integer.toString(thisValue));
-							PowerGarden.Device.distanceThreshold = thisValue;
-							PowerGarden.savePref("rangeThresh", Integer.toString(PowerGarden.Device.distanceThreshold));
+							PowerGarden.Device.rangeLowThresh = thisValue;
+							PowerGarden.savePref("rangeThresh", Integer.toString(PowerGarden.Device.rangeLowThresh));
 							
 							callbackActivity.signalToUi(PowerGarden.ThreshChange, thisType);
 							if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.ThreshChange, "-1");
@@ -318,12 +319,87 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 			//**** settings ****//
 			else if(event.equals("settings")){
 				
-				if(j.has("mood")){
-					if(j.has("index")){
-						//Log.wtf(TAG, "mood set to: " + j.getString("mood"));
-						//PowerGarden.Device.plants[Integer.parseInt(j.getString("index"))].mood = j.getString("mood");
-					}
+//				if(j.has("humidity")){
+//					
+//				}
+				
+				if(j.has("humidity")){
+					JSONObject humidity = new JSONObject();
+					humidity = j.getJSONObject("humidity");
+				
+					PowerGarden.savePref("humidity_active", humidity.getString("active"));
+					PowerGarden.savePref("humidity_thres_high", humidity.getString("high"));
+					PowerGarden.savePref("humidity_thres_low", humidity.getString("low"));
+				
 				}
+				
+				if(j.has("temp")){
+					JSONObject temp = new JSONObject();
+					temp = j.getJSONObject("temp");
+				
+					PowerGarden.savePref("temp_active", temp.getString("active"));
+					PowerGarden.savePref("temp_thres_high", temp.getString("high"));
+					PowerGarden.savePref("temp_thres_low", temp.getString("low"));
+				}
+
+				if(j.has("moisture")){
+					JSONObject moisture = new JSONObject();
+					moisture = j.getJSONObject("moisture");
+				
+					PowerGarden.savePref("moisture_active", moisture.getString("active"));
+					PowerGarden.savePref("moisture_thres_high", moisture.getString("high"));
+					PowerGarden.savePref("moisture_thres_low", moisture.getString("low"));
+					
+					PowerGarden.Device.moistureActive = Boolean.valueOf(moisture.getString("active"));
+					PowerGarden.Device.moistureHighThresh = Integer.parseInt(moisture.getString("high"));
+					PowerGarden.Device.moistureLowThresh = Integer.parseInt(moisture.getString("low"));
+
+
+				
+				}
+				
+				if(j.has("moisture")){
+					JSONObject light = new JSONObject();
+					light = j.getJSONObject("light");
+					PowerGarden.savePref("light_active", light.getString("active"));
+					PowerGarden.savePref("light_thres_high", light.getString("high"));
+					PowerGarden.savePref("light_thres_low", light.getString("low"));
+					
+					PowerGarden.Device.lightActive = Boolean.valueOf(light.getString("active"));
+					PowerGarden.Device.lightHighThresh = Integer.parseInt(light.getString("high"));
+					PowerGarden.Device.lightLowThresh = Integer.parseInt(light.getString("low"));
+					
+				}
+				if(j.has("touch")){
+					
+					JSONObject touch = new JSONObject();
+					touch = j.getJSONObject("touch");
+				
+					PowerGarden.savePref("touch_active", touch.getString("active"));
+					PowerGarden.savePref("touch_thres_high", touch.getString("high"));
+					PowerGarden.savePref("touch_thres_low", touch.getString("low"));
+					PowerGarden.savePref("touch_window", touch.getString("window"));
+					
+					PowerGarden.Device.touchActive = Boolean.valueOf(touch.getString("active"));
+					PowerGarden.Device.touchHighThresh = Integer.parseInt(touch.getString("high"));
+					PowerGarden.Device.touchLowThresh = Integer.parseInt(touch.getString("low"));
+					PowerGarden.Device.touchWindow = Integer.parseInt(touch.getString("window"));
+					
+				}
+				
+				if(j.has("range")){
+					JSONObject range = new JSONObject();
+					range = j.getJSONObject("range");
+					
+					PowerGarden.savePref("range_active", range.getString("active"));
+					PowerGarden.savePref("range_thres_low", range.getString("low"));
+				
+					PowerGarden.Device.rangeActive = Boolean.valueOf(range.getString("active"));
+					PowerGarden.Device.rangeLowThresh = Integer.parseInt(range.getString("low"));
+				}
+				
+				
+				
 				callbackActivity.signalToUi(PowerGarden.Settings, PowerGarden.Device.ID);
 				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.Settings, PowerGarden.Device.ID);
 			}
