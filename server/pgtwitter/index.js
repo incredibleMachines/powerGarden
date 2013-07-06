@@ -28,11 +28,20 @@ for (var i = 0; i < hashtags.length; i++) {
 }
 
 // Set up keywords to respond to
-var waterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', 'sprinkler', 'sprinkers', 'mist', 'misty'];
-// shower, showers, precipitation
+var waterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', 'sprinkle', 'sprinkler', 'sprinkers', 'mist', 'misty', 'shower', 'showers'];
+// precipitation?
+
+// PLACE MORE SPECIFIC KEYWORDS FIRST SO THEY GET CAUGHT FIRST IN THE WORD SEARCH LOOP
+// e.g., try to match "purple carrots" before "carrots"
 var plantKeywords = [
 	{
+		"type": "cherry_tomatoes",
+		"emit": "tomatoes",
+		"keywords": ["cherry tomato", "cherry tomatoe", "cherry tomatoes"]
+	},
+	{
 		"type": "tomatoes",
+		"emit": "cherry_tomatoes",
 		"keywords": ["tomato", "tomatoe", "tomatoes"]
 	},
 	{
@@ -44,7 +53,13 @@ var plantKeywords = [
 		"keywords": ["celery", "celry"],
 	},
 	{
-		"type": "carrots",
+		"type": "purple_carrots",
+		"emit": "orange_carrots",
+		"keywords": ["purple carrot", "purple carrots", "purple carot", "purple carots"],
+	},
+	{
+		"type": "orange_carrots",
+		"emit": "purple_carrots",
 		"keywords": ["carrot", "carrots", "carot", "carots"],
 	},
 	{
@@ -156,6 +171,7 @@ var processesTwitterStreamData = function(data) {
 	var foundWaterKeyword = false;
 	var foundPlantKeyword = false;
 	var mentionedPlants = [];
+	var emitPlant = false;
 
 	for (var i = 0; i < waterKeywords.length; i++) {
 		// Use whole word regex-matching
@@ -173,6 +189,7 @@ var processesTwitterStreamData = function(data) {
 			if (new RegExp("\\b" + plantKeywords[i].keywords[j] + "\\b", "i").test(text)) {
 				foundPlantKeyword = true;
 				mentionedPlants.push(plantKeywords[i].type);
+				if (plantKeywords[i].emit) emitPlant = plantKeywords[i].emit;
 				console.log('[TWITTER] Plant match! ' + plantKeywords[i].type + ': ' + plantKeywords[i].keywords[j]);
 
 				// break out of inner loop and continue searching for plants
@@ -186,8 +203,9 @@ var processesTwitterStreamData = function(data) {
 
 		water: foundWaterKeyword,
 		plants: mentionedPlants.length ? mentionedPlants : false,
+		emit: emitPlant,
 		id: id,
-		user: user,
+		user_name: user,
 		text: text,
 
 	};

@@ -7,8 +7,7 @@
                 "Hi there! See what happens when you pet these plants…",
                 "You seem like a veggie lover. Wanna hang out with these plants?",
                 "Did you know these plants are extremely ticklish? Try it and see!",
-                "Help these plants grow big and tall: give 'em a pinch to grow an inch!",
-
+                "Help these plants grow big and tall: give 'em a pinch to grow an inch!"
             ],
             "audio": [
                 "large_tomatoes_proximity_1.mp3",
@@ -25,7 +24,7 @@
                 "Hey, you've got the magic touch! Keep it up!",
                 "Perfect job, you're a natural!",
                 "You're a great playmate. Hope you visit every day!",
-                "Wow. Were you a vegetable in your past life?",
+                "Wow. Were you a vegetable in your past life?"
             ],
             "audio": [
                 "large_tomatoes_happy_1.mp3",
@@ -44,7 +43,7 @@
                 "Why not spread the love around a bit?",
                 "You guys are getting along great. The other veggies would love to meet you too!",
                 "It's time for the plants to get their beauty rest. Come back soon!",
-                "All of the hustle and bustle can be overwhelming for plants. They need to relax for a bit.",
+                "All of the hustle and bustle can be overwhelming for plants. They need to relax for a bit."
             ],
             "audio": [
                 "large_tomatoes_worked_up_1.mp3",
@@ -57,7 +56,7 @@
                 "Sounds like these plants need some water, can you help?",
                 "Mind watering these plants? They'd do it themselves, but they don't have arms.",
                 "If it gets any drier, these plants are going to become tumbleweeds!",
-                "These plants sure look dry! Can you send some water their way?",
+                "These plants sure look dry! Can you send some water their way?"
             ],
             "audio": [
                 "large_tomatoes_dry_1.mp3",
@@ -69,26 +68,26 @@
         "waterResponseGood": {
             "stage_copy": [
                 "The veggies sure look refreshed! Way to beat the heat.",
-                "The plants are super appreciative. If they could send you a drink in return, they would!",
+                "The plants are super appreciative. If they could send you a drink in return, they would!"
             ],
             "audio": []
         },
         "waterResponseBad": {
             "stage_copy": [
-                "Being TOO generous with the water can drown the tomatoes. Let's give 'em a break, shall we?",
-                "Swimming is a fun summer activity for people, not tomatoes! Can you ease up on the water please?",
-                "These tomatoes are getting soaked! The water is very refreshing but let's not over-do it, eh?",
-                "Tomatoes love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
-                "The tomatoes need time to drink up this water before they get more. Check in on them soon!",
+                "Being TOO generous with the water can drown the plants. Let's give 'em a break, shall we?",
+                "Swimming is a fun summer activity for people, not veggies! Can you ease up on the water please?",
+                "These veggies are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Plants love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+                "The plants need time to drink up this water before they get more. Check in on them soon!",
                 "Holy H2O! That's a lot of water. The plants probably need a break now…",
-                "Water is awesome but we don't want the tomatoes to float away… how about petting them instead?",
+                "Water is awesome but we don't want the veggies to float away… how about petting them instead?",
                 "Oh dear, these plants are drenched! Any more water would be too much of a good thing.",
                 "If the plants keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
         }
     },
-    "large_tomatoes": {
+    "tomatoes": {
         "touchRequest": {
             "stage_copy": [
                 "Get in touch with nature. Literally! Go ahead and touch the tomatoes",

@@ -7,6 +7,7 @@ var DB = require('./db/index');
 var pgtwitter = require('./pgtwitter/index');
 var pump = require('./pump/index');
 var colors = require('colors');
+var dialogue = require('./dialogue');
 
 
 var express = require('express');
@@ -86,10 +87,10 @@ browserio.sockets.on('connection',function(browserSocket){
 		
 		
 	});
-	browserSocket.on('control',function(msg){
+	browserSocket.on('firehose',function(msg){
 		console.log(msg);
-		clients['client-'+msg.connection_id].socket.emit('control',msg);
-		browserSocket.broadcast.emit('control', msg);
+		clients['client-'+msg.connection_id].socket.emit('firehose',msg);
+		browserSocket.broadcast.emit('firehose', msg);
 		
 	});
 
@@ -207,18 +208,21 @@ function twitterCallback(data) {
 	// pump.turnOnSprinklers(15);
 
 	if (data.water) {
+		console.log('User providing water');
 
 		// User is trying to provide water
 
-		
 		// look up water needs of all devices
 		database.calculateGardenWaterNeeds(function(pumpDuration) {
-			// console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
+			console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
 
 			if (pumpDuration > 0) {
 
+				// PLANTS NEED WATER
+
 				// add time for priming
 				database.neededTimeForPriming(function(primingDuration) {
+					console.log('Adding '+primingDuration+'to pump');
 
 					pumpDuration += primingDuration;
 
@@ -230,58 +234,89 @@ function twitterCallback(data) {
 
 
 					// TWITTER RESPONSE
+					// Send appreciation for watering
 
 					if (!data.plants) {
-						// No mention of a specific plant
-						// Send thanks for water from garden
-						console.log('[TWITTER] Thanks for water from garden');
-						// pgtwitter.updateStatus('message here')
+						console.log('Water tweeted at garden');
+						var plant = 'garden';
 					} else {
-						// User mentioned a specific plant
-						// Send thanks for water from the plant
-						console.log('[TWITTER] Thanks for water from ' + data.plants.join(' & '));
-						// pgtwitter.updateStatus('message here')
+						// Just pull the first mentioned one for now
+						var plant = data.plants[0];
+						console.log('Water tweeted at '+plant);
 					}
 
+					var responses = dialogue[plant].waterResponseGood.stage_copy;
+					processResponses(plant, responses);
 				});
 
 			} else {
 
-				// TWITTER RESPONSE
+				// PLANTS DO NOT NEED WATER
+				// Don't run pump, only send twitter response
+				// Tell them to hold off on watering
 
 				if (!data.plants) {
-					// No mention of a specific plant
-					// Send too much water from garden
-					console.log('[TWITTER] Too much water from garden');
-					// pgtwitter.updateStatus('message here')
+					console.log('Water tweeted at garden BUT WE DON\'T NEED IT');
+					var plant = 'garden';
 				} else {
-					// User mentioned a specific plant
-					// Send too much water from the plant
-					console.log('[TWITTER] Too much water from ' + data.plants.join(' & '));
-					// pgtwitter.updateStatus('message here')
+					// just pull the first mentioned one for now
+					var plant = data.plants[0];
+					console.log('Water tweeted at '+plant+' BUT WE DON\'T NEED IT');
 				}
 
-
+				var responses = dialogue['garden'].waterResponseBad.stage_copy;
+				processResponses(plant, responses);
 			}
-
 		});
 
-
 	} else {
+
 		// Not providing water
+		// Send thanks for attention
 
 		if (!data.plants) {
-			// No mention of a specific plant
-			// Send thanks for attention from garden
-			console.log('[TWITTER] Thanks for attention from garden');
-			// pgtwitter.updateStatus('Thanks for hanging out @' + data.user + '! Watch us grow at http://ustre.am/10WaX', { in_reply_to_status_id: data.id });
+			console.log('Attention tweeted at garden');
+			var plant = 'garden';
 		} else {
-			// User mentioned a specific plant
-			// Send thanks for attention from the plant
-			console.log('[TWITTER] Thanks for attention from ' + data.plants.join(' & '));
-			// pgtwitter.updateStatus('Thanks for the good vibes @' + data.user + '! The ' + data.plants.join(' & ') + ' are loving it!', { in_reply_to_status_id: data.id });
+			// just pull the first mentioned one for now
+			var plant = data.plants[0];
+			console.log('Attention tweeted at '+plant);
 		}
-	
+
+		var responses = dialogue[plant].touchResponseGood.stage_copy;
+		processResponses(plant, responses);
 	}
+
+	function processResponses(plant, responses) {
+		console.log('Plant targeted: ' + plant);
+		if (data.emit) console.log('Emits also to: ' + data.emit);
+		console.log('Potential responses are...');
+		console.log(responses);
+
+		var index = Math.floor(Math.random()*responses.length);
+		var text = '@'+data.user_name + ' ' + responses[index];
+
+		// tweet that b
+		//pgtwitter.updateStatus(text, { in_reply_to_status_id: data.id });
+		console.log('[TWITTER] [OUTBOUND] ' + text)
+
+		// send a tweet event to appropriate tablets
+		for (var key in clients) {
+			console.log('key: '+key+', slug: '+clients[key].plant_slug+', emit: '+data.emit);
+			if (!data.plants || clients[key].plant_slug == plant || clients[key].plant_slug == data.emit) {
+				var obj = {
+					device_id: clients[key].device_id,
+					user_name: data.user_name,
+					text: responses[index],
+					plant_type: plant
+				}
+				clients[key].socket.emit('tweet', obj);
+				console.log('Sending tweet event to: plant_type: '+clients[key].plant_type+', plant_slug: '+clients[key].plant_slug);
+				console.log(obj);
+			}
+		}
+
+	}
+
 }
 
