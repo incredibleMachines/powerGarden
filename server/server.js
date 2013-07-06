@@ -41,7 +41,7 @@ var browsers = {};
 
 
 //Connect to twitter, pass callback for responding to tweets
-pgtwitter.start(twitterCallback);
+// pgtwitter.start(twitterCallback);
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -137,7 +137,7 @@ var clientID = 0;
 // }
 
 io.sockets.on('connection', function (socket) {
-  //io.sockets.emit('this', { will: 'be received by everyone'});
+  
   	var connection = new Connection( ++clientID, 'set_id', socket);
 	var connectKey = 'client-'+clientID;
 	clients[connectKey]=connection;
@@ -162,7 +162,7 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('touch',function(msg){
 		console.log('[INBOUND REQUEST]'.warn+' [TOUCH] '.info + JSON.stringify(msg).input);
-		database.plantTouch(msg,connection);
+		database.routeTouch(msg,connection);
 		browserio.sockets.emit('touch',msg);
 	});
 	
