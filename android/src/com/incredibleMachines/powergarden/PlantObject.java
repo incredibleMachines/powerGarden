@@ -6,8 +6,7 @@ import java.util.Vector;
 public class PlantObject {
 	MedianFilter MF = new MedianFilter();
 	
-	public boolean enabled = true
-			;
+	public boolean enabled = true;
 	public boolean triggered = false;
     public int threshold = 10000;
     

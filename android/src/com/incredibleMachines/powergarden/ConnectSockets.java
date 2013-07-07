@@ -111,8 +111,8 @@ public class ConnectSockets extends Activity implements Connectable {
            mSendTouch.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 	        	   //PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );
-				//int plantNum = (int) (Math.random()*7);
-				int plantNum = 1;
+				int plantNum = (int) (Math.random()*8);
+				//int plantNum = 1;
 				
 				PowerGarden.Device.plants[plantNum].triggered = true;
 				
@@ -123,6 +123,13 @@ public class ConnectSockets extends Activity implements Connectable {
 				PowerGarden.stateManager.updatePlantStates();				
 				
 	        	PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, PowerGarden.Device.plants[plantNum].touchStamps.size(), ConnectSockets.this );
+			
+				if (PowerGarden.stateManager.updateDeviceState() ){
+					PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+				}
+				
+				PowerGarden.stateManager.getNumAudioSamples();
+				
 			}
            });
            

@@ -79,7 +79,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	public void plantTouch(String type, String device_id, int plant_index, int cap_val, String state, long numTouches, Connectable _callback){
 		callbackActivity = _callback;
 		String thisState = PowerGarden.Device.plants[plant_index].state;
-		Log.d("plantTouch state: ", thisState);
+		Log.d("touch state for plantindex "+Integer.toString(plant_index)+": ", thisState);
 		
 		try{
 			socket.emit(type, 
@@ -94,12 +94,14 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	public void updateData(String type, String device_id, Connectable _callback){
 		callbackActivity = _callback;
 		JSONObject data = new JSONObject();
-		JSONObject plants = new JSONObject();
+		JSONArray plants = new JSONArray();
 		JSONObject state = new JSONObject();
 		
 		try{
 			for(int i=0; i<PowerGarden.Device.PlantNum; i++){
-				plants.put("state", PowerGarden.Device.plants[i].state).put("index",Integer.toString(i));
+				JSONObject thisPlant = new JSONObject();
+				thisPlant.put("state", PowerGarden.Device.plants[i].state).put("index",i);
+				plants.put(thisPlant);
 			}
 			data.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light);
 			state.put("moisture", PowerGarden.stateManager.getDeviceMoisture()).put("touch", StateManager.getDeviceState()).put("plants", plants);
@@ -126,8 +128,8 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	public void connectToServer(String host, String port, Connectable _callback){
 		callbackActivity = _callback;
 		try {
-			Log.d(TAG, "connectToServer");
-			Log.d(TAG, _callback.toString());
+			Log.wtf(TAG, "connectToServer");
+			Log.d(TAG, "callbackActivity: " + _callback.toString());
 			
 			PowerGarden.Device.host = host;
 			PowerGarden.Device.port = port;
@@ -315,13 +317,24 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 					if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.PlantIgnore, thisPlantIndex);
 				}
 			}
+			
+
+			//**** display tweet ****//
+			else if(event.equals("tweet")){
+				if(j.has("user_name")){
+					String userName = j.getString("user_name");
+				}
+				if(j.has("text")){
+					String text = j.getString("text");
+				}
+				
+				callbackActivity.signalToUi(PowerGarden.PlantIgnore, PowerGarden.Device.ID);
+				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.PlantIgnore, PowerGarden.Device.ID);
+			}
+
 
 			//**** settings ****//
 			else if(event.equals("settings")){
-				
-//				if(j.has("humidity")){
-//					
-//				}
 				
 				if(j.has("humidity")){
 					JSONObject humidity = new JSONObject();
@@ -330,7 +343,6 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 					PowerGarden.savePref("humidity_active", humidity.getString("active"));
 					PowerGarden.savePref("humidity_thres_high", humidity.getString("high"));
 					PowerGarden.savePref("humidity_thres_low", humidity.getString("low"));
-				
 				}
 				
 				if(j.has("temp")){
@@ -341,6 +353,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 					PowerGarden.savePref("temp_thres_high", temp.getString("high"));
 					PowerGarden.savePref("temp_thres_low", temp.getString("low"));
 				}
+				
 
 				if(j.has("moisture")){
 					JSONObject moisture = new JSONObject();
@@ -352,13 +365,11 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 					
 					PowerGarden.Device.moistureActive = Boolean.valueOf(moisture.getString("active"));
 					PowerGarden.Device.moistureHighThresh = Integer.parseInt(moisture.getString("high"));
-					PowerGarden.Device.moistureLowThresh = Integer.parseInt(moisture.getString("low"));
-
-
-				
+					PowerGarden.Device.moistureLowThresh = Integer.parseInt(moisture.getString("low"));				
 				}
 				
-				if(j.has("moisture")){
+				
+				if(j.has("light")){
 					JSONObject light = new JSONObject();
 					light = j.getJSONObject("light");
 					PowerGarden.savePref("light_active", light.getString("active"));
@@ -399,7 +410,6 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 				}
 				
 				
-				
 				callbackActivity.signalToUi(PowerGarden.Settings, PowerGarden.Device.ID);
 				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.Settings, PowerGarden.Device.ID);
 			}
@@ -436,8 +446,6 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	public void run() {
 		// TODO Auto-generated method stub
 		Log.e(TAG,"CONNECT TIMED OUT");
-		connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
-		
+		connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);	
 	}
-
 }

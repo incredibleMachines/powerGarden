@@ -49,22 +49,19 @@ public class StateManager extends Activity {
 					PowerGarden.Device.plants[i].touchStamps.remove(j); //
 					j--;
 				}
-				
-//				int touchesThisPeriod = PowerGarden.Device.plants[i].touchStamps.size();
-//				Log.d("touchesThisPeriod: ", Integer.toString(touchesThisPeriod));
 			}
 			
 			int touchesThisPeriod = PowerGarden.Device.plants[i].touchStamps.size();
 			Log.d("FINAL TOUCHES THIS PERIOD FOR "+Integer.toString(i)+": ", Integer.toString(touchesThisPeriod));
 			
-			if (touchesThisPeriod < 3)
+			if (touchesThisPeriod < 2)
 				PowerGarden.deviceStateIndex = 0; //lonely
-			else if(touchesThisPeriod < 15)
+			else if(touchesThisPeriod < 10)
 				PowerGarden.deviceStateIndex = 1; //content
-			else if(touchesThisPeriod >=15 )
+			else if(touchesThisPeriod >=10 )
 				PowerGarden.deviceStateIndex = 2;; //worked_up
 				
-			PowerGarden.Device.plants[i].state = PowerGarden.plantState[PowerGarden.deviceStateIndex]; //lonely
+			PowerGarden.Device.plants[i].state = PowerGarden.plantState[PowerGarden.deviceStateIndex]; //set state String with index
 		}
 	}
 	
@@ -124,10 +121,13 @@ public class StateManager extends Activity {
 	}
 
 	public boolean updateDeviceState() {
+		
 		if(PowerGarden.Device.deviceState.contains(PowerGarden.stateManager.getDeviceState())){
+			Log.d("updateDeviceState()", "current device state = "+PowerGarden.Device.deviceState);
 			return false;
 		} else {
 			PowerGarden.Device.deviceState = PowerGarden.stateManager.getDeviceState();
+			Log.d("updateDeviceState()", "current device state = "+PowerGarden.Device.deviceState);
 			return true; //true if there is a change to device state 
 		}
 	}
@@ -141,24 +141,23 @@ public class StateManager extends Activity {
 		try {
 			String thisCopyType = PowerGarden.copyType[PowerGarden.deviceStateIndex];
 			
-			thisPlantCopy = PowerGarden.dialogue.getJSONObject("garden").getJSONObject(PowerGarden.Device.plantType)
+			thisPlantCopy = PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType)
 					.getJSONObject(thisCopyType).getJSONArray("stage_copy");
 			
 
 			int numLinesCopy = thisPlantCopy.length();
-			int[] orderArray = new int[numLinesCopy];
-			//String[] randomizedCopy = new String[numLinesCopy];
+//			int[] orderArray = new int[numLinesCopy];
+//
+//			for(int i=0; i<numLinesCopy; i++){
+//				orderArray[i] = i; //initialize array
+//				shuffleArray(orderArray);
+//			}
+//			
+//			for(int i=0; i<numLinesCopy; i++){
+//				Log.d("Randomized Copy Index "+Integer.toString(i), (String) thisPlantCopy.get(i));
+//			}
 			
-			
-			for(int i=0; i<numLinesCopy; i++){
-				orderArray[i] = i; //initialize array
-				shuffleArray(orderArray);
-			}
-			
-			for(int i=0; i<numLinesCopy; i++){
-				Log.d("Randomized Copy Index "+Integer.toString(i), (String) thisPlantCopy.get(i));
-			}
-
+			thisCopy = thisPlantCopy.getString((int)Math.random()*numLinesCopy);
 		
 		} catch (JSONException e) {
 
@@ -168,8 +167,59 @@ public class StateManager extends Activity {
 		return thisCopy;
 	}
 	
-	public void updateAudio() throws JSONException{
-		
+	public int getNumAudioSamples(){
+		int numSamples = 0;
+		try {
+			
+			
+			//int index = 0;
+			for(int i=0; i<6; i++){
+				if(i==0) {
+					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
+						PowerGarden.plantAudio_touchRequest.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
+						numSamples++;
+					}
+				}
+				else if(i==1){
+					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
+						PowerGarden.plantAudio_touchResponseGood.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
+						numSamples++;
+					}
+				}
+				else if(i==2){
+					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
+						PowerGarden.plantAudio_touchResponseBad.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
+						numSamples++;
+					}
+				}
+				else if(i==3){
+					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
+						PowerGarden.plantAudio_waterRequest.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
+						numSamples++;
+					}
+				}
+				else if(i==4){
+					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
+						PowerGarden.plantAudio_waterResponseGood.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
+						numSamples++;
+					}
+				}
+				else if(i==5){
+					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
+						PowerGarden.plantAudio_waterResponseBad.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
+						numSamples++;
+					}
+				}
+			}
+			
+			Log.d("total audio samples: ", Integer.toString(numSamples));
+			
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return numSamples;
 	}
 	
 	  // Implementing FisherÐYates shuffle
@@ -185,5 +235,14 @@ public class StateManager extends Activity {
 	      ar[i] = a;
 	    }
 	  }
+
+	  
+	  
+	public int getPlantState(int plantIndex) {
+		int thisState = 0;
+		
+		thisState = PowerGarden.Device.plants[plantIndex].stateIndex;
+		return thisState;
+	}
 }
 

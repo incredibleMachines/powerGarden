@@ -111,8 +111,20 @@ uint8_t rcode;
 // SETUP *********************************************************************
 void setup(){
 
+    //turn on/off sensors
+  enable_light_sensor = true;
+  enable_moisture_sensor = true;
+  enable_temphum_sensor = true  ;
+  enable_cap_sensor = true;
+  enable_rangefinder = true;
+       
+       setupSensors();
+     
+  
   Serial.begin(115200);
   Serial.println("CODE BEGIN");
+  
+
   if(!debug){
     Serial.println("\r\nADK start");
 
@@ -126,16 +138,14 @@ void setup(){
   }
   Serial2.begin(9600);
 
-  //turn on/off sensors
-  enable_light_sensor = true;
-  enable_moisture_sensor = true;
-  enable_temphum_sensor = true  ;
-  enable_cap_sensor = true;
-  enable_rangefinder = true;
+
+  
+
 
   if(!enable_light_sensor){
     lightVal = -99;
   }
+  
   if(!enable_moisture_sensor){
     moisture_avg = -99;
   }
@@ -154,11 +164,11 @@ void setup(){
   send_moisture_every = 60000;  
   read_temphum_every = 2000;
   send_temphum_every = 60000;
-  send_out_every = 45000;
+  send_out_every = 15000;
 
   pinMode(13, OUTPUT);
 
-  setupSensors();
+ 
 }
 
 

@@ -202,7 +202,7 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 										PowerGarden.Device.plants[i].triggered = true;
 										
 										//play correct sound for this plant here
-										activity_.playAudio(i); //right now just a single array of "cherrytomato_aPoudio[i]"
+										//activity_.playAudio(i); //right now just a single array of "cherrytomato_aPoudio[i]"
 										
 										PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis();
 										
@@ -216,6 +216,9 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 										if (PowerGarden.stateManager.updateDeviceState() ){
 											PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
 										}
+										
+										//play correct sound for this plant here
+										activity_.playAudio(i); //right now just a single array of "cherrytomato_aPoudio[i]"
 										
 									}
 									
@@ -481,8 +484,8 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 
 			@Override
 			public void onClick(View v) {
-				int tempAudioFile = (int) (Math.random()*8);
-				activity_.playAudio(tempAudioFile);
+				//int tempAudioFile = (int) (Math.random()*8);
+				activity_.playAudio(-1); //test code
 			}
 		});
 		

@@ -221,7 +221,9 @@ void setupSensors(){
   //__________________________________________________________
   //humidity & temp sensor setup
   if(enable_temphum_sensor==true){  
+    delay(100);
     dht.setup(DHTPIN); // data pin 2
+    delay(100);
   }
 
   //__________________________________________________________

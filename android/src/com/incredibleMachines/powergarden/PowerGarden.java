@@ -1,5 +1,6 @@
 package com.incredibleMachines.powergarden;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -20,13 +21,27 @@ public class PowerGarden {
     
     public static JSONObject dialogue;// = new JSONObject();
     public static String[] copyType = {"touchRequest", "touchResponseGood", "touchResponseBad", 
-    									"waterRequest", "waterRequestGood", "waterRequestBad"};
+    									"waterRequest", "waterResponseGood", "waterResponseBad"};
     
     public static long plantStateChangeDur = 30000L;
         
 	//--- audio
-	public static final int numSounds = 8;
-	public static int[] cherryTomatoesAudio = new int [numSounds];
+	public static int numSounds = 8;
+	static JSONArray allPlantAudio = new JSONArray();
+	static JSONArray plantAudio_touchRequest = new JSONArray(); //holds file names
+	static int[] touchRequestAudio = null;						//holds sound pool refs
+	static JSONArray plantAudio_touchResponseGood = new JSONArray();
+	static int[] touchResponseGoodAudio = null;
+	static JSONArray plantAudio_touchResponseBad = new JSONArray();
+	static int[] touchResponseBadAudio = null;
+	static JSONArray plantAudio_waterRequest = new JSONArray();
+	static int[] waterRequestAudio = null;
+	static JSONArray plantAudio_waterResponseGood = new JSONArray();
+	static int[] waterResponseGoodAudio = null;
+	static JSONArray plantAudio_waterResponseBad = new JSONArray();
+	static int[] waterResponseBadAudio = null;
+	
+	//public static int[] plantAudio = new int [numSounds];
 	public static boolean audioLoaded = false;
 	
 	
@@ -87,12 +102,12 @@ public class PowerGarden {
 		
 		//--- plants
 		static int PlantNum = 8;
-		static String plantType = "Cherry Tomatoes"; //should be populated by prefs	
+		static String plantType = "cherry_tomatoes"; //should be populated by prefs	
 		static PlantObject plants[] = new PlantObject[PlantNum];
 		
 		static boolean datastream_mode = false; //when this is true, we will stream all data as it comes in, to server.
 		
-		static String messageCopy = "hello!";
+		static String messageCopy = "Welcome to the @PowerGarden!";
 		
 		//--- global device sensors
 		public static int temp = 0;
