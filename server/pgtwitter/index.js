@@ -76,19 +76,9 @@ var start = function(_callback) {
 
 	callback = _callback;
 
-	// twitter = new ntwitter({
-	twitter = ImmortalNTwitter.create({
-		// consumer_key: 'bTc9jPplp8SegUtH9EGhTA',
-		// consumer_secret: 'Tin9GFVUfqZKVzLCrKRrMAl9Y3TX7IlxiIVRSW0OWU',
-		// access_token_key: '1534210819-fSgoQxNsrkY8ORr2t4w6f6jjuQecnY0V8wN5cnm',
-		// access_token_secret: 'ZAsYsPhimfghWJZ3xefpGPhEhs5dcUt7G7ylX6k'
-
-		// @mattfelsen "Matt Felsen Development App"
-		consumer_key: '7b1GuJx7rk8ZoEoEA296oA',
-		consumer_secret: 'Xc5DCVufF4M1dWi19pBPl8XTKCVoHtsmuPrTuc7glA',
-		access_token_key: '519944852-xffsFHrqNBXVPPI5aAozIzaqG34PPeHpYu7CBSMv',
-		access_token_secret: 'WkT3k0ClPvh8BZ6jeBZAQy2E9iFHmGVxUEKROyV8'
-	});
+	var credentials = require('./credentials');
+	// twitter = new ntwitter(credentials);
+	twitter = ImmortalNTwitter.create(credentials);
 
 	// Connect!
 	// twitter.stream('statuses/filter', { track: trackString, stall_warnings: true }, function(stream) {

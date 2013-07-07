@@ -82,7 +82,7 @@ browserio.sockets.on('connection',function(browserSocket){
 	//browserSocket.emit('init', clients);
 	browserSocket.on('threshold',function(msg){
 		console.log(msg);
-		database.updateSettings(msg, function() {
+		database.updateThreshold(msg, function() {
 			clients['client-'+msg.connection_id].socket.emit('threshold',msg);
 			browserSocket.broadcast.emit('threshold', msg);
 		});
@@ -166,7 +166,9 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('threshold',function(msg){
 		msg.connection_id = connection.id;
-		browserio.sockets.emit('threshold',msg);
+		database.updateThreshold(msg, function() {
+			browserio.sockets.emit('threshold',msg);
+		});
 	});
 
 	socket.on('ignore',function(msg){
