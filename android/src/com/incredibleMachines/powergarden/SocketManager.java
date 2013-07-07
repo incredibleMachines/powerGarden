@@ -32,7 +32,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 
-public class SocketManager extends TimerTask  implements  IOCallback {
+public class SocketManager extends TimerTask  implements  IOCallback, Connectable {
 
 	private SocketIO socket;
 	private static long connectTimeout  = 5000;
@@ -41,9 +41,8 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	private Connectable callbackActivity;
 	private Connectable presentationCallback;
 	final private Timer backgroundTimer = new Timer("backgroundTimer");
-	
+	private boolean firstConnect = true;
 
-	
 	SocketManager(){
 		//connectToServer();
 	}
@@ -53,6 +52,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	}
 	
 	public void authDevice (String type, String device_id, int num_plants, String plant_type, Connectable _callback){
+		Log.wtf(TAG, "authDevice");
 		callbackActivity = _callback;
 		try {
 
@@ -65,6 +65,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 		
 	}
 	public void authDevice(String type, String device_id, Connectable _callback){
+		Log.wtf(TAG, "authDevice");
 		callbackActivity = _callback;
 		try {
 
@@ -100,7 +101,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 		try{
 			for(int i=0; i<PowerGarden.Device.PlantNum; i++){
 				JSONObject thisPlant = new JSONObject();
-				thisPlant.put("state", PowerGarden.Device.plants[i].state).put("index",i);
+				thisPlant.put("state", PowerGarden.Device.plants[i].state).put("index",i).put("count", PowerGarden.Device.plants[i].touchStamps.size());
 				plants.put(thisPlant);
 			}
 			data.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light);
@@ -166,14 +167,20 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 		Log.d(TAG,"ERROR MESSAGE: "+socketIOException.getMessage());
 		if(socketIOException.getMessage().equals("1+0")){
 			PowerGarden.bConnected = false;
+			//closeUpShop();
+			//backgroundTimer.schedule(this, connectTimeout);
 			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		if(socketIOException.getMessage().equals("Timeout Error")){
 			PowerGarden.bConnected = false;
+			//closeUpShop();
+			//backgroundTimer.schedule(this, connectTimeout);
 			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		if(socketIOException.getMessage().equals("Error while handshaking")){
 			PowerGarden.bConnected = false;
+			//closeUpShop();
+			//backgroundTimer.schedule(this, connectTimeout);
 			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		//Error while handshaking
@@ -189,6 +196,7 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 		//System.out.println("Connection established");
 		Log.d(TAG, "onConnect callback");
 		callbackActivity.signalToUi(PowerGarden.SocketConnected, null);
+		PowerGarden.bConnected = true;
 	}
 
 	@Override 
@@ -438,14 +446,63 @@ public class SocketManager extends TimerTask  implements  IOCallback {
 	}
 	
 	void closeUpShop(){
+		
+		Log.e(TAG, "closeup shop");
 		//sendSessionEnd();
 		socket.disconnect();
 	}
 
 	@Override
 	public void run() {
+		Log.d("TIMER", "hit run()");
 		// TODO Auto-generated method stub
-		Log.e(TAG,"CONNECT TIMED OUT");
-		connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);	
+		//if(!firstConnect){
+			Log.e(TAG,"CONNECT TIMED OUT");
+			//socket.disconnect();
+			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
+		//} else firstConnect = false;
+	}
+
+	@Override
+	public boolean isConnected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void connect() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disconnect() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendData(CharSequence data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendData(int type, byte[] data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void signalToUi(int type, Object data) {
+		// TODO Auto-generated method stub
+		
 	}
 }

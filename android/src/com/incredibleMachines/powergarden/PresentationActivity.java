@@ -60,7 +60,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	TextView plantCopy;
 	
 	//SOUNDPOOL STUFFS
-	private SoundPool soundPool;
+	
 	
 	@Override
 	public void onResume(){
@@ -127,7 +127,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	@Override
 	protected void createAndSetViews() {
 		//super.onCreate(savedInstanceState);
-		Log.d(TAG,"!!!START!!!");
+		Log.wtf(TAG,"!!!START!!!");
 		setContentView(R.layout.activity_presentation);
 		
 		
@@ -138,7 +138,6 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    Log.wtf(TAG, "getPrefString: " + PowerGarden.getPrefString("deviceID", null));
 	    
 	    if(PowerGarden.getPrefString("deviceID", null) == null){
-	    	//offline/unregistered
 	    	Log.wtf(TAG, "getPref 'deviceID'=null");
 	    }else{
 	    	PowerGarden.Device.ID = PowerGarden.getPrefString("deviceID", null);
@@ -259,8 +258,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		//****** setup soundPool player ******//
 		
         //this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-		soundPool = new SoundPool(100, AudioManager.STREAM_MUSIC, 0);
-        soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+		PowerGarden.soundPool = new SoundPool(100, AudioManager.STREAM_MUSIC, 0);
+		PowerGarden.soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId,
                     int status) {
@@ -269,131 +268,62 @@ public class PresentationActivity extends UsbActivity implements Connectable{
             }
         });
         
-        PowerGarden.numSounds = PowerGarden.stateManager.getNumAudioSamples();
-        Log.d(TAG, "numSounds total found: "+Integer.toString(PowerGarden.numSounds));
+        PowerGarden.audioManager.setupAudio(); //does setup of all sound types
+		
+        Log.d(TAG, "numSounds total found: "+Integer.toString(PowerGarden.audioManager.getNumAudioSamples()));
         
-        Runnable myrun = null;
-        myrun = new Runnable(){
-			public void run(){       
-
-
-    	try {
-    		Log.wtf(TAG, "loading audio");
-    		
-	        for(int j=0; j<PowerGarden.plantAudio_touchRequest.length();j++){
-	        		Log.d(TAG, PowerGarden.plantAudio_touchRequest.getString(j));
-//		    		Class res = R.id.class;
-//		    		String id = PowerGarden.plantAudio_touchRequest.getString(j);
-//		    		Field field = res.getField(id);
-//					int resId = field.getInt(null);
-					//PowerGarden.touchRequestAudio[j] = soundPool.load(this,resId,1);
-					//PowerGarden.waterRequestAudio[j] = soundPool.load(Uri.parse("android.resource://com.incredibleMachines.powergarden/res/raw/" +PowerGarden.plantAudio_touchRequest.getString(j)),1);
-	        		
-	                Runnable audioLoad = null;
-	                final int index = j;
-	                audioLoad = new Runnable(){
-	                	
-	        			public void run(){  
-	        				int sound_id;
-							try {
-								sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchRequest.getString(index), "raw",
-										getPackageName());
-								Log.d(TAG, Integer.toString(sound_id));
-								PowerGarden.touchRequestAudio[index] = soundPool.load( PresentationActivity.this, sound_id, 1);
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-	        			}
-	                };
-	                
-	        		if(audioLoad != null){
-	        			PresentationActivity.this.runOnUiThread(audioLoad);	
-	        		}
-	        		
-	        		//PowerGarden.touchRequestAudio[j] = soundPool.load( PresentationActivity.this, sound_id, 1);
-	        }
-	        
-//	        for(int j=0; j<PowerGarden.plantAudio_touchResponseGood.length();j++){
-////		    		Class res = R.id.class;
-////		    		String id = PowerGarden.plantAudio_touchResponseGood.getString(j);
-////		    		Field field = res.getField(id);
-////					int resId = field.getInt(null);
-//					//PowerGarden.touchResponseGoodAudio[j] = soundPool.load(this,resId,1);
-//					//PowerGarden.waterRequestAudio[j] = soundPool.load("android.resource://com.incredibleMachines.powergarden/res/raw/" +PowerGarden.plantAudio_touchResponseGood.getString(j),1);
-//        			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchResponseGood.getString(j), "raw",
-//                        getPackageName());
-//        			PowerGarden.touchResponseGoodAudio[j] = soundPool.load( PresentationActivity.this, sound_id, 1);
-//	        }
-//	        
-//	        for(int j=0; j<PowerGarden.plantAudio_touchResponseBad.length();j++){
-////		    		Class res = R.id.class;
-////		    		String id = PowerGarden.plantAudio_touchResponseBad.getString(j);
-////		    		Field field = res.getField(id);
-////					int resId = field.getInt(null);
-//					//PowerGarden.touchResponseBadAudio[j] = soundPool.load(this,resId,1);
-//					//PowerGarden.waterRequestAudio[j] = soundPool.load("android.resource://com.incredibleMachines.powergarden/res/raw/" +PowerGarden.plantAudio_touchResponseBad.getString(j),1);
-//    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchResponseBad.getString(j), "raw",
-//                    getPackageName());
-//    				PowerGarden.touchResponseBadAudio[j] = soundPool.load( PresentationActivity.this, sound_id, 1);
-//	        }
-//	        
-//	        for(int j=0; j<PowerGarden.plantAudio_waterRequest.length();j++){
-////		    		Class res = R.id.class;
-////		    		String id = PowerGarden.plantAudio_waterRequest.getString(j);
-////		    		Field field = res.getField(id);
-////					int resId = field.getInt(null);
-////					//soundPool.load
-//					//PowerGarden.waterRequestAudio[j] = soundPool.load("android.resource://com.incredibleMachines.powergarden/res/raw/" +PowerGarden.plantAudio_waterRequest.getString(j),1);
-//    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterRequest.getString(j), "raw",
-//                        getPackageName());
-//    			PowerGarden.waterRequestAudio[j] = soundPool.load( PresentationActivity.this, sound_id, 1);
-//	        }
-//	        
-//	        for(int j=0; j<PowerGarden.plantAudio_waterResponseGood.length();j++){
-////		    		Class res = R.id.class;
-////		    		String id = PowerGarden.plantAudio_waterResponseGood.getString(j);
-////		    		Field field = res.getField(id);
-////					int resId = field.getInt(null);
-//					//PowerGarden.waterResponseGoodAudio[j] = soundPool.load(this,resId,1);
-//					//PowerGarden.waterRequestAudio[j] = soundPool.load("android.resource://com.incredibleMachines.powergarden/res/raw/" +PowerGarden.plantAudio_waterResponseGood.getString(j),1);
-//    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterRequest.getString(j), "raw",
-//                        getPackageName());
-//    			PowerGarden.waterResponseGoodAudio[j] = soundPool.load( PresentationActivity.this, sound_id, 1);	        
-//	        }
-//	        
-//	        for(int j=0; j<PowerGarden.plantAudio_waterResponseBad.length();j++){
-////		    		Class res = R.id.class;
-////		    		String id = PowerGarden.plantAudio_waterResponseBad.getString(j);
-////		    		Field field = res.getField(id);
-////					int resId = field.getInt(null);
-////					//PowerGarden.waterResponseBadAudio[j] = soundPool.load(this,resId,1);
-//					//PowerGarden.waterRequestAudio[j] = soundPool.load("android.resource://com.incredibleMachines.powergarden/res/raw/" +PowerGarden.plantAudio_waterResponseBad.getString(j),1);
-//    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterResponseBad.getString(j), "raw",
-//                        getPackageName());
-//    			PowerGarden.waterResponseBadAudio[j] = soundPool.load( PresentationActivity.this, sound_id, 1);
-//	        }
-//	    	
-			
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-        
-        
-//        PowerGarden.cherryTomatoesAudio[0] =  soundPool.load(this,R.raw.cherrytomatoes_0,1);
-//        PowerGarden.cherryTomatoesAudio[1] =  soundPool.load(this,R.raw.cherrytomatoes_1,1);
-//        PowerGarden.cherryTomatoesAudio[2] =  soundPool.load(this,R.raw.cherrytomatoes_2,1);
-//        PowerGarden.cherryTomatoesAudio[3] =  soundPool.load(this,R.raw.cherrytomatoes_3,1);
-//        PowerGarden.cherryTomatoesAudio[4] =  soundPool.load(this,R.raw.cherrytomatoes_4,1);
-//        PowerGarden.cherryTomatoesAudio[5] =  soundPool.load(this,R.raw.cherrytomatoes_5,1);
-//        PowerGarden.cherryTomatoesAudio[6] =  soundPool.load(this,R.raw.cherrytomatoes_6,1);
-//        PowerGarden.cherryTomatoesAudio[7] =  soundPool.load(this,R.raw.cherrytomatoes_7,1);
-
+        Runnable audioSetup = null;
+        audioSetup = new Runnable(){
+				public void run(){       
+	
+	
+	    	try {
+	    		Log.wtf(TAG, "loading audio");
+	    		
+		        for(int j=0; j<PowerGarden.plantAudio_touchRequest.length();j++){
+		        		int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchRequest.getString(j), "raw", getPackageName());
+						PowerGarden.touchRequestAudio.add(PowerGarden.soundPool.load(PresentationActivity.this, sound_id, 1));
+		        }
+		        
+		        for(int j=0; j<PowerGarden.plantAudio_touchResponseGood.length();j++){
+	        			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchResponseGood.getString(j), "raw",
+	                        getPackageName());
+	        			PowerGarden.touchResponseGoodAudio.add(PowerGarden.soundPool.load( PresentationActivity.this, sound_id, 1));
+		        }
+		        
+		        for(int j=0; j<PowerGarden.plantAudio_touchResponseBad.length();j++){
+	    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchResponseBad.getString(j), "raw",
+	                    getPackageName());
+	    			PowerGarden.touchResponseBadAudio.add(PowerGarden.soundPool.load( PresentationActivity.this, sound_id, 1));
+		        }
+		        
+		        for(int j=0; j<PowerGarden.plantAudio_waterRequest.length();j++){
+	    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterRequest.getString(j), "raw",
+	                        getPackageName());
+	    			PowerGarden.waterRequestAudio.add(PowerGarden.soundPool.load( PresentationActivity.this, sound_id, 1));
+		        }
+		        
+		        for(int j=0; j<PowerGarden.plantAudio_waterResponseGood.length();j++){
+	    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterRequest.getString(j), "raw",
+	                        getPackageName());
+	    			PowerGarden.waterResponseGoodAudio.add(PowerGarden.soundPool.load( PresentationActivity.this, sound_id, 1));	        
+		        }
+		        
+		        for(int j=0; j<PowerGarden.plantAudio_waterResponseBad.length();j++){
+		        	int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterResponseBad.getString(j), "raw",
+	                        getPackageName());
+	    			PowerGarden.waterResponseBadAudio.add(PowerGarden.soundPool.load( PresentationActivity.this, sound_id, 1));
+		        }	
+				
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+       
 			}
 		};
-		if(myrun != null){
-			PresentationActivity.this.runOnUiThread(myrun);	
+		if(audioSetup != null){
+			PresentationActivity.this.runOnUiThread(audioSetup);	
 		}
 	}
 
@@ -417,38 +347,39 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		}
 	};
 	
-	public void playAudio(int plantIndex){
-//		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		Log.d(TAG, "playAudio HIT");
-		//PowerGarden.stateManager.getNumAudioSamples();
-		if (PowerGarden.audioLoaded && plantIndex > -1) {
-			int state = PowerGarden.stateManager.getPlantState(plantIndex);
-			Log.d("playAudio", "state: "+Integer.toString(state));
-			//.play(audio[i], leftVol, rightVol, priority, loop, rate);
-			if(state == 0){
-	        	soundPool.play(PowerGarden.touchRequestAudio[(int)Math.random()*PowerGarden.touchRequestAudio.length-1], 1.0f, 1.0f, 1, 0, 1f); 
-			}
-			if(state == 1){
-	        	soundPool.play(PowerGarden.touchResponseGoodAudio[(int)Math.random()*PowerGarden.touchResponseGoodAudio.length-1], 1.0f, 1.0f, 1, 0, 1f); 
-			}
-			if(state == 2){
-	        	soundPool.play(PowerGarden.touchResponseBadAudio[(int)Math.random()*PowerGarden.touchResponseBadAudio.length-1], 1.0f, 1.0f, 1, 0, 1f); 
-			}
-			if(state == 3){
-	        	soundPool.play(PowerGarden.waterResponseGoodAudio[(int)Math.random()*PowerGarden.waterResponseGoodAudio.length-1], 1.0f, 1.0f, 1, 0, 1f); 
-			}
-			if(state == 4){
-	        	soundPool.play(PowerGarden.waterResponseBadAudio[(int)Math.random()*PowerGarden.waterResponseBadAudio.length-1], 1.0f, 1.0f, 1, 0, 1f); 
-			}
-			if(state == 5){
-	        	soundPool.play(PowerGarden.waterRequestAudio[(int)Math.random()*PowerGarden.waterRequestAudio.length-1], 1.0f, 1.0f, 1, 0, 1f); 
-			}
-		} else if (plantIndex == -1){
-			int whichFile = (int)Math.random()*PowerGarden.touchRequestAudio.length;
-			Log.d("play audio test: ", Integer.toString(whichFile));
-			soundPool.play(PowerGarden.touchRequestAudio[whichFile], 1.0f, 1.0f, 1, 0, 1f);
-		}
-	}
+//	public void playAudio(int plantIndex){
+////		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//		Log.d(TAG, "playAudio HIT");
+//		//PowerGarden.stateManager.getNumAudioSamples();
+//		if (PowerGarden.audioLoaded && plantIndex > -1) {
+//			int state = PowerGarden.stateManager.getPlantState(plantIndex);
+//			Log.d("playAudio", "state: "+Integer.toString(state));
+//			//.play(audio[i], leftVol, rightVol, priority, loop, rate);
+//			if(state == 0){
+//	        	soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+//			}
+//			if(state == 1){
+//	        	soundPool.play(PowerGarden.touchResponseGoodAudio.get((int)(Math.random()*PowerGarden.touchResponseGoodAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+//			}
+//			if(state == 2){
+//	        	soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+//			}
+//			if(state == 3){
+//	        	soundPool.play(PowerGarden.waterResponseGoodAudio.get((int)(Math.random()*PowerGarden.waterResponseGoodAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+//			}
+//			if(state == 4){
+//	        	soundPool.play(PowerGarden.waterResponseBadAudio.get((int)(Math.random()*PowerGarden.waterResponseBadAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+//			}
+//			if(state == 5){
+//	        	soundPool.play(PowerGarden.waterRequestAudio.get((int)(Math.random()*PowerGarden.waterRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+//			}
+//		} else if (plantIndex == -1){
+//			Log.d("size() =  ", Integer.toString(PowerGarden.touchRequestAudio.size()));
+//			int whichFile = (int)(Math.random()*PowerGarden.touchRequestAudio.size());
+//			Log.d("play audio test: ", Integer.toString(whichFile));
+//			soundPool.play(PowerGarden.touchRequestAudio.get(whichFile), 1.0f, 1.0f, 1, 0, 1f);
+//		}
+//	}
 	
 
 	/**
@@ -469,34 +400,62 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
 		plantCopy = (TextView) findViewById(R.id.stage_copy);
 		
-		plantCopy.setText(PowerGarden.Device.messageCopy);
-		plantCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
-		setTextViewFont(PowerGarden.interstateBold, plantCopy);
-		
-		int msgLength = PowerGarden.Device.messageCopy.length();
-		plantCopy.setTextSize((int)(1/(msgLength*.0004f)*2.2));
-		plantCopy.setLineSpacing(3, 1);
-		plantCopy.setAllCaps(true);
-		
-		if(PowerGarden.Device.plantType.contains("cherry")){
-			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
-		} else if(PowerGarden.Device.plantType.contains("beets")){
-			wrapper.setBackgroundResource(R.drawable.beet_bg);
-		} else if(PowerGarden.Device.plantType.contains("celery")){
-			wrapper.setBackgroundResource(R.drawable.celery_bg);
-		} else if(PowerGarden.Device.plantType.contains("tomatoes")){
-			wrapper.setBackgroundResource(R.drawable.tomato_bg);
-		} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
-			wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
-		} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
-			wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
-		} else if(PowerGarden.Device.plantType.contains("peppers")){
-			wrapper.setBackgroundResource(R.drawable.pepper_bg);
-		}  else if(PowerGarden.Device.plantType == null){
-			wrapper.setBackgroundColor(color.default_background);
-		} else {
-			wrapper.setBackgroundColor(color.default_background);
+		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
+			plantCopy.setText(PowerGarden.Device.messageCopy);
+			plantCopy.setVisibility(View.VISIBLE);
+			plantCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+			setTextViewFont(PowerGarden.interstateBold, plantCopy);
+			
+			int msgLength = PowerGarden.Device.messageCopy.length();
+			plantCopy.setTextSize((int)(1/(msgLength*.0004f)*2.2));
+			plantCopy.setLineSpacing(3, 1);
+			plantCopy.setAllCaps(true);
+			
+			if(PowerGarden.Device.plantType.contains("cherry")){
+				wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
+			} else if(PowerGarden.Device.plantType.contains("beets")){
+				wrapper.setBackgroundResource(R.drawable.beet_bg);
+			} else if(PowerGarden.Device.plantType.contains("celery")){
+				wrapper.setBackgroundResource(R.drawable.celery_bg);
+			} else if(PowerGarden.Device.plantType.contains("tomatoes")){
+				wrapper.setBackgroundResource(R.drawable.tomato_bg);
+			} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
+				wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
+			} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
+				wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
+			} else if(PowerGarden.Device.plantType.contains("peppers")){
+				wrapper.setBackgroundResource(R.drawable.pepper_bg);
+			}  else if(PowerGarden.Device.plantType == null){
+				wrapper.setBackgroundColor(color.default_background);
+			} else {
+				wrapper.setBackgroundColor(color.default_background);
+			}
+			
 		}
+		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.PlantTitle){
+			if(PowerGarden.Device.plantType.contains("cherry")){
+				wrapper.setBackgroundResource(R.drawable.cherrytomatoes_title);
+			} else if(PowerGarden.Device.plantType.contains("beets")){
+				wrapper.setBackgroundResource(R.drawable.beets_title);
+			} else if(PowerGarden.Device.plantType.contains("celery")){
+				wrapper.setBackgroundResource(R.drawable.celery_title);
+			} else if(PowerGarden.Device.plantType.contains("tomatoes")){
+				wrapper.setBackgroundResource(R.drawable.tomatoes_title);
+			} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
+				wrapper.setBackgroundResource(R.drawable.orangecarrots_title);
+			} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
+				wrapper.setBackgroundResource(R.drawable.purplecarrots_title);
+			} else if(PowerGarden.Device.plantType.contains("peppers")){
+				wrapper.setBackgroundResource(R.drawable.peppers_title);
+			}  else if(PowerGarden.Device.plantType == null){
+				wrapper.setBackgroundColor(color.default_background);
+			} else {
+				wrapper.setBackgroundColor(color.default_background);
+			}
+			plantCopy.setVisibility(View.INVISIBLE);
+		}
+		
+		
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView, 

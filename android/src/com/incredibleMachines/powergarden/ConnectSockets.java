@@ -109,33 +109,33 @@ public class ConnectSockets extends Activity implements Connectable {
            });
            
            mSendTouch.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-	        	   //PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );
-				int plantNum = (int) (Math.random()*8);
-				//int plantNum = 1;
+        	   public void onClick(View v) {
+		        	   //PowerGarden.SM.plantTouch("touch", mID.getText().toString(), 2, ConnectSockets.this );
+					int plantNum = (int) (Math.random()*8);
+					//int plantNum = 1;
+					
+					PowerGarden.Device.plants[plantNum].triggered = true;
+					
+					PowerGarden.Device.plants[plantNum].touchedTimestamp = System.currentTimeMillis();
+					
+					PowerGarden.Device.plants[plantNum].touchStamps.add(PowerGarden.Device.plants[plantNum].touchedTimestamp);	
+	//				
+					PowerGarden.stateManager.updatePlantStates();				
+					
+		        	PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, PowerGarden.Device.plants[plantNum].touchStamps.size(), ConnectSockets.this );
 				
-				PowerGarden.Device.plants[plantNum].triggered = true;
-				
-				PowerGarden.Device.plants[plantNum].touchedTimestamp = System.currentTimeMillis();
-				
-				PowerGarden.Device.plants[plantNum].touchStamps.add(PowerGarden.Device.plants[plantNum].touchedTimestamp);	
-//				
-				PowerGarden.stateManager.updatePlantStates();				
-				
-	        	PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, PowerGarden.Device.plants[plantNum].touchStamps.size(), ConnectSockets.this );
-			
-				if (PowerGarden.stateManager.updateDeviceState() ){
-					PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+					if (PowerGarden.stateManager.updateDeviceState() ){
+						PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+					}
+					
+					PowerGarden.audioManager.playSound(plantNum);
 				}
-				
-				PowerGarden.stateManager.getNumAudioSamples();
-				
-			}
            });
            
            mSendUpdate.setOnClickListener(new Button.OnClickListener(){
         	   public void onClick(View r){
         		   Log.d(TAG, "Update clicked !");
+        		   PowerGarden.stateManager.updatePlantStates();
         		   JSONObject j = new JSONObject();
         		   long time = System.currentTimeMillis() / 1000L;
         		   	try {
@@ -274,6 +274,7 @@ public class ConnectSockets extends Activity implements Connectable {
 		else if(type == PowerGarden.Updated){
 			Log.d(TAG, "from SignalToUi > type .Updated");
 			//mStatusline.setText(PowerGarden.serverResponseRaw);
+			
 			myrun = new Runnable(){
 				public void run(){
 					mStatusline.setText("server says UPDATED\n\n "+PowerGarden.serverResponseRaw);

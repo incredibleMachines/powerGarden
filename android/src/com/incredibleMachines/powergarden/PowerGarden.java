@@ -1,11 +1,14 @@
 package com.incredibleMachines.powergarden;
 
+import java.util.Vector;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.media.SoundPool;
 
 public class PowerGarden {
 
@@ -13,6 +16,7 @@ public class PowerGarden {
     static Typeface interstateBold;
     
     public static StateManager stateManager = new StateManager();
+    public static AudioManager audioManager = new AudioManager();
 	
     public static String[] plantState = {"lonely", "content", "worked_up"};
     public static int plantStateIndex = 0;
@@ -26,20 +30,22 @@ public class PowerGarden {
     public static long plantStateChangeDur = 30000L;
         
 	//--- audio
+    public static SoundPool soundPool;
 	public static int numSounds = 8;
 	static JSONArray allPlantAudio = new JSONArray();
-	static JSONArray plantAudio_touchRequest = new JSONArray(); //holds file names
-	static int[] touchRequestAudio = null;						//holds sound pool refs
+	static JSONArray plantAudio_touchRequest = new JSONArray(); 		 //holds file names
+	static Vector <Integer> touchRequestAudio = new Vector <Integer> (); //holds sound pool player refs
+	//public static Vector <Integer>[] audio = new Vector <Integer>()[6]; //future?
 	static JSONArray plantAudio_touchResponseGood = new JSONArray();
-	static int[] touchResponseGoodAudio = null;
+	static Vector <Integer> touchResponseGoodAudio = new Vector <Integer> ();
 	static JSONArray plantAudio_touchResponseBad = new JSONArray();
-	static int[] touchResponseBadAudio = null;
+	static Vector <Integer> touchResponseBadAudio = new Vector <Integer> ();
 	static JSONArray plantAudio_waterRequest = new JSONArray();
-	static int[] waterRequestAudio = null;
+	static Vector <Integer> waterRequestAudio = new Vector <Integer> ();
 	static JSONArray plantAudio_waterResponseGood = new JSONArray();
-	static int[] waterResponseGoodAudio = null;
+	static Vector <Integer> waterResponseGoodAudio = new Vector <Integer> ();
 	static JSONArray plantAudio_waterResponseBad = new JSONArray();
-	static int[] waterResponseBadAudio = null;
+	static Vector <Integer> waterResponseBadAudio = new Vector <Integer> ();
 	
 	//public static int[] plantAudio = new int [numSounds];
 	public static boolean audioLoaded = false;
@@ -108,6 +114,7 @@ public class PowerGarden {
 		static boolean datastream_mode = false; //when this is true, we will stream all data as it comes in, to server.
 		
 		static String messageCopy = "Welcome to the @PowerGarden!";
+		public static int displayMode = PowerGarden.DisplayMode.PlantTitle;
 		
 		//--- global device sensors
 		public static int temp = 0;
@@ -142,8 +149,12 @@ public class PowerGarden {
 		
 		static boolean rangeActive = Boolean.valueOf(PowerGarden.getPrefString("range_active","true"));
 		static int rangeLowThresh = Integer.parseInt(PowerGarden.getPrefString("range_low","50"));
-		
-		
-		
+
+	}
+	
+	public static class DisplayMode{ // different display mode codes
+		final static int PlantTitle = 111;
+		final static int MessageCopy = 222;
+		final static int Tweet = 333;
 	}
 }

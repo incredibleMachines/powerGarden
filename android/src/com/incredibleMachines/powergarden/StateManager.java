@@ -157,7 +157,7 @@ public class StateManager extends Activity {
 //				Log.d("Randomized Copy Index "+Integer.toString(i), (String) thisPlantCopy.get(i));
 //			}
 			
-			thisCopy = thisPlantCopy.getString((int)Math.random()*numLinesCopy);
+			thisCopy = thisPlantCopy.getString((int)(Math.random()*numLinesCopy));
 		
 		} catch (JSONException e) {
 
@@ -166,75 +166,7 @@ public class StateManager extends Activity {
 		
 		return thisCopy;
 	}
-	
-	public int getNumAudioSamples(){
-		int numSamples = 0;
-		try {
-			
-			
-			//int index = 0;
-			for(int i=0; i<6; i++){
-				if(i==0) {
-					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
-						PowerGarden.plantAudio_touchRequest.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
-						numSamples++;
-					}
-				}
-				else if(i==1){
-					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
-						PowerGarden.plantAudio_touchResponseGood.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
-						numSamples++;
-					}
-				}
-				else if(i==2){
-					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
-						PowerGarden.plantAudio_touchResponseBad.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
-						numSamples++;
-					}
-				}
-				else if(i==3){
-					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
-						PowerGarden.plantAudio_waterRequest.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
-						numSamples++;
-					}
-				}
-				else if(i==4){
-					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
-						PowerGarden.plantAudio_waterResponseGood.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
-						numSamples++;
-					}
-				}
-				else if(i==5){
-					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
-						PowerGarden.plantAudio_waterResponseBad.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
-						numSamples++;
-					}
-				}
-			}
-			
-			Log.d("total audio samples: ", Integer.toString(numSamples));
-			
-			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return numSamples;
-	}
-	
-	  // Implementing FisherÐYates shuffle
-	  static void shuffleArray(int[] ar)
-	  {
-	    Random rnd = new Random();
-	    for (int i = ar.length - 1; i >= 0; i--)
-	    {
-	      int index = rnd.nextInt(i + 1);
-	      // Simple swap
-	      int a = ar[index];
-	      ar[index] = ar[i];
-	      ar[i] = a;
-	    }
-	  }
+
 
 	  
 	  

@@ -218,7 +218,7 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 										}
 										
 										//play correct sound for this plant here
-										activity_.playAudio(i); //right now just a single array of "cherrytomato_aPoudio[i]"
+										PowerGarden.audioManager.playSound(i); //right now just a single array of "cherrytomato_aPoudio[i]"
 										
 									}
 									
@@ -438,12 +438,12 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 						if (!PowerGarden.Device.plants[thisOne].enabled){
 							threshBarTextView[thisOne].setTextColor(Color.RED);
 							plantValView[thisOne].setTextColor(color.darkgrey);
-							sendMonkey("ignore",new Monkey("device_id",PowerGarden.Device.ID),new Monkey("plant_index",thisOne),new Monkey("ignore","false"));
+							sendMonkey("ignore",new Monkey("device_id",PowerGarden.Device.ID),new Monkey("plant_index",thisOne),new Monkey("ignore",!PowerGarden.Device.plants[thisOne].enabled));
 						}
 						else { 
 							threshBarTextView[thisOne].setTextColor(Color.WHITE);
 							plantValView[thisOne].setTextColor(Color.WHITE);
-							sendMonkey("ignore",new Monkey("device_id",PowerGarden.Device.ID),new Monkey("plant_index",thisOne),new Monkey("ignore","true"));
+							sendMonkey("ignore",new Monkey("device_id",PowerGarden.Device.ID),new Monkey("plant_index",thisOne),new Monkey("ignore",!PowerGarden.Device.plants[thisOne].enabled));
 							
 						}
 						threshBar[thisOne].setEnabled(PowerGarden.Device.plants[thisOne].enabled);
@@ -485,7 +485,7 @@ public class PresentationViewable implements Connectable, Viewable, SeekBar.OnSe
 			@Override
 			public void onClick(View v) {
 				//int tempAudioFile = (int) (Math.random()*8);
-				activity_.playAudio(-1); //test code
+				PowerGarden.audioManager.playSound(-1); //test code
 			}
 		});
 		
