@@ -67,8 +67,14 @@ socket.on('threshold',function(data){
 	}
 });
 
+socket.on('touch',function(data){
+	var device_id = data.device_id;
+	$('#'+device_id+'-plants .plant-table .plant-'+data.plant_index+' .state_touch').html(data.state);
+	$('#'+device_id+'-plants .plant-table .plant-'+data.plant_index+' .touch_count').html(data.count);
+	$('#'+device_id+'-plants .plant-table .plant-'+data.plant_index+' .incoming').html(data.cap_val);
+});
+
 socket.on('update',function(data){
-	console.log(data);
 	var device_id = data.device_id;
 	var readings = data.data;
 	var plants = data.state.plants;
@@ -80,7 +86,7 @@ socket.on('update',function(data){
 	// update plant info for touch state & count
 	for (var i = 0; i < plants.length; i++) {
 		$('#'+device_id+'-plants .plant-table .plant-'+plants[i].index+' .state_touch').html(plants[i].state);
-		// $('#'+device_id+'-plants .plant-table .plant-'+plants[i].index+' .touch_count').html(plants[i].count);
+		$('#'+device_id+'-plants .plant-table .plant-'+plants[i].index+' .touch_count').html(plants[i].count);
 	}
 
 	// update sensor readings
@@ -238,6 +244,8 @@ function buildSettings(data) {
 
 		// ignore keys that aren't objects, e.g. _id and device_id which are strings
 		if (typeof(d[key]) != 'object') continue;
+		// also skip cap_thresh since those are displayed alongside each plant
+		if (key == 'cap_thresh') continue;
 
 		// generate code for whether or not we're active
 		if (d[key].active) {
@@ -323,35 +331,6 @@ $('.toggle-sensor-active').live('click', function() {
 	}
 
 });
-
-// $('.toggle-device-control').live('click', function() {
-// 	var button = this;
-// 	var device_id = $(button).parents('tr').attr('id');
-// 	var active = !$(button).hasClass('btn-success');
-
-// 	var data = {
-// 		device_id: device_id,
-// 		active: !active
-// 	};
-
-// 	// console.log(data);
-	
-// 	if (active) {
-// 		$.get('/update', data, function(data) {
-// 			$(button).addClass('btn-success').removeClass('btn-danger');
-// 			$(button).children('i').addClass('icon-off').removeClass('icon-fire');
-// 		});
-// 	} else {
-// 		$.get('/update', data, function(data) {
-// 			$(button).addClass('btn-danger').removeClass('btn-success');
-// 			$(button).children('i').addClass('icon-fire').removeClass('icon-off');
-// 		});
-// 	}
-
-// 	// return false here to prevent the even bubbling up to parent elements
-// 	// i.e., don't trigger the parent <tr>'s click, which will toggle the row being shown
-// 	return false;
-// });
 
 
 
