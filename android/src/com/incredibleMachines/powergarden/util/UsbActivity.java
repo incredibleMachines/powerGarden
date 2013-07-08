@@ -247,13 +247,13 @@ public abstract class UsbActivity extends Activity implements Connectable {
         createAndSetViews();
         logMessage("before register receiver");
 		//registerReceiver(usbReceiver_, filter);
+        
         /* This code together with the one in onDestroy() 
          * will make the screen be always on until this Activity gets destroyed. */
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
 
-		
 		doBindService();
 
     }

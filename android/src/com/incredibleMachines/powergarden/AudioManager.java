@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Random;
 import java.util.TimerTask;
+import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 public class AudioManager extends Activity {
 	
@@ -112,13 +114,20 @@ public class AudioManager extends Activity {
 			if(state == 5){
 				PowerGarden.soundPool.play(PowerGarden.waterRequestAudio.get((int)(Math.random()*PowerGarden.waterRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
 			}
-		} else if (plantIndex == -1){
-			Log.d("size() =  ", Integer.toString(PowerGarden.touchRequestAudio.size()));
-			int whichFile = (int)(Math.random()*PowerGarden.touchRequestAudio.size());
-			Log.d("play audio test: ", Integer.toString(whichFile));
-			PowerGarden.soundPool.play(PowerGarden.touchRequestAudio.get(whichFile), 1.0f, 1.0f, 1, 0, 1f);
+		} else if (plantIndex == -1){ //debug flag : "play sound" button from sensor config view
+			if ( PowerGarden.waterResponseGoodAudio.size() > 0) {
+				
+				Vector <Integer> thisAudioType = PowerGarden.waterResponseGoodAudio; //which audio type to test
+				
+				Log.d("size() =  ", Integer.toString(thisAudioType.size()));
+				int whichFile = (int)(Math.random()*thisAudioType.size());
+				Log.d("play audio test: ", Integer.toString(whichFile));
+				PowerGarden.soundPool.play(thisAudioType.get(whichFile), 1.0f, 1.0f, 1, 0, 1f);
+			} else {
+				Toast toast = Toast.makeText(getApplicationContext(), "no files for this type", Toast.LENGTH_SHORT);
+				toast.show();
+			}
 		}
-		
 	}
 	
 	
