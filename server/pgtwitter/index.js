@@ -209,7 +209,7 @@ var processesTwitterStreamData = function(data) {
 	};
 
 	// Finally call the callback and pass our data
-	callback(result);
+	callback(result, data);
 
 }
 
@@ -218,7 +218,7 @@ var processesTwitterStreamData = function(data) {
 /* Convenience method for posting to twitter									 			   */
 /* ******************************************************************************************* */
 
-var updateStatus = function(text, options) {
+var updateStatus = function(text, options, callback) {
 
 	var options = options || {};
 
@@ -237,14 +237,15 @@ var updateStatus = function(text, options) {
 
 
 	console.log('[TWITTER] [OUTBOUND] ' + text + ', options: ' + JSON.stringify(options));
-	// twitter.updateStatus(text, options, function (err, data) {
-	// 	if (err) {
-	// 		console.log('[TWITTER] Error Posting Status:');
-	// 		console.log(err);
-	// 	}
-
-	// 	//console.log(JSON.stringify(data));
-	// });
+	twitter.updateStatus(text, options, function (err, data) {
+		if (err) {
+			console.log('[TWITTER] Error Posting Status:');
+			console.log(err);
+		}
+		
+		callback(data);
+		//console.log(JSON.stringify(data));
+	});
 
 }
 exports.updateStatus = updateStatus;

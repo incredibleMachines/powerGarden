@@ -16,9 +16,9 @@ function DB(browserSockets){
 	this.plantsDb;
 	this.touchesDb;
 	this.settingsDb;
+	this.tweetsDb;
 	// this.moodDb;
 	this.pumpDb;
-	this.twitter;
 	this.browserIO = browserSockets;
 	
 	//console.log(storedMood);
@@ -40,6 +40,7 @@ function DB(browserSockets){
 		this.dataDb = db.collection('data');
 		this.touchesDb = db.collection('touches');
 		this.settingsDb = db.collection('settings');
+		this.tweetsDb = db.collection('tweets');
 		// this.moodDb = db.collection('mood');
 		this.pumpDb = db.collection('pump');
 	});
@@ -480,6 +481,19 @@ DB.prototype.neededTimeForPriming = function(callback) {
 	});
 
 }
+
+/* ******************************************************************************************* */
+/* ******************************************************************************************* */
+
+DB.prototype.logTweet = function(data) {
+	tweetsDb.insert(data, function(err) {
+		if (err) console.log(err);
+	});
+};
+
+/* ******************************************************************************************* */
+/* Dialogue!																				   */
+/* ******************************************************************************************* */
 
 var dialogue = {
     "garden": {
