@@ -3,7 +3,7 @@ $(document).ready(function() {
 var deviceSettings = {};
 
 // Connect to socket.io server & set up event handlers
-var socket = io.connect('http://localhost:8080');
+var socket = io.connect('http://'+window.location.hostname+':8080');
 
 // init gets sent for each tablet device when the browser connects
 socket.on('init', function(data){
