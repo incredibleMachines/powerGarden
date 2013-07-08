@@ -146,6 +146,9 @@ io.sockets.on('connection', function (socket) {
 
 	//browserio.sockets.emit('device_conn',connectKey);
 	
+
+	/* Messaging events */
+
 	socket.on('register', function (msg) {
 	    console.log('[INBOUND REQUEST]'.warn+' [REGISTER] '.warn + JSON.stringify(msg).input);
 	    database.routeRegister(msg,connection);
@@ -163,6 +166,16 @@ io.sockets.on('connection', function (socket) {
 		database.routeTouch(msg,connection);
 		browserio.sockets.emit('touch',msg);
 	});
+
+	socket.on('display',function(msg){
+		console.log('[DISPLAY] '.warn + JSON.stringify(msg).input);
+		// probably should be logging all things displayed by tablets. necessary?
+		// database.routeDisplay(msg,connection);
+		browserio.sockets.emit('display',msg);
+	});
+
+
+	/* Control protocol events */
 	
 	socket.on('threshold',function(msg){
 		msg.connection_id = connection.id;
@@ -180,7 +193,10 @@ io.sockets.on('connection', function (socket) {
 		msg.connection_id = connection.id;
 		browserio.sockets.emit('stream',msg);
 	});
-	
+
+
+	/* Disconnect */
+
 	socket.on('disconnect', function () {
 	  /* io.sockets.emit('user disconnected'); */
   	  
