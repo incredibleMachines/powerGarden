@@ -76,7 +76,7 @@ var start = function(_callback) {
 
 	callback = _callback;
 
-	var credentials = require('./credentials');
+	var credentials = require('./credentials').credentials;
 	// twitter = new ntwitter(credentials);
 	twitter = ImmortalNTwitter.create(credentials);
 
