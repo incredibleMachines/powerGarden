@@ -538,6 +538,14 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				stageCopy.setLineSpacing(3, 1);
 				stageCopy.setAllCaps(true);
 			}
+			
+			try {
+				JSONObject j = new JSONObject();
+				j.put("device_id", PowerGarden.Device.ID).put("message", PowerGarden.Device.messageCopy).put("background",PowerGarden.Device.plantType+"_bg.png");
+				PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.Tweet){
@@ -552,7 +560,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			
 			PowerGarden.stateManager.prepareTweet();
 			
-			twitterHandle.setText(PowerGarden.stateManager.getHandle());
+			String thisHandle = PowerGarden.stateManager.getHandle();
+			twitterHandle.setText(thisHandle);
 			twitterHandle.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
 			twitterHandle.setTextSize(60);//((int)(1/(msgLength*.0004f)));
 			twitterHandle.setLineSpacing(3, 1);
@@ -581,6 +590,13 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			}
 			
 			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
+			try {
+				JSONObject j = new JSONObject();
+				j.put("device_id", PowerGarden.Device.ID).put("message", "@"+thisHandle+" "+thisTweet).put("background","twitter_bg.png");
+				PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		
@@ -609,6 +625,13 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			stageCopy.setText("");
 			
 			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
+			try {
+				JSONObject j = new JSONObject();
+				j.put("device_id", PowerGarden.Device.ID).put("message", "").put("background",PowerGarden.Device.plantType+"_title.png");
+				PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -631,7 +654,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			wrapper.setBackgroundColor(color.default_background);
 		} else {
 			wrapper.setBackgroundColor(color.default_background);
-		}
+		}	
 	}
 	
     public static void setTextViewFont(Typeface tf, TextView...params) {

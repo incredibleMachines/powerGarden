@@ -16,6 +16,8 @@ e-mail   :  support@circuitsathome.com
 */
 package com.victorint.android.usb.interfaces;
 
+import com.incredibleMachines.powergarden.Monkey;
+
 import android.app.Activity;
 
 /**
@@ -71,5 +73,8 @@ public interface Viewable {
      * Viewable object can not be re-used after this method is called.
      */
 	void close();
+
+	void sendUpdateData(String type, Monkey[] monkey);
+	void sendMonkey(String type, Monkey[] monkey);
     
 }

@@ -300,6 +300,9 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 				
 				PowerGarden.stateManager.updateDeviceState();
 				
+				if(PowerGarden.Device.datastream_mode)
+					PowerGarden.SM.updateData("update", PowerGarden.Device.ID, this);
+				
 				final int distance = PowerGarden.Device.distance;
 				if(debugSensors && bSetup){
 					Runnable runner = new Runnable(){
@@ -352,7 +355,8 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 		}
 	}
 
-	private void sendUpdateData(String type, Monkey...monkey ){
+	
+	public void sendUpdateData(String type, Monkey...monkey ){
 		Log.d(TAG, "DEVICE ID: "+PowerGarden.Device.ID + " Registered: " +PowerGarden.bRegistered);
 		if(PowerGarden.bRegistered){
 		JSONObject j = new JSONObject();
@@ -372,8 +376,8 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 	}
 	
 	
-	
-	private void sendMonkey(String type, Monkey...monkey ){
+	@Override
+	public void sendMonkey(String type, Monkey...monkey ){
 		Log.d(TAG, "DEVICE ID: "+PowerGarden.Device.ID + " Registered: " +PowerGarden.bRegistered);
 		if(PowerGarden.bRegistered){
 		JSONObject j = new JSONObject();
