@@ -261,7 +261,7 @@ function buildSettings(data) {
 		}
 
 		if (d[key].hasOwnProperty('window')) {
-			var windowString = '<input class="input-small" type="text" name="window" placeholder="window" value="'+d[key].window+'" data-sensor="'+key+'">';
+			var windowString = '<input class="input-small" type="text" name="window" placeholder="window" value="'+d[key].window+'" data-sensor="'+key+'"> sec';
 		} else {
 			var windowString = '';
 		}

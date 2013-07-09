@@ -267,17 +267,17 @@ DB.prototype.createSettings = function(message,connection,_db,num_plants){
 
 	var cap_thresh = [];
 	for (var i = 0; i < num_plants; i++) {
-		cap_thresh[i] = { plant_index: i, value: 1500 };
+		cap_thresh[i] = { plant_index: i, value: 3000 };
 	}
 
 	var obj = {
 		device_id: connection.device_id,
 		humidity: { active: false, low: 10, high:60},
 		temp: {active: false, low: 15, high:35},
-		moisture: {active: true, low:0, high:100},
-		light: {active: false, low:400, high: 1000},
-		touch: {active: true, low:10, high: 30, window: 1},
-		range: {active: false, low: 50},
+		moisture: {active: true, low:800, high:900},
+		light: {active: true, low:400, high: 1000},
+		touch: {active: true, low:1, high: 5, window: 30},
+		range: {active: true, low: 100},
 		cap_thresh: cap_thresh
 	};
 	
