@@ -3,7 +3,7 @@ $(document).ready(function() {
 var deviceSettings = {};
 
 // Connect to socket.io server & set up event handlers
-var socket = io.connect('http://localhost:8080');
+var socket = io.connect('http://'+window.location.hostname+':8080');
 
 // init gets sent for each tablet device when the browser connects
 socket.on('init', function(data){
@@ -261,7 +261,7 @@ function buildSettings(data) {
 		}
 
 		if (d[key].hasOwnProperty('window')) {
-			var windowString = '<input class="input-small" type="text" name="window" placeholder="window" value="'+d[key].window+'" data-sensor="'+key+'">';
+			var windowString = '<input class="input-small" type="text" name="window" placeholder="window" value="'+d[key].window+'" data-sensor="'+key+'"> sec';
 		} else {
 			var windowString = '';
 		}

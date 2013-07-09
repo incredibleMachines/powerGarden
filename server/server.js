@@ -41,7 +41,7 @@ var browsers = {};
 
 
 //Connect to twitter, pass callback for responding to tweets
-// pgtwitter.start(twitterCallback);
+pgtwitter.start(twitterCallback);
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -146,6 +146,9 @@ io.sockets.on('connection', function (socket) {
 
 	//browserio.sockets.emit('device_conn',connectKey);
 	
+
+	/* Messaging events */
+
 	socket.on('register', function (msg) {
 	    console.log('[INBOUND REQUEST]'.warn+' [REGISTER] '.warn + JSON.stringify(msg).input);
 	    database.routeRegister(msg,connection);
@@ -163,6 +166,16 @@ io.sockets.on('connection', function (socket) {
 		database.routeTouch(msg,connection);
 		browserio.sockets.emit('touch',msg);
 	});
+
+	socket.on('display',function(msg){
+		console.log('[DISPLAY] '.warn + JSON.stringify(msg).input);
+		// probably should be logging all things displayed by tablets. necessary?
+		// database.routeDisplay(msg,connection);
+		browserio.sockets.emit('display',msg);
+	});
+
+
+	/* Control protocol events */
 	
 	socket.on('threshold',function(msg){
 		msg.connection_id = connection.id;
@@ -180,7 +193,10 @@ io.sockets.on('connection', function (socket) {
 		msg.connection_id = connection.id;
 		browserio.sockets.emit('stream',msg);
 	});
-	
+
+
+	/* Disconnect */
+
 	socket.on('disconnect', function () {
 	  /* io.sockets.emit('user disconnected'); */
   	  
@@ -212,10 +228,14 @@ function Connection(_id, _device_id,_socket){
 	this.plant_slug;
 }
 
-function twitterCallback(data) {
+function twitterCallback(data, raw) {
 
 	// here just for debugging. this will exist further down in the logic
 	// pump.turnOnSprinklers(15);
+
+	// before we process, just log the incoming tweet
+	var inboundObj = { timestamp: new Date(), type: 'inbound', water: data.water, plants: data.plants, data: raw };
+	database.logTweet(inboundObj);
 
 	if (data.water) {
 		// console.log('User providing water');
@@ -307,9 +327,6 @@ function twitterCallback(data) {
 		var text = '@'+data.user_name + ' ' + responses[index];
 		var watering = _watering || false;
 
-		// tweet that b
-		pgtwitter.updateStatus(text, { in_reply_to_status_id: data.id });
-
 		// send a tweet event to appropriate tablets
 		for (var key in clients) {
 			// console.log('key: '+key+', slug: '+clients[key].plant_slug+', emit: '+data.emit);
@@ -319,13 +336,22 @@ function twitterCallback(data) {
 					user_name: data.user_name,
 					text: responses[index],
 					plant_type: plant,
-					watering: watering
+					water: watering
 				}
 				clients[key].socket.emit('tweet', obj);
 				// console.log('Sending tweet event to: plant_type: '+clients[key].plant_type+', plant_slug: '+clients[key].plant_slug);
 				// console.log(obj);
 			}
 		}
+
+		// tweet that b
+		pgtwitter.updateStatus(text, { in_reply_to_status_id: data.id }, function(tweet) {
+
+			// log the outgoing tweet
+			var outboundObj = { timestamp: new Date(), type: 'outbound', water: data.water, plants: data.plants, data: tweet };
+			database.logTweet(outboundObj);
+
+		});
 
 	}
 
