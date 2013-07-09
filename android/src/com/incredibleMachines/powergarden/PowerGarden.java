@@ -129,6 +129,7 @@ public class PowerGarden {
 		public static int light = 0;
 		public static int moisture = 0;
 		public static int distance = 0;
+		public static int totalNumPlantTouches = 0; //running total of all plant touches on DEVICE in a period at any given time
 		
 		//--- thresholds
 		//static int distanceThreshold; //distance at which we'll send a PING to server

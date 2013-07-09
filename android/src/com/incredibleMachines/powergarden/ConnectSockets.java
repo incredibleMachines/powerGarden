@@ -114,18 +114,21 @@ public class ConnectSockets extends Activity implements Connectable {
 					int plantNum = (int) (Math.random()*8);
 					//int plantNum = 1;
 					
-					PowerGarden.Device.plants[plantNum].triggered = true;
+					//*** TOUCHED ***//
+					PowerGarden.Device.plants[plantNum].triggered = true; //set triggered to true for this plant
 					
-					PowerGarden.Device.plants[plantNum].touchedTimestamp = System.currentTimeMillis();
+					PowerGarden.Device.plants[plantNum].touchedTimestamp = System.currentTimeMillis(); //record timestamp
 					
-					PowerGarden.Device.plants[plantNum].touchStamps.add(PowerGarden.Device.plants[plantNum].touchedTimestamp);	
-	//				
-					PowerGarden.stateManager.updatePlantStates();				
+					PowerGarden.Device.plants[plantNum].touchStamps.add(PowerGarden.Device.plants[plantNum].touchedTimestamp); //add timestamp to overall touchStamps vector
 					
-		        	PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, (int) (Math.random()*2500), PowerGarden.Device.plants[plantNum].state, PowerGarden.Device.plants[plantNum].touchStamps.size(), ConnectSockets.this );
-				
+					PowerGarden.stateManager.updatePlantStates(); //check this plant's state
+					
+					//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
+					PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, plantNum, PowerGarden.Device.plants[plantNum].getFilteredValue(), PowerGarden.Device.plants[plantNum].state, PowerGarden.Device.plants[plantNum].touchStamps.size(), ConnectSockets.this );
+					//PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), "worked_up", 88, PresentationViewable.this );	
 					if (PowerGarden.stateManager.updateDeviceState() ){
 						PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+						//activity_.resetView(); //now done in timerTask run() method
 					}
 					
 					PowerGarden.audioManager.playSound(plantNum);

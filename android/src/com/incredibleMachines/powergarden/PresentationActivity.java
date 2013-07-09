@@ -63,8 +63,11 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	TextView twitterHandle;
 	LinearLayout twitterHeading;
 	
-	//SOUNDPOOL STUFFS
+    LonelyAudio lonelyAudioUpdater = new LonelyAudio();
+//    lonelyAudioUpdater.setActivity(this);
+    Timer lonelyAudioScheduling = new Timer();
 	
+    int frameCount = 0;
 	
 	@Override
 	public void onResume(){
@@ -327,7 +330,20 @@ public class PresentationActivity extends UsbActivity implements Connectable{
       
       //*** send setup to arduino ***//
       PresentationActivity.super.sendData("setup");
-      //currentViewable_.
+//      //currentViewable_.
+//      
+////      LonelyAudio lonelyAudioUpdater = new LonelyAudio();
+//      lonelyAudioUpdater.setActivity(this);
+//      ScheduleLonelyAudio();
+ //     Timer lonelyAudioScheduling = new Timer();
+      
+      //lonelyAudioScheduling.schedule(lonelyAudioUpdater, 3000);
+	}
+	
+	void ScheduleLonelyAudio(){
+		Log.wtf(TAG, "scheduledLonelyAudio");
+		lonelyAudioScheduling.schedule(lonelyAudioUpdater, (int)(2000+(Math.random()*2000)));
+		
 	}
 
 	
@@ -490,6 +506,12 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	}
 	
 	void updateStage(){
+		frameCount++;
+		
+		if(frameCount > 3 && PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
+			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.PlantTitle;
+			frameCount = 0;
+		}
 		
 		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
 			//*** display whatever is inside PowerGarden.Device.messageCopy ***/
@@ -554,7 +576,9 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				stageCopy.setAllCaps(true);
 			}
 
-			
+			if(PowerGarden.stateManager.getDeviceState().equals("lonely")){
+				ScheduleLonelyAudio();
+			}
 			
 			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
 		}
@@ -583,6 +607,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				wrapper.setBackgroundColor(color.default_background);
 			}
 			stageCopy.setText("");
+			
+			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
 		}
 	}
 	

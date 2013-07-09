@@ -299,6 +299,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 					PowerGarden.Device.rangeActive = true;
 				
 				PowerGarden.stateManager.updateDeviceState();
+				
 				final int distance = PowerGarden.Device.distance;
 				if(debugSensors && bSetup){
 					Runnable runner = new Runnable(){
@@ -371,7 +372,6 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 	}
 	
 	
-
 	
 	private void sendMonkey(String type, Monkey...monkey ){
 		Log.d(TAG, "DEVICE ID: "+PowerGarden.Device.ID + " Registered: " +PowerGarden.bRegistered);
