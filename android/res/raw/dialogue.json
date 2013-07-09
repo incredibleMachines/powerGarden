@@ -322,7 +322,9 @@
                 "Great watering job, you must have done this before!",
                 "Thanks for keeping the tomatoes hydrated! You are a big help!"
             ],
-            "audio": []
+            "audio": [
+                "cherry_tomatoes_wet_1"
+            ]
         },
         "waterResponseBad": {
             "stage_copy": [
@@ -743,7 +745,9 @@
                 "Great watering job, you must have done this before!",
                 "Thanks for keeping the carrots hydrated! You are a big help!"
             ],
-            "audio": []
+            "audio": [
+                "orange_carrots_wet_1"
+            ]
         },
         "waterResponseBad": {
             "stage_copy": [

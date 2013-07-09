@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.util.Timer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +37,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -57,7 +59,9 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	SocketManager SM;
 	
 	FrameLayout wrapper;
-	TextView plantCopy;
+	TextView stageCopy;
+	TextView twitterHandle;
+	LinearLayout twitterHeading;
 	
 	//SOUNDPOOL STUFFS
 	
@@ -95,23 +99,16 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		
 		/*** message updated ***/
 		else if(type == PowerGarden.MessageUpdated){
-			plantCopy.setText(PowerGarden.Device.messageCopy);
+			stageCopy.setText(PowerGarden.Device.messageCopy);
 		}
 		
+		/*** update thresholds ***/
 		else if(type == PowerGarden.ThreshChange){
 			Log.d(TAG, "presViewable signalToUi recevievd THRESHCHANGE");
 			//updateThresholds( data.toString() );
 		}
 	}
 	
-//    void updateThresholds(String j){
-//    	Log.wtf(TAG, "updateThresh RECVD  " + j);
-//		//update debug window
-//		for(int i=0; i<PowerGarden.Device.PlantNum; i++){
-////			threshBar[i].setProgress(PowerGarden.Device.plants[i].threshold);
-////			threshBarTextView[i].setText(PowerGarden.Device.plants[i].threshold);
-//		}
-//    }
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -304,16 +301,11 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		        }
 		        
 		        for(int j=0; j<PowerGarden.plantAudio_waterResponseGood.length();j++){
-	    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterRequest.getString(j), "raw",
+	    			int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterResponseGood.getString(j), "raw",
 	                        getPackageName());
 	    			PowerGarden.waterResponseGoodAudio.add(PowerGarden.soundPool.load( PresentationActivity.this, sound_id, 1));	        
 		        }
-		        
-		        for(int j=0; j<PowerGarden.plantAudio_waterResponseBad.length();j++){
-		        	int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_waterResponseBad.getString(j), "raw",
-	                        getPackageName());
-	    			PowerGarden.waterResponseBadAudio.add(PowerGarden.soundPool.load( PresentationActivity.this, sound_id, 1));
-		        }	
+
 				
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -325,6 +317,17 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		if(audioSetup != null){
 			PresentationActivity.this.runOnUiThread(audioSetup);	
 		}
+		
+	  //**** sign staging setup ****//
+      SignStaging signStageUpdater = new SignStaging();
+      signStageUpdater.setActivity(this);
+      Timer signScheduling = new Timer();
+      
+      signScheduling.schedule(signStageUpdater, 10000, 5000); // (task, initial delay, repeated delay
+      
+      //*** send setup to arduino ***//
+      PresentationActivity.super.sendData("setup");
+      //currentViewable_.
 	}
 
 	
@@ -347,41 +350,6 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		}
 	};
 	
-//	public void playAudio(int plantIndex){
-////		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-//		Log.d(TAG, "playAudio HIT");
-//		//PowerGarden.stateManager.getNumAudioSamples();
-//		if (PowerGarden.audioLoaded && plantIndex > -1) {
-//			int state = PowerGarden.stateManager.getPlantState(plantIndex);
-//			Log.d("playAudio", "state: "+Integer.toString(state));
-//			//.play(audio[i], leftVol, rightVol, priority, loop, rate);
-//			if(state == 0){
-//	        	soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
-//			}
-//			if(state == 1){
-//	        	soundPool.play(PowerGarden.touchResponseGoodAudio.get((int)(Math.random()*PowerGarden.touchResponseGoodAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
-//			}
-//			if(state == 2){
-//	        	soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
-//			}
-//			if(state == 3){
-//	        	soundPool.play(PowerGarden.waterResponseGoodAudio.get((int)(Math.random()*PowerGarden.waterResponseGoodAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
-//			}
-//			if(state == 4){
-//	        	soundPool.play(PowerGarden.waterResponseBadAudio.get((int)(Math.random()*PowerGarden.waterResponseBadAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
-//			}
-//			if(state == 5){
-//	        	soundPool.play(PowerGarden.waterRequestAudio.get((int)(Math.random()*PowerGarden.waterRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
-//			}
-//		} else if (plantIndex == -1){
-//			Log.d("size() =  ", Integer.toString(PowerGarden.touchRequestAudio.size()));
-//			int whichFile = (int)(Math.random()*PowerGarden.touchRequestAudio.size());
-//			Log.d("play audio test: ", Integer.toString(whichFile));
-//			soundPool.play(PowerGarden.touchRequestAudio.get(whichFile), 1.0f, 1.0f, 1, 0, 1f);
-//		}
-//	}
-	
-
 	/**
 	 * Schedules a call to hide() in [delay] milliseconds, canceling any
 	 * previously scheduled calls.
@@ -398,63 +366,17 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.stage_copy);
 		wrapper = (FrameLayout) findViewById(R.id.wrapper);
-		plantCopy = (TextView) findViewById(R.id.stage_copy);
+		stageCopy = (TextView) findViewById(R.id.stage_copy);
+		twitterHandle = (TextView) findViewById(R.id.twitter_handle);
+		twitterHeading = (LinearLayout) findViewById(R.id.twitter_title);
 		
-		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
-			plantCopy.setText(PowerGarden.Device.messageCopy);
-			plantCopy.setVisibility(View.VISIBLE);
-			plantCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
-			setTextViewFont(PowerGarden.interstateBold, plantCopy);
-			
-			int msgLength = PowerGarden.Device.messageCopy.length();
-			plantCopy.setTextSize((int)(1/(msgLength*.0004f)*2.2));
-			plantCopy.setLineSpacing(3, 1);
-			plantCopy.setAllCaps(true);
-			
-			if(PowerGarden.Device.plantType.contains("cherry")){
-				wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
-			} else if(PowerGarden.Device.plantType.contains("beets")){
-				wrapper.setBackgroundResource(R.drawable.beet_bg);
-			} else if(PowerGarden.Device.plantType.contains("celery")){
-				wrapper.setBackgroundResource(R.drawable.celery_bg);
-			} else if(PowerGarden.Device.plantType.contains("tomatoes")){
-				wrapper.setBackgroundResource(R.drawable.tomato_bg);
-			} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
-				wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
-			} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
-				wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
-			} else if(PowerGarden.Device.plantType.contains("peppers")){
-				wrapper.setBackgroundResource(R.drawable.pepper_bg);
-			}  else if(PowerGarden.Device.plantType == null){
-				wrapper.setBackgroundColor(color.default_background);
-			} else {
-				wrapper.setBackgroundColor(color.default_background);
-			}
-			
-		}
-		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.PlantTitle){
-			if(PowerGarden.Device.plantType.contains("cherry")){
-				wrapper.setBackgroundResource(R.drawable.cherrytomatoes_title);
-			} else if(PowerGarden.Device.plantType.contains("beets")){
-				wrapper.setBackgroundResource(R.drawable.beets_title);
-			} else if(PowerGarden.Device.plantType.contains("celery")){
-				wrapper.setBackgroundResource(R.drawable.celery_title);
-			} else if(PowerGarden.Device.plantType.contains("tomatoes")){
-				wrapper.setBackgroundResource(R.drawable.tomatoes_title);
-			} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
-				wrapper.setBackgroundResource(R.drawable.orangecarrots_title);
-			} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
-				wrapper.setBackgroundResource(R.drawable.purplecarrots_title);
-			} else if(PowerGarden.Device.plantType.contains("peppers")){
-				wrapper.setBackgroundResource(R.drawable.peppers_title);
-			}  else if(PowerGarden.Device.plantType == null){
-				wrapper.setBackgroundColor(color.default_background);
-			} else {
-				wrapper.setBackgroundColor(color.default_background);
-			}
-			plantCopy.setVisibility(View.INVISIBLE);
-		}
+		PowerGarden.Device.tweetCopy.add("hello this is a tweet and it is going to be exactly one-hundred forty characters and here it is, the exact number of chars you wanted !!!  .");
+		PowerGarden.Device.tweetUsername.add("@QuantifiedPup");
 		
+		
+		setStageBG(); // bare plant background of this plantType
+		
+		updateStage();
 		
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
@@ -567,6 +489,124 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		//Log.d("LOADDIALOGUE", PowerGarden.dialogue.toString());
 	}
 	
+	void updateStage(){
+		
+		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
+			//*** display whatever is inside PowerGarden.Device.messageCopy ***/
+			setStageBG();
+			
+			twitterHeading.setVisibility(View.INVISIBLE);
+			stageCopy.setVisibility(View.VISIBLE);
+			
+			stageCopy.setText(PowerGarden.Device.messageCopy);
+			stageCopy.setPadding(20, 20, 20, 20);
+			stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+			setTextViewFont(PowerGarden.interstateBold, stageCopy);
+			
+			int msgLength = PowerGarden.Device.messageCopy.length();
+			
+			if(msgLength > 120){
+				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+				stageCopy.setTextSize(75);//((int)(1/(msgLength*.0004f)));
+				stageCopy.setLineSpacing(0, 1);
+				stageCopy.setAllCaps(true);
+
+			} else {
+				stageCopy.setTextSize(100);//((int)(1/(msgLength*.0004f)));
+				stageCopy.setLineSpacing(3, 1);
+				stageCopy.setAllCaps(true);
+			}
+		}
+		
+		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.Tweet){
+			//*** display a tweet ! ***/
+			
+			twitterHeading.setVisibility(View.VISIBLE);
+			stageCopy.setVisibility(View.VISIBLE);
+			
+			setTextViewFont(PowerGarden.interstateBold, stageCopy);
+			setTextViewFont(PowerGarden.interstateBold, twitterHandle);
+			wrapper.setBackgroundResource(R.drawable.twitter_bg);
+			
+			PowerGarden.stateManager.prepareTweet();
+			
+			twitterHandle.setText(PowerGarden.stateManager.getHandle());
+			twitterHandle.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+			twitterHandle.setTextSize(60);//((int)(1/(msgLength*.0004f)));
+			twitterHandle.setLineSpacing(3, 1);
+			//twitterHandle.setAllCaps(true);
+			
+			String thisTweet = PowerGarden.stateManager.getTweet();
+			int msgLength = thisTweet.length();
+			stageCopy.setText(thisTweet);
+			stageCopy.setPadding(10, 80, 10, 10); //add padding to top to make the twitter handle fit nicer
+			
+			if(msgLength > 120){  //if it's a long ass tweet
+				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+				stageCopy.setTextSize(70);//((int)(1/(msgLength*.0004f)));
+				stageCopy.setLineSpacing(0, 0.9f);
+				stageCopy.setAllCaps(true);
+
+			} else {
+				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+				stageCopy.setTextSize(90);//((int)(1/(msgLength*.0004f)));
+				stageCopy.setLineSpacing(3, 1);
+				stageCopy.setAllCaps(true);
+			}
+
+			
+			
+			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
+		}
+		
+		
+		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.PlantTitle){
+			//*** show plant title card .png ***//
+			
+			if(PowerGarden.Device.plantType.contains("cherry")){
+				wrapper.setBackgroundResource(R.drawable.cherrytomatoes_title);
+			} else if(PowerGarden.Device.plantType.contains("beets")){
+				wrapper.setBackgroundResource(R.drawable.beets_title);
+			} else if(PowerGarden.Device.plantType.contains("celery")){
+				wrapper.setBackgroundResource(R.drawable.celery_title);
+			} else if(PowerGarden.Device.plantType.contains("tomatoes")){
+				wrapper.setBackgroundResource(R.drawable.tomatoes_title);
+			} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
+				wrapper.setBackgroundResource(R.drawable.orangecarrots_title);
+			} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
+				wrapper.setBackgroundResource(R.drawable.purplecarrots_title);
+			} else if(PowerGarden.Device.plantType.contains("peppers")){
+				wrapper.setBackgroundResource(R.drawable.peppers_title);
+			}  else if(PowerGarden.Device.plantType == null){
+				wrapper.setBackgroundColor(color.default_background);
+			} else {
+				wrapper.setBackgroundColor(color.default_background);
+			}
+			stageCopy.setText("");
+		}
+	}
+	
+	void setStageBG(){
+		if(PowerGarden.Device.plantType.contains("cherry")){
+			wrapper.setBackgroundResource(R.drawable.cherrytomato_bg);
+		} else if(PowerGarden.Device.plantType.contains("beets")){
+			wrapper.setBackgroundResource(R.drawable.beet_bg);
+		} else if(PowerGarden.Device.plantType.contains("celery")){
+			wrapper.setBackgroundResource(R.drawable.celery_bg);
+		} else if(PowerGarden.Device.plantType.contains("tomatoes")){
+			wrapper.setBackgroundResource(R.drawable.tomato_bg);
+		} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
+			wrapper.setBackgroundResource(R.drawable.orange_carrot_bg);
+		} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
+			wrapper.setBackgroundResource(R.drawable.purple_carrot_bg);
+		} else if(PowerGarden.Device.plantType.contains("peppers")){
+			wrapper.setBackgroundResource(R.drawable.pepper_bg);
+		}  else if(PowerGarden.Device.plantType == null){
+			wrapper.setBackgroundColor(color.default_background);
+		} else {
+			wrapper.setBackgroundColor(color.default_background);
+		}
+	}
 	
     public static void setTextViewFont(Typeface tf, TextView...params) {
         for (TextView tv : params) {

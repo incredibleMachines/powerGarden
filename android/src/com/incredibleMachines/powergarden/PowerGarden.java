@@ -33,9 +33,8 @@ public class PowerGarden {
     public static SoundPool soundPool;
 	public static int numSounds = 8;
 	static JSONArray allPlantAudio = new JSONArray();
-	static JSONArray plantAudio_touchRequest = new JSONArray(); 		 //holds file names
+	static JSONArray plantAudio_touchRequest = new JSONArray(); 		 //holds audio file names
 	static Vector <Integer> touchRequestAudio = new Vector <Integer> (); //holds sound pool player refs
-	//public static Vector <Integer>[] audio = new Vector <Integer>()[6]; //future?
 	static JSONArray plantAudio_touchResponseGood = new JSONArray();
 	static Vector <Integer> touchResponseGoodAudio = new Vector <Integer> ();
 	static JSONArray plantAudio_touchResponseBad = new JSONArray();
@@ -46,6 +45,9 @@ public class PowerGarden {
 	static Vector <Integer> waterResponseGoodAudio = new Vector <Integer> ();
 	static JSONArray plantAudio_waterResponseBad = new JSONArray();
 	static Vector <Integer> waterResponseBadAudio = new Vector <Integer> ();
+	//public static Vector <Integer>[] audio = new Vector <Integer>()[6]; //future?
+	//static Vector <Vector <Integer>> audio;
+	//static Vector <Integer>[] audio = {touchRequestAudio, touchResponseGoodAudio};
 	
 	//public static int[] plantAudio = new int [numSounds];
 	public static boolean audioLoaded = false;
@@ -77,8 +79,9 @@ public class PowerGarden {
 	public static int ThreshChange = 97;
 	public static int StreamModeUpdate = 98;
 	public static int PlantIgnore = 99;
-	public static int Settings = 100;
-	public static int Unrecognized = 101;
+	public static int DisplayTweet = 100;
+	public static int Settings = 101;
+	public static int Unrecognized = 102;
 			
 	//--- app status
 	public static boolean bAudioPlaying = false;
@@ -110,11 +113,15 @@ public class PowerGarden {
 		static int PlantNum = 8;
 		static String plantType = "cherry_tomatoes"; //should be populated by prefs	
 		static PlantObject plants[] = new PlantObject[PlantNum];
+		static boolean isWatering = false;
 		
-		static boolean datastream_mode = false; //when this is true, we will stream all data as it comes in, to server.
+		static boolean datastream_mode = false; //when this is true, we will stream all data as it comes in, straight to server.
 		
+		//--- tweets, screen stuff
+		static Vector <String> tweetCopy = new Vector<String>();
+		static Vector <String> tweetUsername = new Vector<String>();;
 		static String messageCopy = "Welcome to the @PowerGarden!";
-		public static int displayMode = PowerGarden.DisplayMode.PlantTitle;
+		public static int displayMode = PowerGarden.DisplayMode.MessageCopy;
 		
 		//--- global device sensors
 		public static int temp = 0;
@@ -123,10 +130,10 @@ public class PowerGarden {
 		public static int moisture = 0;
 		public static int distance = 0;
 		
-		//thresholds
+		//--- thresholds
 		//static int distanceThreshold; //distance at which we'll send a PING to server
 		static boolean moistureActive = Boolean.valueOf(PowerGarden.getPrefString("moisture_active","true"));
-		static int moistureLowThresh =  Integer.parseInt(PowerGarden.getPrefString("moisture_low","300"));
+		static int moistureLowThresh =  Integer.parseInt(PowerGarden.getPrefString("moisture_low","800"));
 		static int moistureHighThresh = Integer.parseInt(PowerGarden.getPrefString("moisture_high","800"));
 		
 		static boolean tempActive = Boolean.valueOf(PowerGarden.getPrefString("temp_active","true"));
@@ -142,9 +149,9 @@ public class PowerGarden {
 		static int lightHighThresh = Integer.parseInt(PowerGarden.getPrefString("light_high","85"));
 		
 		static boolean touchActive = Boolean.valueOf(PowerGarden.getPrefString("touch_active","true"));
-		static int touchLowThresh = Integer.parseInt(PowerGarden.getPrefString("touch_low","0"));
+		static int touchLowThresh = Integer.parseInt(PowerGarden.getPrefString("touch_low","1"));
 		static int touchHighThresh = Integer.parseInt(PowerGarden.getPrefString("touch_high","14"));
-		static int touchWindow = Integer.parseInt(PowerGarden.getPrefString("touch_window","30000"));
+		static int touchWindow = Integer.parseInt(PowerGarden.getPrefString("touch_window","30"));
 
 		
 		static boolean rangeActive = Boolean.valueOf(PowerGarden.getPrefString("range_active","true"));
@@ -157,4 +164,6 @@ public class PowerGarden {
 		final static int MessageCopy = 222;
 		final static int Tweet = 333;
 	}
+	
+	
 }

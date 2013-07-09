@@ -65,12 +65,12 @@ public class AudioManager extends Activity {
 						numSamples++;
 					}
 				}
-				else if(i==5){
-					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
-						PowerGarden.plantAudio_waterResponseBad.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
-						numSamples++;
-					}
-				}
+//				else if(i==5){
+//					for (int j=0; j<PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").length(); j++){
+//						PowerGarden.plantAudio_waterResponseBad.put(PowerGarden.dialogue.getJSONObject(PowerGarden.Device.plantType).getJSONObject(PowerGarden.copyType[i]).getJSONArray("audio").get(j));
+//						numSamples++;
+//					}
+//				}
 			}
 			
 			Log.d("total audio samples: ", Integer.toString(numSamples));
@@ -96,25 +96,39 @@ public class AudioManager extends Activity {
 			int state = PowerGarden.stateManager.getPlantState(plantIndex);
 			Log.d("playAudio", "state: "+Integer.toString(state));
 			//.play(audio[i], leftVol, rightVol, priority, loop, rate);
+			float leftChannelVol = 1.0f;
+			float rightChannelVol = 1.0f;
+			
+			if(plantIndex >= 0 && plantIndex <= 3){
+				rightChannelVol = 0.0f;
+			}
+			if(plantIndex > 3){
+				leftChannelVol = 0.0f;
+			}
+		
 			if(state == 0){
-	        	PowerGarden.soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+	        	PowerGarden.soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
 			}
 			if(state == 1){
-				PowerGarden.soundPool.play(PowerGarden.touchResponseGoodAudio.get((int)(Math.random()*PowerGarden.touchResponseGoodAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+				PowerGarden.soundPool.play(PowerGarden.touchResponseGoodAudio.get((int)(Math.random()*PowerGarden.touchResponseGoodAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
 			}
 			if(state == 2){
-				PowerGarden.soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+				PowerGarden.soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
 			}
 			if(state == 3){
-				PowerGarden.soundPool.play(PowerGarden.waterResponseGoodAudio.get((int)(Math.random()*PowerGarden.waterResponseGoodAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+				PowerGarden.soundPool.play(PowerGarden.waterResponseGoodAudio.get((int)(Math.random()*PowerGarden.waterResponseGoodAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
 			}
+//			if(state == 4){ //NEVER PLAYING THIS AUDIO
+//				PowerGarden.soundPool.play(PowerGarden.waterResponseBadAudio.get((int)(Math.random()*PowerGarden.waterResponseBadAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+//			}
 			if(state == 4){
-				PowerGarden.soundPool.play(PowerGarden.waterResponseBadAudio.get((int)(Math.random()*PowerGarden.waterResponseBadAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
+				PowerGarden.soundPool.play(PowerGarden.waterRequestAudio.get((int)(Math.random()*PowerGarden.waterRequestAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
 			}
-			if(state == 5){
-				PowerGarden.soundPool.play(PowerGarden.waterRequestAudio.get((int)(Math.random()*PowerGarden.waterRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
-			}
-		} else if (plantIndex == -1){ //debug flag : "play sound" button from sensor config view
+			
+			
+		} 
+		
+		else if (plantIndex == -1){ //debug flag : "play sound" button from sensor config view
 			if ( PowerGarden.waterResponseGoodAudio.size() > 0) {
 				
 				Vector <Integer> thisAudioType = PowerGarden.waterResponseGoodAudio; //which audio type to test
@@ -123,10 +137,26 @@ public class AudioManager extends Activity {
 				int whichFile = (int)(Math.random()*thisAudioType.size());
 				Log.d("play audio test: ", Integer.toString(whichFile));
 				PowerGarden.soundPool.play(thisAudioType.get(whichFile), 1.0f, 1.0f, 1, 0, 1f);
+				Log.wtf("play audio: ", thisAudioType.get(whichFile).toString());
 			} else {
 				Toast toast = Toast.makeText(getApplicationContext(), "no files for this type", Toast.LENGTH_SHORT);
 				toast.show();
 			}
+		}
+		
+		else if (plantIndex == -2){
+			PowerGarden.soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f);
+		}
+		
+		else if (plantIndex == -3){
+			PowerGarden.soundPool.play(PowerGarden.waterRequestAudio.get((int)(Math.random()*PowerGarden.waterRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f);
+		}
+		
+		else if (plantIndex == -4){
+			Vector <Integer> thisAudioType = PowerGarden.waterResponseGoodAudio;
+			int whichFile = (int)(Math.random()*thisAudioType.size());
+			PowerGarden.soundPool.play(PowerGarden.waterResponseGoodAudio.get(whichFile), 1.0f, 1.0f, 1, 0, 1f); 
+			Log.wtf("play audio: ", thisAudioType.get(whichFile).toString());
 		}
 	}
 	

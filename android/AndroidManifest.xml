@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+
+<manifest 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.incredibleMachines.powergarden"
     android:versionCode="009"
     android:versionName="0.09" >
@@ -15,6 +17,8 @@
         	android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission 
         	android:name="android.permission.WAKE_LOCK" />
+    <uses-permission 
+        android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
         android:allowBackup="true"
@@ -53,10 +57,15 @@
                 android:resource="@xml/accessory_filter" />
         </activity>
 
-        <service android:name="com.incredibleMachines.powergarden.util.ArduinoUsbService"  /> 
-        <!-- <service android:name=".ArduinoUsbService" android:process=":remote" /> -->    
-        <service android:name=".SocketManager" />
-		<uses-library android:name="com.android.future.usb.accessory" />
+        <service 
+            android:name="com.incredibleMachines.powergarden.util.ArduinoUsbService"  /> 
+        <!-- <service 
+        	android:name=".ArduinoUsbService" android:process=":remote" /> -->    
+        <service
+             android:name=".SocketManager" />
+        
+		<uses-library 
+		    android:name="com.android.future.usb.accessory" />
     
     </application>
 

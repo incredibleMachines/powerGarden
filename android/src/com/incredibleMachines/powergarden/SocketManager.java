@@ -104,7 +104,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 				thisPlant.put("state", PowerGarden.Device.plants[i].state).put("index",i).put("count", PowerGarden.Device.plants[i].touchStamps.size());
 				plants.put(thisPlant);
 			}
-			data.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light);
+			data.put("moisture", PowerGarden.Device.moisture).put("temp", PowerGarden.Device.temp).put("humidity", PowerGarden.Device.hum).put("light", PowerGarden.Device.light).put("range",PowerGarden.Device.distance);
 			state.put("moisture", PowerGarden.stateManager.getDeviceMoisture()).put("touch", StateManager.getDeviceState()).put("plants", plants);
 			socket.emit(type, 
 					new JSONObject().put("device_id", device_id).put("plant_type", PowerGarden.Device.plantType).put("data", data).put("state", state)
@@ -301,12 +301,12 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 			else if(event.equals("firehose")){
 				
 				int thisPlantIndex = 0;
-				if(j.has("firehose")){
-					PowerGarden.Device.datastream_mode = Boolean.parseBoolean(j.getString("stream"));
+				//if(j.has("firehose")){
+					PowerGarden.Device.datastream_mode = j.getBoolean("stream");//Boolean.parseBoolean(j.getString("stream"));
 					Log.d(TAG, "datastream_mode set to: "+j.getString("stream"));
 					callbackActivity.signalToUi(PowerGarden.StreamModeUpdate, PowerGarden.Device.ID);
 					if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.StreamModeUpdate, PowerGarden.Device.datastream_mode);
-				}
+				//}
 			}
 			
 			
@@ -329,15 +329,31 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 
 			//**** display tweet ****//
 			else if(event.equals("tweet")){
-				if(j.has("user_name")){
-					String userName = j.getString("user_name");
-				}
+
 				if(j.has("text")){
-					String text = j.getString("text");
+					if(j.has("user_name")){
+						String name = j.getString("user_name");
+						PowerGarden.Device.tweetUsername.add("@"+name);
+						String text = j.getString("text");
+						PowerGarden.Device.tweetCopy.add(text);
+						PowerGarden.Device.displayMode = PowerGarden.DisplayMode.Tweet;
+						Log.wtf(TAG,"TWEET RECEIVED: ");
+						Log.wtf(TAG, PowerGarden.Device.tweetCopy.lastElement());
+					}
 				}
-				
-				callbackActivity.signalToUi(PowerGarden.PlantIgnore, PowerGarden.Device.ID);
-				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.PlantIgnore, PowerGarden.Device.ID);
+				if(j.has("plant_type")){
+					String text = j.getString("text");
+					//don't believe we'll use this.
+				}
+				if(j.has("water")){
+					Boolean isWatering = Boolean.valueOf(j.getString("text"));
+//					PowerGarden.Device.isWatering = isWatering; //not using this at the moment.
+					//if this is a watering tweet, garden is watering, let's play water sounds.
+					if(isWatering) PowerGarden.audioManager.playSound(-4); //only sound triggered by a tweet event !
+				}
+
+				callbackActivity.signalToUi(PowerGarden.DisplayTweet, PowerGarden.Device.ID);
+				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.DisplayTweet, PowerGarden.Device.ID);
 			}
 
 
@@ -362,7 +378,6 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 					PowerGarden.savePref("temp_thres_low", temp.getString("low"));
 				}
 				
-
 				if(j.has("moisture")){
 					JSONObject moisture = new JSONObject();
 					moisture = j.getJSONObject("moisture");
@@ -375,8 +390,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 					PowerGarden.Device.moistureHighThresh = Integer.parseInt(moisture.getString("high"));
 					PowerGarden.Device.moistureLowThresh = Integer.parseInt(moisture.getString("low"));				
 				}
-				
-				
+
 				if(j.has("light")){
 					JSONObject light = new JSONObject();
 					light = j.getJSONObject("light");
@@ -386,9 +400,9 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 					
 					PowerGarden.Device.lightActive = Boolean.valueOf(light.getString("active"));
 					PowerGarden.Device.lightHighThresh = Integer.parseInt(light.getString("high"));
-					PowerGarden.Device.lightLowThresh = Integer.parseInt(light.getString("low"));
-					
+					PowerGarden.Device.lightLowThresh = Integer.parseInt(light.getString("low"));	
 				}
+				
 				if(j.has("touch")){
 					
 					JSONObject touch = new JSONObject();
@@ -403,7 +417,6 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 					PowerGarden.Device.touchHighThresh = Integer.parseInt(touch.getString("high"));
 					PowerGarden.Device.touchLowThresh = Integer.parseInt(touch.getString("low"));
 					PowerGarden.Device.touchWindow = Integer.parseInt(touch.getString("window"));
-					
 				}
 				
 				if(j.has("range")){
@@ -415,6 +428,10 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 				
 					PowerGarden.Device.rangeActive = Boolean.valueOf(range.getString("active"));
 					PowerGarden.Device.rangeLowThresh = Integer.parseInt(range.getString("low"));
+				}
+				
+				if(j.has("duration")){
+					//some sort of text display duration setting....
 				}
 				
 				

@@ -16,9 +16,14 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 public class StateManager extends Activity {
 	
+	static String TAG = "StateManager";
+	
+	private String currentTweet;
+	private String currentHandle;
 	
 	StateManager(){
 		int i = 0;
@@ -30,7 +35,8 @@ public class StateManager extends Activity {
 		for(int i=0; i<PowerGarden.Device.PlantNum; i++){
 			
 			//compare last touched timestamp of this plant -- if it's been more than 3 min, then lower 
-			if(System.currentTimeMillis() - PowerGarden.Device.plants[i].touchedTimestamp > PowerGarden.plantStateChangeDur){
+			Log.d(TAG, "curr touchWindow setting: "+ PowerGarden.Device.touchWindow);
+			if(System.currentTimeMillis() - PowerGarden.Device.plants[i].touchedTimestamp > PowerGarden.Device.touchWindow*10000){ 
 				if (PowerGarden.Device.plants[i].stateIndex > 0){
 					PowerGarden.Device.plants[i].stateIndex =  PowerGarden.Device.plants[i].stateIndex - 1;
 					//set timestamp to now, will take another changeDur to lower again
@@ -40,6 +46,7 @@ public class StateManager extends Activity {
 					PowerGarden.Device.plants[i].stateIndex = 0; //stay at 0 if we're already at 0
 			}
 	
+			
 			for(int j=0; j < PowerGarden.Device.plants[i].touchStamps.size(); j++){ //go through entre vector of touch timestamps for this plant 
 				
 				//if any of them happened before changeDur (3 min?) then remove them from the vector
@@ -54,11 +61,11 @@ public class StateManager extends Activity {
 			int touchesThisPeriod = PowerGarden.Device.plants[i].touchStamps.size();
 			Log.d("FINAL TOUCHES THIS PERIOD FOR "+Integer.toString(i)+": ", Integer.toString(touchesThisPeriod));
 			
-			if (touchesThisPeriod < 2)
+			if (touchesThisPeriod < PowerGarden.Device.touchLowThresh)
 				PowerGarden.deviceStateIndex = 0; //lonely
-			else if(touchesThisPeriod < 10)
+			else if(touchesThisPeriod < PowerGarden.Device.touchHighThresh)
 				PowerGarden.deviceStateIndex = 1; //content
-			else if(touchesThisPeriod >=10 )
+			else if(touchesThisPeriod >= PowerGarden.Device.touchHighThresh)
 				PowerGarden.deviceStateIndex = 2;; //worked_up
 				
 			PowerGarden.Device.plants[i].state = PowerGarden.plantState[PowerGarden.deviceStateIndex]; //set state String with index
@@ -74,34 +81,58 @@ public class StateManager extends Activity {
 		int numWorkedUp = 0;
 		
 		for(int i=0; i<PowerGarden.Device.PlantNum; i++){
-			if (PowerGarden.Device.plants[i].state.contains("lonely"))
+			if (PowerGarden.Device.plants[i].state == PowerGarden.plantState[0])
 				numLonely++;
-			else if (PowerGarden.Device.plants[i].state.contains("content"))
+			else if (PowerGarden.Device.plants[i].state== PowerGarden.plantState[1])
 				numContent++;
-			else if (PowerGarden.Device.plants[i].state.contains("worked_up"))
+			else if (PowerGarden.Device.plants[i].state == PowerGarden.plantState[2])
 				numWorkedUp++;
 		}
 		
-		if(numLonely > numContent && numLonely > numWorkedUp)
-			thisState = "lonely";
-		else if(numWorkedUp > numContent && numWorkedUp > numLonely)
-			thisState = "worked_up";
-		else if(numContent > numWorkedUp && numContent > numLonely)
-			thisState = "content";
+		Log.d(TAG, "numLonely: "+ Integer.toString(numLonely));
+		Log.d(TAG, "numContent: "+ Integer.toString(numContent));
+		Log.d(TAG, "numWorkedUp: "+ Integer.toString(numWorkedUp));
 		
-		if(numContent == numLonely) {
-			if(numContent > numWorkedUp) thisState = "content";
-			else thisState = "worked_up";
+//		if(numLonely > numContent && numLonely > numWorkedUp) { 
+//			thisState = "lonely";
+//		}
+//		else if(numWorkedUp > numContent && numWorkedUp > numLonely)
+//			thisState = "worked_up";
+//		else if(numContent > numWorkedUp && numContent > numLonely)
+//			thisState = "content";
+//		
+//		if(numContent == numLonely) {
+//			if(numContent > numWorkedUp) thisState = "content";
+//			else thisState = "worked_up";
+//		}
+//			
+//		else if(numContent == numWorkedUp) {
+//			if(numContent > numLonely) thisState = "content";
+//			else thisState = "lonely";
+//		}
+//			
+//		else if(numWorkedUp == numLonely) {
+//			if(numWorkedUp > numContent) thisState = "worked_up";
+//			else thisState = "content";
+//		}
+		
+		if(numContent > 0){
+			thisState = "content";
+		} 
+		
+		if(numContent > 2){
+			thisState = "worked_up";
 		}
-			
-		else if(numContent == numWorkedUp) {
-			if(numContent > numLonely) thisState = "content";
-			else thisState = "lonely";
+		//check distance and moisture if state:lonely AND range is inside thresh
+		if(thisState.equals(PowerGarden.plantState[0]) && PowerGarden.Device.distance < PowerGarden.Device.rangeLowThresh && PowerGarden.Device.rangeActive){
+			Log.wtf(TAG, "lonely AND range thresh hit -- TOUCH request Audio!");
+			PowerGarden.audioManager.playSound(-2); //TOUCH_REQUEST audio !
+			PowerGarden.Device.rangeActive = false;
 		}
-			
-		else if(numWorkedUp == numLonely) {
-			if(numWorkedUp > numContent) thisState = "worked_up";
-			else thisState = "content";
+		
+		if(thisState.equals(PowerGarden.plantState[2]) && PowerGarden.Device.moistureActive && PowerGarden.Device.moisture > PowerGarden.Device.moistureLowThresh){
+			Log.wtf(TAG, "worked_up AND moisture thresh hit -- WATER request Audio!");
+			PowerGarden.audioManager.playSound(-3); //WATER_REQUEST audio !
 		}
 		
 		return thisState;
@@ -120,14 +151,18 @@ public class StateManager extends Activity {
 		return currMoisture;
 	}
 
-	public boolean updateDeviceState() {
+	public boolean updateDeviceState() { //check getDeviceState(), if it's new send an update
 		
-		if(PowerGarden.Device.deviceState.contains(PowerGarden.stateManager.getDeviceState())){
-			Log.d("updateDeviceState()", "current device state = "+PowerGarden.Device.deviceState);
+		if(PowerGarden.Device.deviceState.equals(getDeviceState())){ //are we still at the same device state?
+			Log.wtf("current device state:", PowerGarden.Device.deviceState);
 			return false;
-		} else {
-			PowerGarden.Device.deviceState = PowerGarden.stateManager.getDeviceState();
-			Log.d("updateDeviceState()", "current device state = "+PowerGarden.Device.deviceState);
+			
+		} else {	
+			PowerGarden.Device.deviceState = getDeviceState(); //we have changed the device state !
+			Log.wtf("updateDeviceState()", "NEW: "+PowerGarden.Device.deviceState);
+//			Toast toast = Toast.makeText(getApplicationContext(), "NEW device state: "+PowerGarden.Device.deviceState, Toast.LENGTH_LONG);
+//			toast.show();
+			PowerGarden.SM.updateData("update", PowerGarden.Device.ID, null);
 			return true; //true if there is a change to device state 
 		}
 	}
@@ -175,6 +210,26 @@ public class StateManager extends Activity {
 		
 		thisState = PowerGarden.Device.plants[plantIndex].stateIndex;
 		return thisState;
+	}
+	
+	
+	public void prepareTweet(){
+		int index;
+		currentTweet = PowerGarden.Device.tweetCopy.lastElement();
+		index = PowerGarden.Device.tweetCopy.indexOf(currentTweet);
+		currentHandle = PowerGarden.Device.tweetUsername.get(index);
+	}
+	
+	public String getHandle(){ //always call prepareTweet first !
+		String thisHandle;
+		thisHandle = currentHandle;
+		return thisHandle;
+	}
+	
+	public String getTweet(){ //always call prepareTweet first !
+		String thisTweet;
+		thisTweet = currentTweet;
+		return thisTweet;
 	}
 }
 
