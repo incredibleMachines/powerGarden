@@ -107,6 +107,15 @@ browserio.sockets.on('connection',function(browserSocket){
 			browserSocket.broadcast.emit('settings', msg);
 		});
 	});
+
+	browserSocket.on('sprinklers',function(msg){
+		if (msg.state) {
+			// run for 10 minutes by default
+			pump.turnOnSprinklers(60 * 1);
+		} else {
+			pump.turnOffSprinklers();
+		}
+	});
 	
 	browserSocket.on('disconnect',function(){
 		delete browsers['browser'+browserConnection.id];

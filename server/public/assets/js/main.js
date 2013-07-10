@@ -332,6 +332,18 @@ $('.toggle-sensor-active').live('click', function() {
 
 });
 
-
+$('.turn-on-sprinklers').click(function() {
+	console.log('clicked!');
+	socket.emit('sprinklers', { state: true })
+});
+$('.turn-off-sprinklers').click(function() {
+	socket.emit('sprinklers', { state: false })
+});
+$('.restart-twitter-stream').click(function() {
+	socket.emit('twitter-restart');
+});
+$('.include-ustream-link').click(function() {
+	socket.emit('include-ustream-link', { state: $(this).attr('checked') ? true : false });
+});
 
 });

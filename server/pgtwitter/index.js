@@ -141,6 +141,10 @@ var processesTwitterStreamData = function(data) {
 	var text = data.text;
 	var user = data.user.screen_name;
 
+	// Check if the stream sent us one of our own tweets. If so return so that we
+	// don't wind up an in infinite loop responding to our own tweets
+	if (handle == user) return;
+
 	// Make sure there's a user mention or matched hashtag before continuing
 	var hashtagMatched = false;
 	for (var i = 0; i < hashtagRegexes.length; i++) {
