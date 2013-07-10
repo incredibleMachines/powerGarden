@@ -778,7 +778,7 @@
             "audio": []
         },
         "factoids": [
-            "Everyone knows that carrots have Vitamin A. But did you know they also contain iron and Vitamins B6, E, C and K (and more)? Yep. A carrot is nature’s vitamin store.",
+            "Everyone knows that carrots have Vitamin A. But did you know they also contain iron and Vitamins B6, E, C and K (and more)? Yep. A carrot is nature’s vitamin store."
         ]
     },
     "purple_carrots": {
@@ -970,7 +970,7 @@
                 "Hey, you've got the magic touch! Keep it up!",
                 "Perfect job, you're a natural!",
                 "You're making the beets so happy! Great job!",
-                "You must have a green thumb, the veggies are loving you!",
+                "You must have a green thumb, the veggies are loving you!"
             ],
             "audio": [
                 "beets_happy_1",
