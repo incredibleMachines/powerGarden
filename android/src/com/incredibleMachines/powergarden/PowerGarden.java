@@ -27,7 +27,7 @@ public class PowerGarden {
     public static String[] copyType = {"touchRequest", "touchResponseGood", "touchResponseBad", 
     									"waterRequest", "waterResponseGood", "waterResponseBad"};
     
-    public static long plantStateChangeDur = 30000L;
+    //public static long plantStateChangeDur = 30000L;
         
 	//--- audio
     public static SoundPool soundPool;
@@ -120,7 +120,7 @@ public class PowerGarden {
 		//--- tweets, screen stuff
 		static Vector <String> tweetCopy = new Vector<String>();
 		static Vector <String> tweetUsername = new Vector<String>();;
-		static String messageCopy = "Welcome to the @PowerGarden!";
+		static String messageCopy = "Welcome to @ThePowerGarden!";
 		public static int displayMode = PowerGarden.DisplayMode.MessageCopy;
 		
 		//--- global device sensors

@@ -326,10 +326,10 @@ public class PresentationActivity extends UsbActivity implements Connectable{
       signStageUpdater.setActivity(this);
       Timer signScheduling = new Timer();
       
-      signScheduling.schedule(signStageUpdater, 10000, 5000); // (task, initial delay, repeated delay
+      signScheduling.schedule(signStageUpdater, 10000, 15000); // (task, initial delay, repeated delay
       
       //*** send setup to arduino ***//
-      PresentationActivity.super.sendData("setup");
+      PresentationActivity.super.sendData("setup");	
 //      //currentViewable_.
 //      
 ////      LonelyAudio lonelyAudioUpdater = new LonelyAudio();
@@ -521,20 +521,20 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			stageCopy.setVisibility(View.VISIBLE);
 			
 			stageCopy.setText(PowerGarden.Device.messageCopy);
-			stageCopy.setPadding(20, 20, 20, 20);
+			stageCopy.setPadding(30, 20, 30, 20);
 			stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
 			setTextViewFont(PowerGarden.interstateBold, stageCopy);
 			
 			int msgLength = PowerGarden.Device.messageCopy.length();
 			
-			if(msgLength > 120){
+			if(msgLength > 80){
 				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
 				stageCopy.setTextSize(75);//((int)(1/(msgLength*.0004f)));
 				stageCopy.setLineSpacing(0, 1);
 				stageCopy.setAllCaps(true);
 
 			} else {
-				stageCopy.setTextSize(100);//((int)(1/(msgLength*.0004f)));
+				stageCopy.setTextSize(85);//((int)(1/(msgLength*.0004f)));
 				stageCopy.setLineSpacing(3, 1);
 				stageCopy.setAllCaps(true);
 			}
@@ -563,16 +563,16 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			String thisHandle = PowerGarden.stateManager.getHandle();
 			twitterHandle.setText(thisHandle);
 			twitterHandle.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
-			twitterHandle.setTextSize(60);//((int)(1/(msgLength*.0004f)));
+			twitterHandle.setTextSize(65);//((int)(1/(msgLength*.0004f)));
 			twitterHandle.setLineSpacing(3, 1);
 			//twitterHandle.setAllCaps(true);
 			
 			String thisTweet = PowerGarden.stateManager.getTweet();
 			int msgLength = thisTweet.length();
 			stageCopy.setText(thisTweet);
-			stageCopy.setPadding(10, 80, 10, 10); //add padding to top to make the twitter handle fit nicer
+			stageCopy.setPadding(30, 80, 30, 10); //add padding to top to make the twitter handle fit nicer
 			
-			if(msgLength > 120){  //if it's a long ass tweet
+			if(msgLength > 90){  //if it's a long ass tweet
 				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
 				stageCopy.setTextSize(70);//((int)(1/(msgLength*.0004f)));
 				stageCopy.setLineSpacing(0, 0.9f);
@@ -585,9 +585,9 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				stageCopy.setAllCaps(true);
 			}
 
-			if(PowerGarden.stateManager.getDeviceState().equals("lonely")){
-				ScheduleLonelyAudio();
-			}
+//			if(PowerGarden.stateManager.getDeviceState().equals("lonely")){
+//				ScheduleLonelyAudio();
+//			}
 			
 			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
 			try {
@@ -602,6 +602,13 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		
 		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.PlantTitle){
 			//*** show plant title card .png ***//
+			twitterHeading.setVisibility(View.INVISIBLE);
+			
+			if(PowerGarden.Device.plantType.contains(" ")){
+				PowerGarden.Device.plantType.replace(" ", "_");
+				PowerGarden.Device.plantType = PowerGarden.Device.plantType.toLowerCase();
+				
+			}
 			
 			if(PowerGarden.Device.plantType.contains("cherry")){
 				wrapper.setBackgroundResource(R.drawable.cherrytomatoes_title);

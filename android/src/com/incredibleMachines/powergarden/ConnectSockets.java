@@ -40,7 +40,7 @@ public class ConnectSockets extends Activity implements Connectable {
 
 	   private void loadPrefs() {
 
-	      mHostname.setText(PowerGarden.getPrefString("hostname", "10.0.1.0"));
+	      mHostname.setText(PowerGarden.getPrefString("hostname", "10.0.1.2"));
 	      mPort.setText(PowerGarden.getPrefString("port", "9000"));
 	      
 	      //if(PowerGarden.getPrefString("deviceID", "set_id") != null){
@@ -106,7 +106,7 @@ public class ConnectSockets extends Activity implements Connectable {
            		savePlantPrefs();
            		//PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum.toString(), mplantList.getSelectedItem().toString() , ConnectSockets.this);
            		PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, ConnectSockets.this);
-           		PowerGarden.Device.plantType = mplantList.getSelectedItem().toString();
+           		//PowerGarden.Device.plantType = mplantList.getSelectedItem().toString();
            	}
            });
            
