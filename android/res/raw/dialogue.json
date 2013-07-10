@@ -10,11 +10,6 @@
                 "Help these plants grow big and tall: give 'em a pinch to grow an inch!"
             ],
             "audio": [
-                "large_tomatoes_proximity_1",
-                "large_tomatoes_proximity_2",
-                "large_tomatoes_proximity_3",
-                "large_tomatoes_proximity_4",
-                "large_tomatoes_proximity_5"
             ]
         },
         "touchResponseGood": {
@@ -27,15 +22,6 @@
                 "Wow. Were you a vegetable in your past life?"
             ],
             "audio": [
-                "large_tomatoes_happy_1",
-                "large_tomatoes_happy_2",
-                "large_tomatoes_happy_3",
-                "large_tomatoes_happy_4",
-                "large_tomatoes_happy_5",
-                "large_tomatoes_happy_6",
-                "large_tomatoes_happy_7",
-                "large_tomatoes_happy_8",
-                "large_tomatoes_happy_9"
             ]
         },
         "touchResponseBad": {
@@ -46,9 +32,6 @@
                 "All of the hustle and bustle can be overwhelming for plants. They need to relax for a bit."
             ],
             "audio": [
-                "large_tomatoes_worked_up_1",
-                "large_tomatoes_worked_up_2",
-                "large_tomatoes_worked_up_3"
             ]
         },
         "waterRequest": {
@@ -59,10 +42,6 @@
                 "These plants sure look dry! Can you send some water their way?"
             ],
             "audio": [
-                "large_tomatoes_dry_1",
-                "large_tomatoes_dry_2",
-                "large_tomatoes_dry_3",
-                "large_tomatoes_dry_4"
             ]
         },
         "waterResponseGood": {
@@ -194,7 +173,10 @@
                 "Great watering job, you must have done this before!",
                 "Thanks for keeping the tomatoes hydrated! You are a big help!"
             ],
-            "audio": []
+            "audio": [
+                "large_tomatoes_wet_1",
+                "large_tomatoes_wet_2"
+            ]
         },
         "waterResponseBad": {
             "stage_copy": [
@@ -209,7 +191,13 @@
                 "If the tomatoes keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Did you know that the tomato's official name is Solanum lycopersicum. That's Latin for… well, tomato?",
+            "The first European explorers of the Americas actually mistook the tomato for a new breed of eggplant.",
+            "Tomatoes are very friendly plants. They have mutually benefit growing relationships with carrot, asparagus, and a variety of herbs",
+            "Loaded with Vitamins A and C, tomatoes are also a great source of dietary fiber and disease-fighting antioxidants. Oh tomato, what can’t you do?"
+        ]
     },
     "cherry_tomatoes": {
         "touchRequest": {
@@ -323,7 +311,9 @@
                 "Thanks for keeping the tomatoes hydrated! You are a big help!"
             ],
             "audio": [
-                "cherry_tomatoes_wet_1"
+                "cherry_tomatoes_wet_1",
+                "cherry_tomatoes_wet_2",
+                "cherry_tomatoes_wet_3"
             ]
         },
         "waterResponseBad": {
@@ -339,7 +329,13 @@
                 "If the tomatoes keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Did you know that the tomato's official name is Solanum lycopersicum. That's Latin for… well, tomato?",
+            "The first European explorers of the Americas actually mistook the tomato for a new breed of eggplant.",
+            "Tomatoes are very friendly plants. They have mutually benefit growing relationships with carrot, asparagus, and a variety of herbs",
+            "Loaded with Vitamins A and C, tomatoes are also a great source of dietary fiber and disease-fighting antioxidants. Oh tomato, what can’t you do?"
+        ]
     },
     "peppers": {
         "touchRequest": {
@@ -441,7 +437,9 @@
                 "Great watering job, you must have done this before!",
                 "Thanks for keeping the peppers hydrated! You are a big help!"
             ],
-            "audio": []
+            "audio": [
+                "peppers_wet_1"
+            ]
         },
         "waterResponseBad": {
             "stage_copy": [
@@ -458,7 +456,10 @@
                 "Water droplets look neat on a pepper's waxy peel, but too much and these guy will be in trouble…"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Like carrots, red bell peppers contain loads of beta carotene for healthy vision. And up to three times as much Vitamin C as an orange. Lots to love about bell peppers."
+        ]
     },
     "celery": {
         "touchRequest": {
@@ -541,7 +542,7 @@
                 "The peppers are getting tuckered out. Want to play with some other veggies?",
                 "Looks like the peppers need to mellow out a bit. Can you go say hi to other veggies in the garden?",
                 "This celery is so excited it's gonna get its stalks all tangled up! Don't forget about the rest of the garden…",
-                "Celery stick are good to eat, but these are still growing! Let them rest for a bit."
+                "Celery sticks are good to eat, but these are still growing! Let them rest for a bit."
             ],
             "audio": [
                 "celery_worked_up_1",
@@ -590,7 +591,14 @@
                 "Thanks for keeping the celery hydrated! You are a big help!",
                 "Thanks for keeping the celery a lean, green crunchy machine!"
             ],
-            "audio": []
+            "audio": [
+                "celery_wet_1",
+                "celery_wet_2",
+                "celery_wet_3",
+                "celery_wet_4",
+                "celery_wet_5",
+                "celery_wet_6"
+            ]
         },
         "waterResponseBad": {
             "stage_copy": [
@@ -606,7 +614,10 @@
                 "If the celery keeps getting this much water, it's gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "It’s not just a simple green stalk. Studies show that celery can lower cholesterol and reduce cell damage caused by free radicals. Studies also show that celery is perfect with tomato juice."
+        ]
     },
     "orange_carrots": {
         "touchRequest": {
@@ -700,7 +711,7 @@
                 "The carrots are getting tuckered out. Want to play with some other veggies?",
                 "Looks like the carrots need to mellow out a bit. Can you go say hi to other veggies in the garden?",
                 "Too much attention and these carrots are gonna burrow on outta here.",
-                "Celery stick are good to eat, but these are still growing! Let them rest for a bit."
+                "Carrots are good to eat, but these are still growing! Let them rest for a bit."
             ],
             "audio": [
                 "orange_carrots_worked_up_1",
@@ -746,7 +757,9 @@
                 "Thanks for keeping the carrots hydrated! You are a big help!"
             ],
             "audio": [
-                "orange_carrots_wet_1"
+                "orange_carrots_wet_1",
+                "orange_carrots_wet_2",
+                "orange_carrots_wet_3"
             ]
         },
         "waterResponseBad": {
@@ -763,7 +776,10 @@
                 "If the carrots keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Everyone knows that carrots have Vitamin A. But did you know they also contain iron and Vitamins B6, E, C and K (and more)? Yep. A carrot is nature’s vitamin store."
+        ]
     },
     "purple_carrots": {
         "touchRequest": {
@@ -784,13 +800,12 @@
                 "Purple carrots are supercharged with antioxidants. Plus they’re purple, which is pretty cool all by itself."
             ],
             "audio": [
-                "orange_carrots_proximity_1",
-                "orange_carrots_proximity_2",
-                "orange_carrots_proximity_3",
-                "orange_carrots_proximity_4",
-                "orange_carrots_proximity_5",
-                "orange_carrots_proximity_6",
-                "orange_carrots_proximity_7"
+                "purple_carrots_proximity_1",
+                "purple_carrots_proximity_2",
+                "purple_carrots_proximity_3",
+                "purple_carrots_proximity_4",
+                "purple_carrots_proximity_5",
+                "purple_carrots_proximity_6"
             ]
         },
         "touchResponseGood": {
@@ -809,38 +824,26 @@
                 "Good thing you're not a rabbit. When they hang with carrots it never ends well."
             ],
             "audio": [
-                "orange_carrots_happy_1",
-                "orange_carrots_happy_2",
-                "orange_carrots_happy_3",
-                "orange_carrots_happy_4",
-                "orange_carrots_happy_5",
-                "orange_carrots_happy_6",
-                "orange_carrots_happy_7",
-                "orange_carrots_happy_8",
-                "orange_carrots_happy_9",
-                "orange_carrots_happy_10",
-                "orange_carrots_happy_11",
-                "orange_carrots_happy_12",
-                "orange_carrots_happy_13",
-                "orange_carrots_happy_14",
-                "orange_carrots_happy_15",
-                "orange_carrots_happy_16",
-                "orange_carrots_happy_17",
-                "orange_carrots_happy_18",
-                "orange_carrots_happy_19",
-                "orange_carrots_happy_20",
-                "orange_carrots_happy_21",
-                "orange_carrots_happy_22",
-                "orange_carrots_happy_23",
-                "orange_carrots_happy_24",
-                "orange_carrots_happy_25",
-                "orange_carrots_happy_26",
-                "orange_carrots_happy_27",
-                "orange_carrots_happy_28",
-                "orange_carrots_happy_29",
-                "orange_carrots_happy_30",
-                "orange_carrots_happy_31",
-                "orange_carrots_happy_32"
+                "purple_carrots_happy_1",
+                "purple_carrots_happy_2",
+                "purple_carrots_happy_3",
+                "purple_carrots_happy_4",
+                "purple_carrots_happy_5",
+                "purple_carrots_happy_6",
+                "purple_carrots_happy_7",
+                "purple_carrots_happy_8",
+                "purple_carrots_happy_9",
+                "purple_carrots_happy_10",
+                "purple_carrots_happy_11",
+                "purple_carrots_happy_12",
+                "purple_carrots_happy_13",
+                "purple_carrots_happy_14",
+                "purple_carrots_happy_15",
+                "purple_carrots_happy_16",
+                "purple_carrots_happy_17",
+                "purple_carrots_happy_18",
+                "purple_carrots_happy_19",
+                "purple_carrots_happy_20"
             ]
         },
         "touchResponseBad": {
@@ -857,15 +860,14 @@
                 "The carrots are getting tuckered out. Want to play with some other veggies?",
                 "Looks like the carrots need to mellow out a bit. Can you go say hi to other veggies in the garden?",
                 "Too much attention and these carrots are gonna burrow on outta here.",
-                "Celery stick are good to eat, but these are still growing! Let them rest for a bit."
+                "Carrots are good to eat, but these are still growing! Let them rest for a bit."
             ],
             "audio": [
-                "orange_carrots_worked_up_1",
-                "orange_carrots_worked_up_2",
-                "orange_carrots_worked_up_3",
-                "orange_carrots_worked_up_4",
-                "orange_carrots_worked_up_5",
-                "orange_carrots_worked_up_6"
+                "purple_carrots_worked_up_1",
+                "purple_carrots_worked_up_2",
+                "purple_carrots_worked_up_3",
+                "purple_carrots_worked_up_4",
+                "purple_carrots_worked_up_5"
             ]
         },
         "waterRequest": {
@@ -881,12 +883,14 @@
                 "If these dudes don't get some water, we're going to have a carrot riot on our hands! Help!"
             ],
             "audio": [
-                "orange_carrots_dry_1",
-                "orange_carrots_dry_2",
-                "orange_carrots_dry_3",
-                "orange_carrots_dry_4",
-                "orange_carrots_dry_5",
-                "orange_carrots_dry_6"
+                "purple_carrots_dry_1",
+                "purple_carrots_dry_2",
+                "purple_carrots_dry_3",
+                "purple_carrots_dry_4",
+                "purple_carrots_dry_5",
+                "purple_carrots_dry_6",
+                "purple_carrots_dry_7",
+                "purple_carrots_dry_8"
             ]
         },
         "waterResponseGood": {
@@ -902,7 +906,9 @@
                 "Great watering job, you must have done this before!",
                 "Thanks for keeping the carrots hydrated! You are a big help!"
             ],
-            "audio": []
+            "audio": [
+                "purple_carrots_wet_1"
+            ]
         },
         "waterResponseBad": {
             "stage_copy": [
@@ -918,7 +924,11 @@
                 "If the carrots keep getting this much water, they're gonna need an umbrella!"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "Everyone knows that carrots have Vitamin A. But did you know they also contain iron and Vitamins B6, E, C and K (and more)? Yep. A carrot is nature’s vitamin store.",
+            "Among many health benefits, purple carrots have supercharged antioxidant abilities. Plus they’re purple, which is obviously kind of cool in itself."
+        ]
     },
     "beets": {
         "touchRequest": {
@@ -936,7 +946,7 @@
                 "These beets would love to spend some time with you!",
                 "Plant your feet right here and get to know these amazing beets.",
                 "Don't mistake a beets underground hideout for shyness. They definitely want to play with you!",
-                "Purple beets are supercharged with antioxidants. Plus they’re purple, which is pretty cool all by itself."
+                "Beets are supercharged with antioxidants. Plus they’re purple, which is pretty cool all by itself."
             ],
             "audio": [
                 "beets_proximity_1",
@@ -960,8 +970,7 @@
                 "Hey, you've got the magic touch! Keep it up!",
                 "Perfect job, you're a natural!",
                 "You're making the beets so happy! Great job!",
-                "You must have a green thumb, the veggies are loving you!",
-                "Good thing you're not a rabbit. When they hang with beets it never ends well."
+                "You must have a green thumb, the veggies are loving you!"
             ],
             "audio": [
                 "beets_happy_1",
@@ -1012,7 +1021,7 @@
                 "The beets are getting tuckered out. Want to play with some other veggies?",
                 "Looks like the beets need to mellow out a bit. Can you go say hi to other veggies in the garden?",
                 "Too much attention and these beets are gonna burrow on outta here.",
-                "Celery stick are good to eat, but these are still growing! Let them rest for a bit."
+                "Beets are good to eat, but these are still growing! Let them rest for a bit."
             ],
             "audio": [
                 "beets_worked_up_1",
@@ -1058,7 +1067,11 @@
                 "Thanks for keeping the beets hydrated! You are a big help!",
                 "The beets sure look refreshed! Way to \"beet\" the heat. (Get it?)"
             ],
-            "audio": []
+            "audio": [
+                "beets_wet_1",
+                "beets_wet_2",
+                "beets_wet_3"
+            ]
         },
         "waterResponseBad": {
             "stage_copy": [
@@ -1075,6 +1088,9 @@
                 "That's not how you make beet juice! Cut back on the water, will ya?"
             ],
             "audio": []
-        }
+        },
+        "factoids": [
+            "High in fiber, red beets reduce cholesterol. They also contain nutrients that act as natural anti-inflammatory agents. Way to be, red beets."
+        ]
     }
 }
