@@ -166,10 +166,11 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 		socketIOException.printStackTrace();
 		Log.d(TAG,"ERROR MESSAGE: "+socketIOException.getMessage());
 		if(socketIOException.getMessage().equals("1+0")){
+			Log.d(TAG, "hit onError '1+0'");
 			PowerGarden.bConnected = false;
-			//closeUpShop();
-			//backgroundTimer.schedule(this, connectTimeout);
-			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+			backgroundTimer.schedule(this, connectTimeout);
+			closeUpShop();
+			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		if(socketIOException.getMessage().equals("Timeout Error")){
 			PowerGarden.bConnected = false;
@@ -475,8 +476,8 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 		// TODO Auto-generated method stub
 		//if(!firstConnect){
 			Log.e(TAG,"CONNECT TIMED OUT");
-			//socket.disconnect();
-			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+			socket.disconnect();
+			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
 		//} else firstConnect = false;
 	}
