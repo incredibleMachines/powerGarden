@@ -111,11 +111,15 @@ browserio.sockets.on('connection',function(browserSocket){
 	browserSocket.on('sprinklers',function(msg){
 		if (msg.state) {
 			// run for 10 minutes by default
-			pump.turnOnSprinklers(60 * 1);
+			pump.turnOnSprinklers(60 * 10);
 		} else {
 			pump.turnOffSprinklers();
 		}
 	});
+
+	// browserSocket.on('restart-twitter-stream',function(msg){
+	// 	pgtwitter.restart();
+	// });
 	
 	browserSocket.on('disconnect',function(){
 		delete browsers['browser'+browserConnection.id];
@@ -252,7 +256,8 @@ function twitterCallback(data, raw) {
 		// User is trying to provide water
 
 		// look up water needs of all devices
-		database.calculateGardenWaterNeeds(function(pumpDuration) {
+		var pumpDuration = 30;
+		// database.calculateGardenWaterNeeds(function(pumpDuration) {
 			// console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
 
 			if (pumpDuration > 0) {
@@ -306,7 +311,7 @@ function twitterCallback(data, raw) {
 				var responses = dialogue['garden'].waterResponseBad.stage_copy;
 				processResponses(plant, responses);
 			}
-		});
+		// });
 
 	} else {
 
