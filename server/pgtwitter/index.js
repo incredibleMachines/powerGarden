@@ -14,8 +14,8 @@ var twitter;
 var callback;
 
 // Set up our handle & hashtags to follow
-var handle = 'IncMachinesDev';
-var hashtags = ['IncMachinesDev', 'PowerGarden', 'ThePowerGarden'];
+var handle = 'ThePowerGarden';
+var hashtags = ['ThePowerGarden', 'PowerGarden'];
 var trackString = handle + ',' + hashtags.join(',');
 
 var ustreamLink = 'http://ustre.am/10WaX';
@@ -143,7 +143,10 @@ var processesTwitterStreamData = function(data) {
 
 	// Check if the stream sent us one of our own tweets. If so return so that we
 	// don't wind up an in infinite loop responding to our own tweets
-	if (handle == user) return;
+	if (handle == user) {
+		console.log('[TWITTER] Matched a tweet from self, exiting: @' + user + ': ' + text);
+		return;
+	}
 
 	// Make sure there's a user mention or matched hashtag before continuing
 	var hashtagMatched = false;
@@ -216,6 +219,11 @@ var processesTwitterStreamData = function(data) {
 	callback(result, data);
 
 }
+
+var restart = function() {
+	twitter.resurrect();
+}
+exports.restart = restart;
 
 
 /* ******************************************************************************************* */
