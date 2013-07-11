@@ -96,8 +96,10 @@ browserio.sockets.on('connection',function(browserSocket){
 
 	browserSocket.on('ignore',function(msg){
 		console.log(msg);
-		clients['client-'+msg.connection_id].socket.emit('ignore',msg);
-		browserSocket.broadcast.emit('ignore', msg);
+		database.updateIgnore(msg, function() {
+			clients['client-'+msg.connection_id].socket.emit('ignore',msg);
+			browserSocket.broadcast.emit('ignore', msg);
+		});
 	});
 
 	browserSocket.on('settings',function(msg){
@@ -199,7 +201,9 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('ignore',function(msg){
 		msg.connection_id = connection.id;
-		browserio.sockets.emit('ignore',msg);
+		database.updateIgnore(msg, function() {
+			browserio.sockets.emit('ignore',msg);
+		});
 	});
 
 	socket.on('stream',function(msg){
