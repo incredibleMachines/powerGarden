@@ -433,7 +433,8 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 		
 		for (var i = 0; i < res.length; i++) {
 			// console.log('calculateGardenWaterNeeds: '+i+': '+JSON.stringify(res[i]));
-			if (!res[i].state.moisture == 'born') continue;
+			console.log('i is ' + i +', duration is ' + duration);
+			if (res[i].state.moisture == 'born') continue;
 
 			// Increase amount according to above map
 			duration += durations[res[i].state.moisture];
