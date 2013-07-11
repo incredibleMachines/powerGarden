@@ -33,6 +33,9 @@ var waterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', '
 
 // PLACE MORE SPECIFIC KEYWORDS FIRST SO THEY GET CAUGHT FIRST IN THE WORD SEARCH LOOP
 // e.g., try to match "purple carrots" before "carrots"
+// emit is a plant slug for tablets which should receive plant-specific tweets even
+// if they wren't matched
+// e.g., send matches for tomatoes to cherry tomatoes as well
 var plantKeywords = [
 	{
 		"type": "cherry_tomatoes",
