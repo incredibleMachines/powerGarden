@@ -357,6 +357,7 @@ function twitterCallback(data, raw) {
 					water: watering
 				}
 				clients[key].socket.emit('tweet', obj);
+				console.log('[TWEET] '.warn + JSON.stringify(obj).input);
 				// console.log('Sending tweet event to: plant_type: '+clients[key].plant_type+', plant_slug: '+clients[key].plant_slug);
 				// console.log(obj);
 			}

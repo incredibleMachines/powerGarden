@@ -151,6 +151,12 @@ var processesTwitterStreamData = function(data) {
 		return;
 	}
 
+	// Ignore retweets
+	if (data.hasOwnProperty('retweeted_status')) {
+		console.log('[TWITTER] Ignoring retweet: @' + user + ': ' + text);
+		return
+	}
+
 	// Make sure there's a user mention or matched hashtag before continuing
 	var hashtagMatched = false;
 	for (var i = 0; i < hashtagRegexes.length; i++) {
