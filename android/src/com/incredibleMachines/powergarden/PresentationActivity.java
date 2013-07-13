@@ -254,6 +254,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		Log.d(TAG, "onPostCreate");
 		delayedHide(100);
 		
+		PowerGarden.Device.plantType = PowerGarden.getPrefString("plantType", "orange_carrots");
 		
 		//****** setup soundPool player ******//
 		
@@ -392,7 +393,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		
 		setStageBG(); // bare plant background of this plantType
 		
-		updateStage();
+		updateStage(-1);
 		
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
@@ -505,139 +506,145 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		//Log.d("LOADDIALOGUE", PowerGarden.dialogue.toString());
 	}
 	
-	void updateStage(){
+	void updateStage(int deviceStateIndex){
 		frameCount++;
 		
-		if(frameCount > 3 && PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
-			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.PlantTitle;
-			frameCount = 0;
-		}
+		if(deviceStateIndex > -1){ //we have a real state change, immediately show copy for that state
+			
+		} 
 		
-		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
-			//*** display whatever is inside PowerGarden.Device.messageCopy ***/
-			setStageBG();
-			
-			twitterHeading.setVisibility(View.INVISIBLE);
-			stageCopy.setVisibility(View.VISIBLE);
-			
-			stageCopy.setText(PowerGarden.Device.messageCopy);
-			stageCopy.setPadding(30, 20, 30, 20);
-			stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
-			setTextViewFont(PowerGarden.interstateBold, stageCopy);
-			
-			int msgLength = PowerGarden.Device.messageCopy.length();
-			
-			if(msgLength > 80){
-				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
-				stageCopy.setTextSize(75);//((int)(1/(msgLength*.0004f)));
-				stageCopy.setLineSpacing(0, 1);
-				stageCopy.setAllCaps(true);
-
-			} else {
-				stageCopy.setTextSize(85);//((int)(1/(msgLength*.0004f)));
-				stageCopy.setLineSpacing(3, 1);
-				stageCopy.setAllCaps(true);
+		else {	//deviceStateIndex = -1; this is a standard update, do your thang
+			if(frameCount > 3 && PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
+				PowerGarden.Device.displayMode = PowerGarden.DisplayMode.PlantTitle;
+				frameCount = 0;
 			}
 			
-			try {
-				JSONObject j = new JSONObject();
-				j.put("device_id", PowerGarden.Device.ID).put("message", PowerGarden.Device.messageCopy).put("background",PowerGarden.Device.plantType+"_bg.png");
-				PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.Tweet){
-			//*** display a tweet ! ***/
-			
-			twitterHeading.setVisibility(View.VISIBLE);
-			stageCopy.setVisibility(View.VISIBLE);
-			
-			setTextViewFont(PowerGarden.interstateBold, stageCopy);
-			setTextViewFont(PowerGarden.interstateBold, twitterHandle);
-			wrapper.setBackgroundResource(R.drawable.twitter_bg);
-			
-			PowerGarden.stateManager.prepareTweet();
-			
-			String thisHandle = PowerGarden.stateManager.getHandle();
-			twitterHandle.setText(thisHandle);
-			twitterHandle.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
-			twitterHandle.setTextSize(65);//((int)(1/(msgLength*.0004f)));
-			twitterHandle.setLineSpacing(3, 1);
-			//twitterHandle.setAllCaps(true);
-			
-			String thisTweet = PowerGarden.stateManager.getTweet();
-			int msgLength = thisTweet.length();
-			stageCopy.setText(thisTweet);
-			stageCopy.setPadding(30, 80, 30, 10); //add padding to top to make the twitter handle fit nicer
-			
-			if(msgLength > 90){  //if it's a long ass tweet
-				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
-				stageCopy.setTextSize(70);//((int)(1/(msgLength*.0004f)));
-				stageCopy.setLineSpacing(0, 0.9f);
-				stageCopy.setAllCaps(true);
-
-			} else {
-				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
-				stageCopy.setTextSize(90);//((int)(1/(msgLength*.0004f)));
-				stageCopy.setLineSpacing(3, 1);
-				stageCopy.setAllCaps(true);
-			}
-
-//			if(PowerGarden.stateManager.getDeviceState().equals("lonely")){
-//				ScheduleLonelyAudio();
-//			}
-			
-			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
-			try {
-				JSONObject j = new JSONObject();
-				j.put("device_id", PowerGarden.Device.ID).put("message", "@"+thisHandle+" "+thisTweet).put("background","twitter_bg.png");
-				PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		
-		if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.PlantTitle){
-			//*** show plant title card .png ***//
-			twitterHeading.setVisibility(View.INVISIBLE);
-			
-			if(PowerGarden.Device.plantType.contains(" ")){
-				PowerGarden.Device.plantType.replace(" ", "_");
-				PowerGarden.Device.plantType = PowerGarden.Device.plantType.toLowerCase();
+			if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
+				//*** display whatever is inside PowerGarden.Device.messageCopy ***/
+				setStageBG();
 				
+				twitterHeading.setVisibility(View.INVISIBLE);
+				stageCopy.setVisibility(View.VISIBLE);
+				
+				stageCopy.setText(PowerGarden.Device.messageCopy);
+				stageCopy.setPadding(30, 20, 30, 20);
+				stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+				setTextViewFont(PowerGarden.interstateBold, stageCopy);
+				
+				int msgLength = PowerGarden.Device.messageCopy.length();
+				
+				if(msgLength > 80){
+					stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+					stageCopy.setTextSize(75);//((int)(1/(msgLength*.0004f)));
+					stageCopy.setLineSpacing(0, 1);
+					stageCopy.setAllCaps(true);
+	
+				} else {
+					stageCopy.setTextSize(85);//((int)(1/(msgLength*.0004f)));
+					stageCopy.setLineSpacing(3, 1);
+					stageCopy.setAllCaps(true);
+				}
+				
+				try {
+					JSONObject j = new JSONObject();
+					j.put("device_id", PowerGarden.Device.ID).put("message", PowerGarden.Device.messageCopy).put("background",PowerGarden.Device.plantType+"_bg.png");
+					PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 			
-			if(PowerGarden.Device.plantType.contains("cherry")){
-				wrapper.setBackgroundResource(R.drawable.cherrytomatoes_title);
-			} else if(PowerGarden.Device.plantType.contains("beets")){
-				wrapper.setBackgroundResource(R.drawable.beets_title);
-			} else if(PowerGarden.Device.plantType.contains("celery")){
-				wrapper.setBackgroundResource(R.drawable.celery_title);
-			} else if(PowerGarden.Device.plantType.contains("tomatoes")){
-				wrapper.setBackgroundResource(R.drawable.tomatoes_title);
-			} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
-				wrapper.setBackgroundResource(R.drawable.orangecarrots_title);
-			} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
-				wrapper.setBackgroundResource(R.drawable.purplecarrots_title);
-			} else if(PowerGarden.Device.plantType.contains("peppers")){
-				wrapper.setBackgroundResource(R.drawable.peppers_title);
-			}  else if(PowerGarden.Device.plantType == null){
-				wrapper.setBackgroundColor(color.default_background);
-			} else {
-				wrapper.setBackgroundColor(color.default_background);
+			if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.Tweet){
+				//*** display a tweet ! ***/
+				
+				twitterHeading.setVisibility(View.VISIBLE);
+				stageCopy.setVisibility(View.VISIBLE);
+				
+				setTextViewFont(PowerGarden.interstateBold, stageCopy);
+				setTextViewFont(PowerGarden.interstateBold, twitterHandle);
+				wrapper.setBackgroundResource(R.drawable.twitter_bg);
+				
+				PowerGarden.stateManager.prepareTweet();
+				
+				String thisHandle = PowerGarden.stateManager.getHandle();
+				twitterHandle.setText(thisHandle);
+				twitterHandle.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+				twitterHandle.setTextSize(65);//((int)(1/(msgLength*.0004f)));
+				twitterHandle.setLineSpacing(3, 1);
+				//twitterHandle.setAllCaps(true);
+				
+				String thisTweet = PowerGarden.stateManager.getTweet();
+				int msgLength = thisTweet.length();
+				stageCopy.setText(thisTweet);
+				stageCopy.setPadding(30, 80, 30, 10); //add padding to top to make the twitter handle fit nicer
+				
+				if(msgLength > 90){  //if it's a long ass tweet
+					stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+					stageCopy.setTextSize(70);//((int)(1/(msgLength*.0004f)));
+					stageCopy.setLineSpacing(0, 0.9f);
+					stageCopy.setAllCaps(true);
+	
+				} else {
+					stageCopy.setShadowLayer(50, .5f, .5f, Color.DKGRAY);
+					stageCopy.setTextSize(90);//((int)(1/(msgLength*.0004f)));
+					stageCopy.setLineSpacing(3, 1);
+					stageCopy.setAllCaps(true);
+				}
+	
+	//			if(PowerGarden.stateManager.getDeviceState().equals("lonely")){
+	//				ScheduleLonelyAudio();
+	//			}
+				
+				PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
+				try {
+					JSONObject j = new JSONObject();
+					j.put("device_id", PowerGarden.Device.ID).put("message", "@"+thisHandle+" "+thisTweet).put("background","twitter_bg.png");
+					PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
-			stageCopy.setText("");
 			
-			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
-			try {
-				JSONObject j = new JSONObject();
-				j.put("device_id", PowerGarden.Device.ID).put("message", "").put("background",PowerGarden.Device.plantType+"_title.png");
-				PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
-			} catch (JSONException e) {
-				e.printStackTrace();
+			
+			if(PowerGarden.Device.displayMode == PowerGarden.DisplayMode.PlantTitle){
+				//*** show plant title card .png ***//
+				twitterHeading.setVisibility(View.INVISIBLE);
+				
+				if(PowerGarden.Device.plantType.contains(" ")){
+					PowerGarden.Device.plantType.replace(" ", "_");
+					PowerGarden.Device.plantType = PowerGarden.Device.plantType.toLowerCase();
+					
+				}
+				
+				if(PowerGarden.Device.plantType.contains("cherry")){
+					wrapper.setBackgroundResource(R.drawable.cherrytomatoes_title);
+				} else if(PowerGarden.Device.plantType.contains("beets")){
+					wrapper.setBackgroundResource(R.drawable.beets_title);
+				} else if(PowerGarden.Device.plantType.contains("celery")){
+					wrapper.setBackgroundResource(R.drawable.celery_title);
+				} else if(PowerGarden.Device.plantType.contains("tomatoes")){
+					wrapper.setBackgroundResource(R.drawable.tomatoes_title);
+				} else if(PowerGarden.Device.plantType.contains("orange_carrots")){
+					wrapper.setBackgroundResource(R.drawable.orangecarrots_title);
+				} else if(PowerGarden.Device.plantType.contains("purple_carrots")){
+					wrapper.setBackgroundResource(R.drawable.purplecarrots_title);
+				} else if(PowerGarden.Device.plantType.contains("peppers")){
+					wrapper.setBackgroundResource(R.drawable.peppers_title);
+				}  else if(PowerGarden.Device.plantType == null){
+					wrapper.setBackgroundColor(color.default_background);
+				} else {
+					wrapper.setBackgroundColor(color.default_background);
+				}
+				stageCopy.setText("");
+				
+				PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
+				try {
+					JSONObject j = new JSONObject();
+					j.put("device_id", PowerGarden.Device.ID).put("message", "").put("background",PowerGarden.Device.plantType+"_title.png");
+					PowerGarden.SM.sendMonkey("display", PowerGarden.Device.ID.toString(), j, this);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

@@ -177,10 +177,10 @@ void readRange(){
   if(enable_rangefinder == true){
     rangefinderVal = analogRead(RANGE_PIN);
     if(debug==true){
-      //      Serial.print("Rangefinder val ");
-      //      Serial.print(rangefinderVal);
-      //      Serial.print(" (cm)");
-      //      Serial.println();
+            Serial.print("Rangefinder val ");
+            Serial.print(rangefinderVal);
+            Serial.print(" (cm)");
+            Serial.println();
     }
     else{
       //nothing

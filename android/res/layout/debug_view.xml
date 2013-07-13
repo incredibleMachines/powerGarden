@@ -65,14 +65,14 @@
                        android:id="@+id/seekBar1"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="15000" />
+                       android:max="40000" />
 
                    <TextView
                        android:id="@+id/bar1text"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -106,14 +106,14 @@
                        android:id="@+id/seekBar2"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="15000" />
+                       android:max="40000" />
 
                    <TextView
                        android:id="@+id/bar2text"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -147,14 +147,14 @@
                        android:id="@+id/seekBar3"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="15000" />
+                       android:max="40000" />
 
                    <TextView
                        android:id="@+id/bar3text"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -188,14 +188,14 @@
                        android:id="@+id/seekBar4"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="15000" />
+                       android:max="40000" />
 
                    <TextView
                        android:id="@+id/bar4text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
            </LinearLayout>
@@ -235,14 +235,14 @@
                        android:id="@+id/seekBar5"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="15000" />
+                       android:max="40000" />
 
                    <TextView
                        android:id="@+id/bar5text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -276,14 +276,14 @@
                        android:id="@+id/seekBar6"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="15000" />
+                       android:max="40000" />
 
                    <TextView
                        android:id="@+id/bar6text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -317,14 +317,14 @@
                        android:id="@+id/seekBar7"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="15000" />
+                       android:max="40000" />
 
                    <TextView
                        android:id="@+id/bar7text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -358,14 +358,14 @@
                        android:id="@+id/seekBar8"
                        android:layout_width="400dp"
                        android:layout_height="wrap_content"
-                       android:max="15000" />
+                       android:max="40000" />
 
                    <TextView
                        android:id="@+id/bar8text"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:layout_toRightOf="@id/seekBar1"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
            </LinearLayout>
@@ -396,7 +396,7 @@
                        android:id="@+id/tempval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -415,7 +415,7 @@
                        android:id="@+id/humval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -434,7 +434,7 @@
                        android:id="@+id/moistval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -461,7 +461,7 @@
                        android:id="@+id/distanceval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
 
@@ -480,7 +480,7 @@
                        android:id="@+id/lightval"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="15000"
+                       android:text="40000"
                        android:textSize="26dp" />
                </LinearLayout>
                <LinearLayout

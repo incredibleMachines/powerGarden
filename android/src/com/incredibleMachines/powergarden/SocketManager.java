@@ -258,45 +258,6 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 				//callbackActivity.signalToUi(PowerGarden.ThreshChange, PowerGarden.Device.ID);
 			}
 			
-			
-			//**** update ****// //--- DEPRECATED ---
-//			else if(event.equals("update")){
-//				try {
-//					//JSONObject j = new JSONObject(args[0].toString() );
-//					if(!PowerGarden.Device.ID.contentEquals(j.getString("device_id"))){
-//						Log.e(TAG, "DEVICE ID MISMATCH");
-//						Log.e(TAG, "PowerGarden.Device.ID: "+ PowerGarden.Device.ID);
-//						Log.e(TAG, "incoming Device.ID: "+ j.getString("device_id"));
-//						
-//					}
-//					//PowerGarden.Device.ID = j.getString("device_id");
-//					//PowerGarden.Device.deviceMood = j.getString("mood");
-//					//PowerGarden.Device.messageCopy = j.getString("message");
-////					PowerGarden.savePref("deviceID",PowerGarden.Device.ID);
-////					System.out.println(PowerGarden.Device.ID);
-//					
-//					if(j.has("message")){
-//						JSONObject thisMsg = j.getJSONObject("message");
-//						if(thisMsg.has("touches")){
-//							PowerGarden.Device.messageCopy = thisMsg.getString("touches");
-//							Log.d(TAG, "received 'message'");
-//							Log.d(TAG, PowerGarden.Device.messageCopy);
-//							callbackActivity.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
-//							if(presentationCallback != null)
-//								presentationCallback.signalToUi(PowerGarden.MessageUpdated, PowerGarden.Device.messageCopy);
-//						}
-//					} else Log.wtf(TAG, "NO 'message' received");
-//					
-//					if(j.has("mood")){
-//						//do something yo
-//					}
-//					
-//					callbackActivity.signalToUi(PowerGarden.Updated, PowerGarden.Device.ID);
-//				} catch (JSONException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
 
 			//**** stream control update ****//
 			else if(event.equals("firehose")){
@@ -311,7 +272,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 			}
 			
 			
-			//**** stream control update ****//
+			//**** enable/disable plant touches by index ****//
 			else if(event.equals("ignore")){
 				
 				int thisPlantIndex = 0;
@@ -347,10 +308,14 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 					//don't believe we'll use this.
 				}
 				if(j.has("water")){
-					Boolean isWatering = Boolean.valueOf(j.getString("text"));
+					Boolean isWatering = Boolean.valueOf(j.getString("water"));
+					Log.d("water: ", j.getString("water"));
 //					PowerGarden.Device.isWatering = isWatering; //not using this at the moment.
 					//if this is a watering tweet, garden is watering, let's play water sounds.
-					if(isWatering) PowerGarden.audioManager.playSound(-4); //only sound triggered by a tweet event !
+					if(isWatering){ 
+						PowerGarden.audioManager.playSound(-4); //only sound triggered by a tweet event !
+						Log.d(TAG, "isWatering == TRUE");
+					}
 				}
 
 				callbackActivity.signalToUi(PowerGarden.DisplayTweet, PowerGarden.Device.ID);
@@ -466,7 +431,6 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 	void closeUpShop(){
 		
 		Log.e(TAG, "closeup shop");
-		//sendSessionEnd();
 		socket.disconnect();
 	}
 

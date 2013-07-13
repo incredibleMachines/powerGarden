@@ -42,7 +42,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
     TextView streamMode;
     TextView rangeThresh;
     
-    
+    int lastPlantDisplay[] = new int[PowerGarden.Device.PlantNum];
     TextView plantCopy;
   
     public boolean debugSensors = true;
@@ -182,8 +182,9 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 				//updateView(); //quick refresh of all PowerGarden.statics
 				
 				for(int i = 0; i<parseData.length-1; i++){
-					PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
-					plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
+					plantDisplay[i] = Integer.parseInt(parseData[i+1]);
+					//PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
+					//plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
 					//Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
 				}
 	
@@ -199,7 +200,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 										PowerGarden.Device.plants[i].triggered = false;
 									}
 									
-									if((PowerGarden.Device.plants[i].getFilteredValue() > PowerGarden.Device.plants[i].threshold) && 
+									if((PowerGarden.Device.plants[i].getFilteredValue() < PowerGarden.Device.plants[i].threshold) && 
 										!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
 										
 										//*** TOUCHED ***//
@@ -209,25 +210,30 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 										
 										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp); //add timestamp to overall touchStamps vector
 										
-										PowerGarden.stateManager.updatePlantStates(); //check this plant's state
+										//PowerGarden.stateManager.updatePlantStates(); //check this plant's state
 										
 										//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
-										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
-										//PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), "worked_up", 88, PresentationViewable.this );	
-										if (PowerGarden.stateManager.updateDeviceState() ){
-											PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
-											//activity_.resetView(); //now done in timerTask run() method
-										}
+										//******* for now
+										//PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
+										//*******	
+//										if (PowerGarden.stateManager.updateDeviceState() ){
+//											PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+//											//activity_.resetView(); //now done in timerTask run() method
+//										}
 										
 										//play correct sound for this plant here
-										PowerGarden.audioManager.playSound(i); 	
+										//PowerGarden.audioManager.playSound(i); 	
 									}
 									
-									if(bSetup) plantValView[i].setText(String.valueOf(plantDisplay[i]));
+									if(bSetup){
+										plantValView[i].setText(String.valueOf(plantDisplay[i]));
+										//plantValView[i].setText(String.valueOf(Math.abs(plantDisplay[i]-lastPlantDisplay[i])));
+										//lastPlantDisplay[i] = plantDisplay[i];
+									}
 									
 									
 									if(PowerGarden.Device.datastream_mode == true) //this might be getting crazy
-										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
+										//PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
 									
 									if(bSetup){
 										if(PowerGarden.Device.plants[i].triggered) {
@@ -294,11 +300,17 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 			    }
 			}else if(dataType.equalsIgnoreCase("R")){ // RANGE
 				PowerGarden.Device.distance = Integer.parseInt(parseData[1]);
+				Log.d("distqnce: ", Integer.toString(PowerGarden.Device.distance) );
 				//createJson("distance",PowerGarden.distance);
-				if(PowerGarden.Device.distance > PowerGarden.Device.rangeLowThresh+35)
-					PowerGarden.Device.rangeActive = true;
+//				if(PowerGarden.Device.distance > PowerGarden.Device.rangeLowThresh && )
+//					PowerGarden.Device.rangeActive = true;
+//				if(System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 3000){
+//					PowerGarden.Device.rangeActive = true;
+//				}
 				
-				PowerGarden.stateManager.updateDeviceState();
+				if(PowerGarden.stateManager.updateDeviceState()){
+					activity_.updateStage(PowerGarden.deviceStateIndex);
+				}
 				
 				if(PowerGarden.Device.datastream_mode)
 					PowerGarden.SM.updateData("update", PowerGarden.Device.ID, this);
@@ -325,7 +337,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 				PowerGarden.Device.distance = Integer.parseInt(parseData[5]);
 				//objTest(new Object({"light",PowerGarden.light}));
 				//objTest(new Monkey("string",49));
-				//sendUpdateData("update",new Monkey("light",PowerGarden.Device.light),new Monkey("temperature",PowerGarden.Device.temp),new Monkey("humidity",PowerGarden.Device.hum),new Monkey("moisture",PowerGarden.Device.moisture));
+				sendUpdateData("update",new Monkey("light",PowerGarden.Device.light),new Monkey("distance",PowerGarden.Device.distance),new Monkey("temperature",PowerGarden.Device.temp),new Monkey("humidity",PowerGarden.Device.hum),new Monkey("moisture",PowerGarden.Device.moisture));
 				PowerGarden.stateManager.updatePlantStates();
 				PowerGarden.stateManager.updateDeviceState();
 				

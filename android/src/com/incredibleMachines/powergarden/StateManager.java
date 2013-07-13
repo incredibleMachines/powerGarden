@@ -84,30 +84,65 @@ public class StateManager extends Activity {
 	public static String getDeviceState(){
 		String thisState = "null";
 
-		if(PowerGarden.Device.totalNumPlantTouches < PowerGarden.Device.touchLowThresh){
-			thisState = "lonely";
-			PowerGarden.deviceStateIndex = 0;
-		}
-		if(PowerGarden.Device.totalNumPlantTouches >= PowerGarden.Device.touchLowThresh){
-			thisState = "content";
-			PowerGarden.deviceStateIndex = 1;
-		}		
-		if(PowerGarden.Device.totalNumPlantTouches >= PowerGarden.Device.touchHighThresh){
-			thisState = "worked_up";
-			PowerGarden.deviceStateIndex = 2;
-		}
+//		if(PowerGarden.Device.totalNumPlantTouches < PowerGarden.Device.touchLowThresh){
+//			thisState = "lonely";
+//			PowerGarden.deviceStateIndex = 0;
+//		}
+//		if(PowerGarden.Device.totalNumPlantTouches >= PowerGarden.Device.touchLowThresh){
+//			thisState = "content";
+//			PowerGarden.deviceStateIndex = 1;
+//		}		
+//		if(PowerGarden.Device.totalNumPlantTouches >= PowerGarden.Device.touchHighThresh){
+//			thisState = "worked_up";
+//			PowerGarden.deviceStateIndex = 2;
+//		}
 			
 		//check distance and moisture if state:lonely AND range is inside thresh
-		if(thisState.equals("lonely") && PowerGarden.Device.distance < PowerGarden.Device.rangeLowThresh && PowerGarden.Device.rangeActive){
-			Log.wtf(TAG, "lonely AND range thresh hit -- TOUCH request Audio!");
-			PowerGarden.audioManager.playSound(-2); //TOUCH_REQUEST audio !
-			PowerGarden.Device.rangeActive = false; //only play it once
-		}
+//		if(thisState.equals("lonely") && PowerGarden.Device.distance < PowerGarden.Device.rangeLowThresh && PowerGarden.Device.rangeActive
+//				&& System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){
+//			PowerGarden.Device.lastRangeHitTime = System.currentTimeMillis();
+//			Log.wtf(TAG, "lonely AND range thresh hit -- TOUCH request Audio!");
+//			PowerGarden.audioManager.playSound(-2); //TOUCH_REQUEST audio !
+//			//PowerGarden.Device.rangeActive = false; //only play it once
+//		}
+//		
+//		if(thisState.equals("worked_up") && PowerGarden.Device.moistureActive && PowerGarden.Device.moisture > PowerGarden.Device.moistureLowThresh){
+//			Log.wtf(TAG, "worked_up AND moisture thresh hit -- WATER request Audio!");
+//			PowerGarden.audioManager.playSound(-3); //WATER_REQUEST audio !
+//		}
 		
-		if(thisState.equals("worked_up") && PowerGarden.Device.moistureActive && PowerGarden.Device.moisture > PowerGarden.Device.moistureLowThresh){
-			Log.wtf(TAG, "worked_up AND moisture thresh hit -- WATER request Audio!");
-			PowerGarden.audioManager.playSound(-3); //WATER_REQUEST audio !
+		if(Math.abs(PowerGarden.Device.distance - PowerGarden.Device.lastDistance) > 5){
+			
+			if(PowerGarden.Device.distance < 35
+					&& System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000 && 
+					PowerGarden.Device.distance != PowerGarden.Device.lastDistance){
+					PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
+					PowerGarden.Device.deviceState ="content";
+					PowerGarden.deviceStateIndex = 1;
+					PowerGarden.audioManager.playSound(-11);
+					PowerGarden.Device.lastRangeHitTime = System.currentTimeMillis();
+				}
+			
+//			else if (PowerGarden.Device.distance < 75
+//					&& System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000 && 
+//					PowerGarden.Device.distance != PowerGarden.Device.lastDistance){
+//					PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
+//					PowerGarden.Device.deviceState ="content";
+//					PowerGarden.audioManager.playSound(-10);
+//					PowerGarden.Device.lastRangeHitTime = System.currentTimeMillis();
+//				} 
+			
+			
+			else if (Math.abs(PowerGarden.Device.distance - PowerGarden.Device.lastDistance) > 5 && 
+					System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){ //(PowerGarden.Device.distance > 75 && System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){
+						PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
+						PowerGarden.Device.deviceState ="lonely";
+						PowerGarden.deviceStateIndex = 0;
+						PowerGarden.audioManager.playSound(-10);
+						PowerGarden.Device.lastRangeHitTime = System.currentTimeMillis();
+			}
 		}
+			
 		
 		return thisState;
 	}
@@ -136,7 +171,7 @@ public class StateManager extends Activity {
 			Log.wtf("updateDeviceState()", "NEW: "+PowerGarden.Device.deviceState);
 //			Toast toast = Toast.makeText(getApplicationContext(), "NEW device state: "+PowerGarden.Device.deviceState, Toast.LENGTH_LONG);
 //			toast.show();
-			PowerGarden.SM.updateData("update", PowerGarden.Device.ID, null);
+			PowerGarden.SM.updateData("update", PowerGarden.Device.ID, null); //send an update to server about our state change
 			return true; //true if there is a change to device state 
 		}
 	}

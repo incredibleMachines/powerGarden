@@ -6,6 +6,8 @@ class MedianFilter {
 	
   int NUM_VALS_MEDIAN = 7;
   
+  int HYSTERISIS_LOW = 20000;
+  
   int [] vals = new int[NUM_VALS_MEDIAN];
   int [] valsSorted = new int[NUM_VALS_MEDIAN];
   boolean firstVal = true;
@@ -46,7 +48,14 @@ class MedianFilter {
   }
   
   int medianFilterGetMedian(){
-     return valsSorted[ (int)Math.floor(NUM_VALS_MEDIAN/2) ];
+	  int thisMedian = valsSorted[ (int)Math.floor(NUM_VALS_MEDIAN/2) ];
+	  if (thisMedian < HYSTERISIS_LOW) HYSTERISIS_LOW = thisMedian;
+     return thisMedian;
   }
   
 };
+
+// public int medianNoise(){
+//	  int thisNoise;
+//	  return thisNoise;
+//}

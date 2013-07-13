@@ -129,6 +129,7 @@ public class PowerGarden {
 		public static int light = 0;
 		public static int moisture = 0;
 		public static int distance = 0;
+		public static int lastDistance = 0;
 		public static int totalNumPlantTouches = 0; //running total of all plant touches on DEVICE in a period at any given time
 		
 		//--- thresholds
@@ -157,6 +158,7 @@ public class PowerGarden {
 		
 		static boolean rangeActive = Boolean.valueOf(PowerGarden.getPrefString("range_active","true"));
 		static int rangeLowThresh = Integer.parseInt(PowerGarden.getPrefString("range_low","50"));
+		static long lastRangeHitTime = 0;
 
 	}
 	
