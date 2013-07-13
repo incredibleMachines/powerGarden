@@ -10,6 +10,6 @@ The app is designed to use this arduino lib - https://github.com/felis/USB_Host_
 	/* Uncomment the following if you have Arduino Mega ADK board with MAX3421e built-in */
 	#define BOARD_MEGA_ADK
 
-Twitter Account Setup for @PowerGarden
+Twitter Account Setup for @ThePowerGarden
 	Make sure to turn "Geolocate my tweets" ON
 	

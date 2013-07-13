@@ -154,7 +154,7 @@ void loop() {
     // Expecting a message like 1,15000 or 0,0
     // So call parseInt() twice to grab each value
     int state = wifly.parseInt();
-    int duration = wifly.parseInt();
+    unsigned long duration = wifly.parseInt();
 
     //    Serial.print("State: "); 
     //    Serial.println(state);

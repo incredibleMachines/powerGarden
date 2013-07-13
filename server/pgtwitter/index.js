@@ -14,8 +14,8 @@ var twitter;
 var callback;
 
 // Set up our handle & hashtags to follow
-var handle = 'IncMachinesDev';
-var hashtags = ['IncMachinesDev', 'PowerGarden', 'ThePowerGarden'];
+var handle = 'ThePowerGarden';
+var hashtags = ['ThePowerGarden', 'PowerGarden'];
 var trackString = handle + ',' + hashtags.join(',');
 
 var ustreamLink = 'http://ustre.am/10WaX';
@@ -33,6 +33,9 @@ var waterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', '
 
 // PLACE MORE SPECIFIC KEYWORDS FIRST SO THEY GET CAUGHT FIRST IN THE WORD SEARCH LOOP
 // e.g., try to match "purple carrots" before "carrots"
+// emit is a plant slug for tablets which should receive plant-specific tweets even
+// if they wren't matched
+// e.g., send matches for tomatoes to cherry tomatoes as well
 var plantKeywords = [
 	{
 		"type": "cherry_tomatoes",
@@ -141,6 +144,19 @@ var processesTwitterStreamData = function(data) {
 	var text = data.text;
 	var user = data.user.screen_name;
 
+	// Check if the stream sent us one of our own tweets. If so return so that we
+	// don't wind up an in infinite loop responding to our own tweets
+	if (handle == user) {
+		console.log('[TWITTER] Matched a tweet from self, exiting: @' + user + ': ' + text);
+		return;
+	}
+
+	// Ignore retweets
+	if (data.hasOwnProperty('retweeted_status')) {
+		console.log('[TWITTER] Ignoring retweet: @' + user + ': ' + text);
+		return
+	}
+
 	// Make sure there's a user mention or matched hashtag before continuing
 	var hashtagMatched = false;
 	for (var i = 0; i < hashtagRegexes.length; i++) {
@@ -212,6 +228,11 @@ var processesTwitterStreamData = function(data) {
 	callback(result, data);
 
 }
+
+var restart = function() {
+	twitter.resurrect();
+}
+exports.restart = restart;
 
 
 /* ******************************************************************************************* */

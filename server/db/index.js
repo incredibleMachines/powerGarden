@@ -104,6 +104,18 @@ DB.prototype.updateThreshold = function(data, callback) {
 	});
 }
 
+DB.prototype.updateIgnore = function(data, callback) {
+
+	// invert ignore value for active state, i.e. { ignore: true } means active should be false
+	var active = !data.ignore;
+	var obj = { device_id: new BSON.ObjectID(String(data.device_id)), 'cap_thresh.plant_index': data.plant_index };
+	var settingsObj = { $set: { 'cap_thresh.$.active': active } }
+
+	settingsDb.update(obj, settingsObj, function(err, count) {
+		callback();
+	});
+}
+
 
 
 /* ******************************************************************************************* */
@@ -267,7 +279,7 @@ DB.prototype.createSettings = function(message,connection,_db,num_plants){
 
 	var cap_thresh = [];
 	for (var i = 0; i < num_plants; i++) {
-		cap_thresh[i] = { plant_index: i, value: 3000 };
+		cap_thresh[i] = { plant_index: i, active: false, value: 3000 };
 	}
 
 	var obj = {
@@ -433,7 +445,8 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 		
 		for (var i = 0; i < res.length; i++) {
 			// console.log('calculateGardenWaterNeeds: '+i+': '+JSON.stringify(res[i]));
-			if (!res[i].state.moisture == 'born') continue;
+			console.log('i is ' + i +', duration is ' + duration);
+			if (res[i].state.moisture == 'born') continue;
 
 			// Increase amount according to above map
 			duration += durations[res[i].state.moisture];

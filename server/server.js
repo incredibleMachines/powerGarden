@@ -96,8 +96,10 @@ browserio.sockets.on('connection',function(browserSocket){
 
 	browserSocket.on('ignore',function(msg){
 		console.log(msg);
-		clients['client-'+msg.connection_id].socket.emit('ignore',msg);
-		browserSocket.broadcast.emit('ignore', msg);
+		database.updateIgnore(msg, function() {
+			clients['client-'+msg.connection_id].socket.emit('ignore',msg);
+			browserSocket.broadcast.emit('ignore', msg);
+		});
 	});
 
 	browserSocket.on('settings',function(msg){
@@ -107,6 +109,19 @@ browserio.sockets.on('connection',function(browserSocket){
 			browserSocket.broadcast.emit('settings', msg);
 		});
 	});
+
+	browserSocket.on('sprinklers',function(msg){
+		if (msg.state) {
+			// run for 10 minutes by default
+			pump.turnOnSprinklers(60 * 10);
+		} else {
+			pump.turnOffSprinklers();
+		}
+	});
+
+	// browserSocket.on('restart-twitter-stream',function(msg){
+	// 	pgtwitter.restart();
+	// });
 	
 	browserSocket.on('disconnect',function(){
 		delete browsers['browser'+browserConnection.id];
@@ -186,7 +201,9 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('ignore',function(msg){
 		msg.connection_id = connection.id;
-		browserio.sockets.emit('ignore',msg);
+		database.updateIgnore(msg, function() {
+			browserio.sockets.emit('ignore',msg);
+		});
 	});
 
 	socket.on('stream',function(msg){
@@ -243,7 +260,8 @@ function twitterCallback(data, raw) {
 		// User is trying to provide water
 
 		// look up water needs of all devices
-		database.calculateGardenWaterNeeds(function(pumpDuration) {
+		var pumpDuration = 30;
+		// database.calculateGardenWaterNeeds(function(pumpDuration) {
 			// console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
 
 			if (pumpDuration > 0) {
@@ -297,7 +315,7 @@ function twitterCallback(data, raw) {
 				var responses = dialogue['garden'].waterResponseBad.stage_copy;
 				processResponses(plant, responses);
 			}
-		});
+		// });
 
 	} else {
 
@@ -339,6 +357,7 @@ function twitterCallback(data, raw) {
 					water: watering
 				}
 				clients[key].socket.emit('tweet', obj);
+				console.log('[TWEET] '.warn + JSON.stringify(obj).input);
 				// console.log('Sending tweet event to: plant_type: '+clients[key].plant_type+', plant_slug: '+clients[key].plant_slug);
 				// console.log(obj);
 			}

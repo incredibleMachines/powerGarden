@@ -153,7 +153,7 @@ function populate(socket, data){
 		// console.log(data.plants);
 		for (var i = 0; i < plants.length; i++) {
 			var j = plants[i].index;
-			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'" class="plant-'+j+'"><td><button class="btn-mini btn-success plant-'+j+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+j+'"><i class="icon-ok"></i></button></td><td>'+plants[i]._id+'</td><td>'+j+'</td><td class="state_touch"></td><td class="touch_count"></td><td><input type="range" min="0" max="15000" step="1" class="plant-'+j+' cap client-'+data.connection_id+'" data-plant_index="'+j+'"></td><td class="plant-'+j+' value client-'+data.connection_id+'"></td><td class="plant-'+j+' incoming client-'+data.connection_id+'"></td></tr>';
+			plantString += '<tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'" class="plant-'+j+'"><td><button class="btn-mini btn-danger plant-'+j+' disablePlant client-'+data.connection_id+'" data-ignore="false" data-plant_index="'+j+'"><i class="icon-remove"></i></button></td><td>'+plants[i]._id+'</td><td>'+j+'</td><td class="state_touch"></td><td class="touch_count"></td><td><input type="range" min="0" max="20000" step="1" class="plant-'+j+' cap client-'+data.connection_id+'" data-plant_index="'+j+'"></td><td class="plant-'+j+' value client-'+data.connection_id+'"></td><td class="plant-'+j+' incoming client-'+data.connection_id+'"></td></tr>';
 		}
 
 
@@ -223,12 +223,18 @@ function populate(socket, data){
 
 function buildSettings(data) {
 
-	// Update values for capacitance thresholds in plant table first
+	// Update values for capacitance thresholds & active state in plant table first
 
 	for (var i = 0; i < data.cap_thresh.length; i++) {
+		var button = $('button.plant-'+data.cap_thresh[i].plant_index+'.disablePlant.client-'+data.connection_id);
 		var input = $('input.plant-'+data.cap_thresh[i].plant_index+'.cap.client-'+data.connection_id);
 		input.val(data.cap_thresh[i].value);
 		$('td.plant-'+data.cap_thresh[i].plant_index+'.value.client-'+data.connection_id).html(data.cap_thresh[i].value);
+
+		if (data.cap_thresh[i].active) {
+			button.addClass('btn-success').removeClass('btn-danger');
+			button.children('i').addClass('icon-ok').removeClass('icon-remove');
+		}
 	}
 
 	// GENERATE TABLE FOR SENSORS
@@ -332,6 +338,18 @@ $('.toggle-sensor-active').live('click', function() {
 
 });
 
-
+$('.turn-on-sprinklers').click(function() {
+	console.log('clicked!');
+	socket.emit('sprinklers', { state: true })
+});
+$('.turn-off-sprinklers').click(function() {
+	socket.emit('sprinklers', { state: false })
+});
+$('.restart-twitter-stream').click(function() {
+	socket.emit('twitter-restart');
+});
+$('.include-ustream-link').click(function() {
+	socket.emit('include-ustream-link', { state: $(this).attr('checked') ? true : false });
+});
 
 });
