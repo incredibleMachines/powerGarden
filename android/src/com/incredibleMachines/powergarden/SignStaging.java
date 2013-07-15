@@ -20,7 +20,7 @@ class SignStaging extends TimerTask {
 		
 		Runnable runner = new Runnable(){
 			public void run() {
-				activity_.updateStage(0);
+				activity_.updateStage();
 			}
 		};
 		if(runner != null){

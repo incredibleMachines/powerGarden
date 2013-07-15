@@ -1,5 +1,6 @@
 package com.incredibleMachines.powergarden;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,7 +41,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 	private static String TAG = "SocketManager";
 	private Connectable callbackActivity;
 	private Connectable presentationCallback;
-	final private Timer backgroundTimer = new Timer("backgroundTimer");
+	//final private Timer backgroundTimer = new Timer("backgroundTimer");
 	private boolean firstConnect = true;
 
 	SocketManager(){
@@ -117,6 +118,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 	
 	public void sendMonkey(String type, String device_id, JSONObject json, Connectable _callback){
 		callbackActivity = _callback;
+		Log.d("SENDING SOCKET EVENT: ", type+": "+ json.toString());
 		
 		try{
 			socket.emit(type, json);
@@ -138,7 +140,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 			//todo: read this from a text file
 				socket = new SocketIO();
 				socket.connect("http://"+host+":"+port+"/", this);
-				backgroundTimer.schedule(this, connectTimeout);
+				//backgroundTimer.schedule(this, connectTimeout);
 				
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -164,13 +166,14 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 	public void onError(SocketIOException socketIOException) {
 		System.out.println("an Error occured");
 		socketIOException.printStackTrace();
-		Log.d(TAG,"ERROR MESSAGE: "+socketIOException.getMessage());
+
+		
 		if(socketIOException.getMessage().equals("1+0")){
 			Log.d(TAG, "hit onError '1+0'");
 			PowerGarden.bConnected = false;
-			backgroundTimer.schedule(this, connectTimeout);
-			closeUpShop();
-			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+			//backgroundTimer.schedule(this, connectTimeout);
+			//closeUpShop();
+			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		if(socketIOException.getMessage().equals("Timeout Error")){
 			PowerGarden.bConnected = false;
@@ -185,6 +188,16 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		//Error while handshaking
+		
+		if(!PowerGarden.bConnected){
+			socket = new SocketIO();
+			try {
+				socket.connect("http://"+PowerGarden.Device.host+":"+PowerGarden.Device.port+"/", this);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -202,7 +215,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 
 	@Override 
 	public void on(String event, IOAcknowledge ack, Object... args) { //incoming from server
-		
+		PowerGarden.bConnected = true;
 		System.out.println("Server triggered event '" + event + "'");
 //		Log.d(TAG, "INCOMING MESSAGE: "+args[0].toString());
 		PowerGarden.serverResponseRaw = args[0].toString();
@@ -440,9 +453,9 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 		// TODO Auto-generated method stub
 		//if(!firstConnect){
 			Log.e(TAG,"CONNECT TIMED OUT");
-			socket.disconnect();
-			connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
-			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
+			//socket.disconnect();
+			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+			//PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
 		//} else firstConnect = false;
 	}
 

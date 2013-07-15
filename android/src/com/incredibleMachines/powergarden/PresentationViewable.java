@@ -30,6 +30,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 	private int messageLevel_			= 22;
 	
     TextView plantValView[] = new TextView[PowerGarden.Device.PlantNum];
+    TextView plantDiffView[] = new TextView[PowerGarden.Device.PlantNum];
     SeekBar threshBar[] = new SeekBar[PowerGarden.Device.PlantNum];    
     int threshVal[] = new int[PowerGarden.Device.PlantNum];
     TextView threshBarTextView[] = new TextView[PowerGarden.Device.PlantNum];
@@ -178,11 +179,26 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 			if(dataType.equalsIgnoreCase("c")){ /** capacitance touch received from arduino **/
 	
 				final int plantDisplay[] = new int [8];
+				final int plantDiffDisplay[] = new int [8];
 				
 				//updateView(); //quick refresh of all PowerGarden.statics
 				
 				for(int i = 0; i<parseData.length-1; i++){
-					plantDisplay[i] = Integer.parseInt(parseData[i+1]);
+					int val = Integer.parseInt(parseData[i+1]);
+					
+					plantDisplay[i] = val;
+					
+					Log.d("plantDisplay[i]", String.valueOf(val));
+					
+				//	PowerGarden.Device.plants[i].capCalculator.addValue(val);
+					
+				//	int delta = PowerGarden.Device.plants[i].capCalculator.getDelta();
+					
+				//	plantDiffDisplay[i] = delta;
+				//	Log.d("plantDIFFDisplay[i]", String.valueOf(delta));
+//					
+					
+					
 					//PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
 					//plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
 					//Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
@@ -204,11 +220,11 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 										!PowerGarden.Device.plants[i].triggered){ //if we're over the threshold AND we're not triggered:
 										
 										//*** TOUCHED ***//
-										PowerGarden.Device.plants[i].triggered = true; //set triggered to true for this plant
+										//PowerGarden.Device.plants[i].triggered = true; //set triggered to true for this plant
 										
-										PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis(); //record timestamp
+										//PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis(); //record timestamp
 										
-										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp); //add timestamp to overall touchStamps vector
+										//PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp); //add timestamp to overall touchStamps vector
 										
 										//PowerGarden.stateManager.updatePlantStates(); //check this plant's state
 										
@@ -226,9 +242,12 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 									}
 									
 									if(bSetup){
-										plantValView[i].setText(String.valueOf(plantDisplay[i]));
-										//plantValView[i].setText(String.valueOf(Math.abs(plantDisplay[i]-lastPlantDisplay[i])));
-										//lastPlantDisplay[i] = plantDisplay[i];
+										if( i < 2) {
+											//plantValView[i].setText(String.valueOf(plantDisplay[i]));
+											//plantDiffView[i].setText(String.valueOf(plantDiffDisplay[i]));
+											
+											//lastPlantDisplay[i] = plantDisplay[i];
+										}
 									}
 									
 									
@@ -309,7 +328,8 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 //				}
 				
 				if(PowerGarden.stateManager.updateDeviceState()){
-					activity_.updateStage(PowerGarden.deviceStateIndex);
+					//activity_.updateStage(PowerGarden.deviceStateIndex);
+					activity_.updateStage();
 				}
 				
 				if(PowerGarden.Device.datastream_mode)
@@ -434,6 +454,9 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+	    	
+	    	plantDiffView[0] = (TextView) activity_.findViewById(R.id.plant_1_diff);
+	    	plantDiffView[1] = (TextView) activity_.findViewById(R.id.plant_2_diff);
 	    	
 	    	try {
 	    		Class res = R.id.class;

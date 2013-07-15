@@ -327,7 +327,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
       signStageUpdater.setActivity(this);
       Timer signScheduling = new Timer();
       
-      signScheduling.schedule(signStageUpdater, 10000, 15000); // (task, initial delay, repeated delay
+      signScheduling.schedule(signStageUpdater, 10000, 5000); // (task, initial delay, repeated delay
       
       //*** send setup to arduino ***//
       PresentationActivity.super.sendData("setup");	
@@ -393,7 +393,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		
 		setStageBG(); // bare plant background of this plantType
 		
-		updateStage(-1);
+		updateStage();
 		
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
@@ -506,14 +506,14 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		//Log.d("LOADDIALOGUE", PowerGarden.dialogue.toString());
 	}
 	
-	void updateStage(int deviceStateIndex){
+	void updateStage(){//(int deviceStateIndex){
 		frameCount++;
 		
-		if(deviceStateIndex > -1){ //we have a real state change, immediately show copy for that state
-			
-		} 
+//		if(deviceStateIndex > -1){ //we have a real state change, immediately show copy for that state
+//			
+//		} 
 		
-		else {	//deviceStateIndex = -1; this is a standard update, do your thang
+//		else {	//deviceStateIndex = -1; this is a standard update, do your thang
 			if(frameCount > 3 && PowerGarden.Device.displayMode == PowerGarden.DisplayMode.MessageCopy){
 				PowerGarden.Device.displayMode = PowerGarden.DisplayMode.PlantTitle;
 				frameCount = 0;
@@ -646,7 +646,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 					e.printStackTrace();
 				}
 			}
-		}
+//		}
 	}
 	
 	void setStageBG(){

@@ -114,8 +114,8 @@ public class StateManager extends Activity {
 		if(Math.abs(PowerGarden.Device.distance - PowerGarden.Device.lastDistance) > 5){
 			
 			if(PowerGarden.Device.distance < 35
-					&& System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000 && 
-					PowerGarden.Device.distance != PowerGarden.Device.lastDistance){
+						&& System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000 
+						&& PowerGarden.Device.distance != PowerGarden.Device.lastDistance){
 					PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
 					PowerGarden.Device.deviceState ="content";
 					PowerGarden.deviceStateIndex = 1;
@@ -133,8 +133,8 @@ public class StateManager extends Activity {
 //				} 
 			
 			
-			else if (Math.abs(PowerGarden.Device.distance - PowerGarden.Device.lastDistance) > 5 && 
-					System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){ //(PowerGarden.Device.distance > 75 && System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){
+			else if (Math.abs(PowerGarden.Device.distance - PowerGarden.Device.lastDistance) > 5 
+					&&	System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){ //(PowerGarden.Device.distance > 75 && System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){
 						PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
 						PowerGarden.Device.deviceState ="lonely";
 						PowerGarden.deviceStateIndex = 0;

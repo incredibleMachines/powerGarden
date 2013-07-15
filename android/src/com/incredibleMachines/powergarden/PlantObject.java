@@ -4,7 +4,10 @@ import java.lang.Character.UnicodeBlock;
 import java.util.Vector;
 
 public class PlantObject {
+	
 	MedianFilter MF = new MedianFilter();
+	
+	CapCalculator capCalculator = new CapCalculator();
 	
 	public boolean enabled = true;
 	public boolean triggered = false;

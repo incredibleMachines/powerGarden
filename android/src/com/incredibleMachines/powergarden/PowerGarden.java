@@ -17,6 +17,7 @@ public class PowerGarden {
     
     public static StateManager stateManager = new StateManager();
     public static AudioManager audioManager = new AudioManager();
+   
 	
     public static String[] plantState = {"lonely", "content", "worked_up"};
     public static int plantStateIndex = 0;

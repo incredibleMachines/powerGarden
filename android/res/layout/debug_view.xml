@@ -49,11 +49,18 @@
 
                    <TextView
                        android:id="@+id/arduino_value_1"
-                       android:layout_width="wrap_content"
+                       android:layout_width="150dp"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
                        android:text="0"
                        android:textSize="26dp" />
+                   
+                   <TextView
+                       android:id="@+id/plant_1_diff"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="0"
+                       android:textSize="26dp" />                   
                </LinearLayout>
 
                <LinearLayout
@@ -90,11 +97,18 @@
 
                    <TextView
                        android:id="@+id/arduino_value_2"
-                       android:layout_width="wrap_content"
+                       android:layout_width="150dp"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
                        android:text="0"
                        android:textSize="26dp" />
+                   
+                   <TextView
+                       android:id="@+id/plant_2_diff"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="0"
+                       android:textSize="26dp" /> 
                </LinearLayout>
 
                <LinearLayout
