@@ -108,7 +108,9 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:text="0"
-                       android:textSize="26dp" /> 
+                       android:textSize="26dp" />
+                   
+                   
                </LinearLayout>
 
                <LinearLayout
@@ -340,6 +342,7 @@
                        android:layout_toRightOf="@id/seekBar1"
                        android:text="40000"
                        android:textSize="26dp" />
+                   
                </LinearLayout>
 
                <LinearLayout
@@ -356,9 +359,16 @@
 
                    <TextView
                        android:id="@+id/arduino_value_8"
-                       android:layout_width="wrap_content"
+                       android:layout_width="150dp"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
+                       android:text="0"
+                       android:textSize="26dp" />
+                   
+                   <TextView
+                       android:id="@+id/plant_7_diff"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
                        android:text="0"
                        android:textSize="26dp" />
                </LinearLayout>

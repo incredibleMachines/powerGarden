@@ -52,7 +52,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 	private static final boolean TOGGLE_ON_CLICK = true;
 	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
-	private SystemUiHider mSystemUiHider;
+	public SystemUiHider mSystemUiHider;
 	
 	private static String TAG = "PresentationActivity";
 	
@@ -109,6 +109,22 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		else if(type == PowerGarden.ThreshChange){
 			Log.d(TAG, "presViewable signalToUi recevievd THRESHCHANGE");
 			//updateThresholds( data.toString() );
+		}
+		
+		else if(type == PowerGarden.StreamModeUpdate){
+			if(PowerGarden.Device.datastream_mode){
+				 Runnable showDebug = null;
+				 showDebug = new Runnable(){
+					public void run(){       
+						PresentationActivity.super.sendData("setup");
+						currentViewable_.setState("debug");
+						mSystemUiHider.hide();
+					}
+				 };
+				if(showDebug != null){
+					PresentationActivity.this.runOnUiThread(showDebug);	
+				}
+			}
 		}
 	}
 	
@@ -230,6 +246,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		//set up arduino
 		findViewById(R.id.connect_arduino_button).setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v){	
+				
 		    	PresentationActivity.super.sendData("setup");
 		    	currentViewable_.setState("debug");
 			}
@@ -327,7 +344,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
       signStageUpdater.setActivity(this);
       Timer signScheduling = new Timer();
       
-      signScheduling.schedule(signStageUpdater, 10000, 5000); // (task, initial delay, repeated delay
+      signScheduling.schedule(signStageUpdater, 10000, 15000); // (task, initial delay, repeated delay
       
       //*** send setup to arduino ***//
       PresentationActivity.super.sendData("setup");	
@@ -371,9 +388,11 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	 * Schedules a call to hide() in [delay] milliseconds, canceling any
 	 * previously scheduled calls.
 	 */
-	private void delayedHide(int delayMillis) {
+	public void delayedHide(int delayMillis) {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
+		LinearLayout controls = (LinearLayout) findViewById(R.id.fullscreen_content_controls);
+		controls.setVisibility(View.INVISIBLE);
 	}
 
 	

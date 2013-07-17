@@ -111,15 +111,15 @@ public class AudioManager extends Activity {
 				leftChannelVol = 0.0f;
 			}
 		//**************
-//			if(state.equals("lonely")){
-//	        	PowerGarden.soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
-//			}
-//			if(state.equals("content")){
-//				PowerGarden.soundPool.play(PowerGarden.touchResponseGoodAudio.get((int)(Math.random()*PowerGarden.touchResponseGoodAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
-//			}
-//			if(state.equals("worked_up")){
-//				PowerGarden.soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
-//			}
+			if(state.equals("lonely")){
+	        	PowerGarden.soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
+			}
+			if(state.equals("content")){
+				PowerGarden.soundPool.play(PowerGarden.touchResponseGoodAudio.get((int)(Math.random()*PowerGarden.touchResponseGoodAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
+			}
+			if(state.equals("worked_up")){
+				PowerGarden.soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
+			}
 		//****************
 			
 //			if(state == 3){
