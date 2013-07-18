@@ -13,7 +13,7 @@ var transport = nodemailer.createTransport("SMTP", {
 // set up e-mail
 var mailOptions = {
 	from: "The Power Garden <powergarden@incrediblemachines.net>",
-	to: "Incredible Machines <core@incrediblemachines.net>",
+	to: "The Power Garden <powergarden@incrediblemachines.net>",
 }
 
 // set up ustream request
