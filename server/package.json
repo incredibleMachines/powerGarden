@@ -9,6 +9,7 @@
     "immortal-ntwitter": "horixon/immortal-ntwitter",
     "socket.io": "~0.9.16",
     "express": "3.3.1",
-    "colors": "x"
+    "colors": "x",
+    "nodemailer": "0.5.0"
   }
 }

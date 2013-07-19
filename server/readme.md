@@ -39,3 +39,9 @@ PowerGarden Server
 
 		Connect to database shell
 		mongo powergarden
+
+	Ustream monitoring:
+
+		Run the script which monitors ustream and sends out email notifications:
+		cd ~/IncredibleMachines/powerGarden/server
+		forever start -a -o logs/ustreamOut.log -l logs/ustream.log -e logs/ustreamError.log ustream.js
