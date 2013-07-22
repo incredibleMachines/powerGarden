@@ -201,7 +201,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 					
 					delta = PowerGarden.Device.plants[i].capCalculator.getDelta();
 					
-					if(i < 2) {
+					if(i < 2 || i == 7) {
 						plantDiffDisplay[i] = delta;
 						Log.d("plantDIFFDisplay[i]", String.valueOf(delta));
 					}
@@ -298,7 +298,6 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 											plantDiffView[i].setText(String.valueOf(plantDiffDisplay[i]));
 										}
 									}
-									
 									
 									//if(PowerGarden.Device.datastream_mode == true) //this might be getting crazy
 									//	PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
