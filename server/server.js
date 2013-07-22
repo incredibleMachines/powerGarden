@@ -322,16 +322,20 @@ function twitterCallback(data, raw) {
 		// Not providing water
 		// Send thanks for attention
 
-		if (!data.plants) {
-			// console.log('Attention tweeted at garden');
-			var plant = 'garden';
-		} else {
-			// just pull the first mentioned one for now
-			var plant = data.plants[0];
-			// console.log('Attention tweeted at '+plant);
-		}
+		/* NO LONGER SENDING PLANT-SPECIFIC RESPONSES OR GENERIC APPRECIATION OF ATTENTION */
+		/* INSTEAD IT'S A THANKS + MENTION OF NEXT TASTING EVENT!! */
 
-		var responses = dialogue[plant].touchResponseGood.stage_copy;
+		// if (!data.plants) {
+		// 	// console.log('Attention tweeted at garden');
+		// 	var plant = 'garden';
+		// } else {
+		// 	// just pull the first mentioned one for now
+		// 	var plant = data.plants[0];
+		// 	// console.log('Attention tweeted at '+plant);
+		// }
+
+		// set up date for next tasting event
+		var responses = dialogue['garden'].events;
 		processResponses(plant, responses);
 	}
 
@@ -344,6 +348,47 @@ function twitterCallback(data, raw) {
 		var index = Math.floor(Math.random()*responses.length);
 		var text = '@'+data.user_name + ' ' + responses[index];
 		var watering = _watering || false;
+
+		// check if response has [DATE] placeholder and update it if so
+		if (text.indexOf('[DATE]') > -1) {
+			var today = new Date( (new Date()).toDateString() );
+			var tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+
+			var tastingDates = ['07/23/2013', '08/06/2013', '08/14/2013', '08/20/2013', '08/27/2013'];
+			var weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+			var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+
+			for (var i = 0; i < tastingDates.length; i++) {
+				var date = new Date( new Date(tastingDates[i]).toDateString() );
+				var dateFormatted = weekDays[date.getDay()] +' '+ months[date.getMonth()] +' '+ date.getDate();
+
+				// check if date has passed. if so, move on to next date
+				if (today > date) continue;
+
+				if (today.toDateString() == date.toDateString()) {
+					text = text.replace('[DATE]', 'TODAY');
+					break;
+				}
+				if (tomorrow.toDateString() == date.toDateString()) {
+					text = text.replace('[DATE]', 'TOMORROW');
+					break;
+				}
+
+				text = text.replace('[DATE]', 'on ' + dateFormatted);
+				break;
+
+			}
+
+			// we got through the loop but no text was substituted
+			// in other words, all of the tasting events have already happened but we're still running
+			// instead, pull from a different set of responses that mention finale
+			if (text.indexOf('[DATE]') > -1) {
+				responses = dialogue['garden'].eventsPast;
+				index = Math.floor(Math.random()*responses.length);
+				text = '@'+data.user_name + ' ' + responses[index];
+			}
+		}
 
 		// send a tweet event to appropriate tablets
 		for (var key in clients) {
