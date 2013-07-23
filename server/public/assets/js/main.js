@@ -67,6 +67,13 @@ socket.on('threshold',function(data){
 	}
 });
 
+socket.on('tablet',function(data){
+	$('input.volume.client-'+data.connection_id).val(data.volume);
+	$('input.brightness.client-'+data.connection_id).val(data.brightness);
+	$('div.battery.client-'+data.connection_id).css('width', data.battery_status+'%');
+	$('div.battery.client-'+data.connection_id).tooltip('destroy').tooltip({ animation: false, title: data.battery_status+'%' }).tooltip('show');
+});
+
 socket.on('touch',function(data){
 	var device_id = data.device_id;
 	$('#'+device_id+'-plants .plant-table .plant-'+data.plant_index+' .state_touch').html(data.state);
@@ -161,7 +168,7 @@ function populate(socket, data){
 		var string = commonPre + plantPre + plantString + plantPost + /* settingsPre + settingsString + settingsPost + */ commonPost;
 		$('tr#'+data.device_id).after(string);
 
-
+		// change event for cap thresh slider
 		$('input.cap.client-'+data.connection_id).change(function() {
 			var connection = $(this).parents('tr').data('connection');
 			var device = $(this).parents('tr').data('device');
@@ -175,6 +182,44 @@ function populate(socket, data){
 
 		});
 
+		// change event for volume slider
+		$('input.volume.client-'+data.connection_id).live('change', function() {
+			var connection = $(this).parents('tr').data('connection');
+			var device = $(this).parents('tr').data('device');
+			var volumeVal = $(this).val();
+			var brightnessVal = $('input.brightness.client-'+connection).val();
+			var json = { connection_id: connection, device_id: device, volume: volumeVal, brightness: brightnessVal, sleep: false };
+
+			socket.emit('tablet', json);
+			$(this).tooltip('destroy').tooltip({ animation: false, title: volumeVal }).tooltip('show');
+
+		});
+
+		// change event for brightness slider
+		$('input.brightness.client-'+data.connection_id).live('change', function() {
+			var connection = $(this).parents('tr').data('connection');
+			var device = $(this).parents('tr').data('device');
+			var volumeVal = $('input.volume.client-'+connection).val();
+			var brightnessVal = $(this).val();
+			var json = { connection_id: connection, device_id: device, volume: volumeVal, brightness: brightnessVal, sleep: false };
+
+			socket.emit('tablet', json);
+			$(this).tooltip('destroy').tooltip({ animation: false, title: brightnessVal }).tooltip('show');
+
+		});
+
+		// click event for sleep button
+		$('button.sleep.client-'+data.connection_id).live('click', function() {
+			var connection = $(this).parents('tr').data('connection');
+			var device = $(this).parents('tr').data('device');
+			var volumeVal = $('input.volume.client-'+connection).val();
+			var brightnessVal = $('input.brightness.client-'+connection).val();
+			var json = { connection_id: connection, device_id: device, volume: volumeVal, brightness: brightnessVal, sleep: true };
+
+			socket.emit('tablet', json);
+		});
+
+		// click event for firehose button
 		$('button.firehose.client-'+data.connection_id).click(function(){ 
 			deviceFirehose = !deviceFirehose;
 
@@ -194,6 +239,7 @@ function populate(socket, data){
 			return false;
 		});
 
+		// click event for plant disable button
 		$('button.disablePlant.client-'+data.connection_id).on("click",function(){
 			var index = $(this).data('plant_index');
 			var bool = $(this).data('ignore');
@@ -252,6 +298,8 @@ function buildSettings(data) {
 		if (typeof(d[key]) != 'object') continue;
 		// also skip cap_thresh since those are displayed alongside each plant
 		if (key == 'cap_thresh') continue;
+		// skip tablet, which has nested volume & brightness values, to display separately
+		if (key == 'tablet') continue;
 
 		// generate code for whether or not we're active
 		if (d[key].active) {
@@ -275,9 +323,16 @@ function buildSettings(data) {
 		settingsString += '<tr><td>'+activeButton+'</td><td>'+key+'</td><td class="'+key+' reading"></td><td><input class="input-small" type="text" name="low" placeholder="low" value="'+d[key].low+'" data-sensor="'+key+'"></td><td>'+highString+'</td><td>'+windowString+'</td></tr>'
 	}
 
+	var tabletString = '<table class="table table-condensed tablet-table"><thead><tr><th width="25%">Tablet Hardware Settings</th><th width="25%">Volume</th><th width="25%">Brightness</th><th width="25%">Battery Level</th></tr></thead><tbody><tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td><button class="btn-mini btn-warning sleep client-'+data.connection_id+'"><i class="icon-adjust"></i> Sleep</button></td><td><input type="range" min="0" max="100" step="1" value="'+d['tablet'].volume+'" class="volume client-'+data.connection_id+'"></td><td><input type="range" min="0" max="100" step="1" value="'+d['tablet'].brightness+'" class="brightness client-'+data.connection_id+'"></td><td><div class="progress progress-info progress-striped"><div class="bar battery client-'+data.connection_id+'" style="width: 0%;"></div></div></td></tr></tbody></table>';
+
+	// build append string for sensor settings
 	var append = settingsPre + settingsString + settingsPost;
+	// add tablet hardware settings to append string
+	append += tabletString;
+
 
 	$('#'+d.device_id+'-plants .sensor-table').remove();
+	$('#'+d.device_id+'-plants .tablet-table').remove();
 	$('#'+d.device_id+'-plants .plant-table').after(append);
 
 	// store data in global var. get rid of extraneous stuff
@@ -348,8 +403,20 @@ $('.turn-off-sprinklers').click(function() {
 $('.restart-twitter-stream').click(function() {
 	socket.emit('twitter-restart');
 });
-$('.include-ustream-link').click(function() {
-	socket.emit('include-ustream-link', { state: $(this).attr('checked') ? true : false });
+$('.chorus').click(function() {
+	
+	if ($(this).hasClass('play')) {
+		var timestamp = new Date();
+		timestamp.setSeconds(timestamp.getSeconds() + 15);
+
+		var obj = { start_time: timestamp }
+	}
+	if ($(this).hasClass('stop')) {
+		var obj = { start_time: false }
+	}
+
+	obj.file_name = 'thissong_1.mp3';
+	socket.emit('chorus', obj);
 });
 
 });

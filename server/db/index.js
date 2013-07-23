@@ -116,6 +116,16 @@ DB.prototype.updateIgnore = function(data, callback) {
 	});
 }
 
+DB.prototype.updateTablet = function(data, callback) {
+
+	var obj = { device_id: new BSON.ObjectID(String(data.device_id)) };
+	var settingsObj = { $set: { 'tablet.volume': data.volume, 'tablet.brightness': data.brightness } }
+
+	settingsDb.update(obj, settingsObj, function(err, count) {
+		callback();
+	});
+}
+
 
 
 /* ******************************************************************************************* */

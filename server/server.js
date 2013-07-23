@@ -102,6 +102,23 @@ browserio.sockets.on('connection',function(browserSocket){
 		});
 	});
 
+	browserSocket.on('tablet',function(msg){
+		console.log(msg);
+		database.updateTablet(msg, function() {
+			clients['client-'+msg.connection_id].socket.emit('tablet',msg);
+			browserSocket.broadcast.emit('tablet', msg);
+		});
+	});
+
+	browserSocket.on('chorus',function(msg){
+		console.log(msg);
+		for (var key in clients) {
+			var obj = msg;
+			obj.device_id = clients[key].device_id; 
+			clients[key].socket.emit('chorus', obj);
+		}
+	});
+
 	browserSocket.on('settings',function(msg){
 		// console.log(msg);
 		database.updateSettings(msg, function() {
@@ -203,6 +220,13 @@ io.sockets.on('connection', function (socket) {
 		msg.connection_id = connection.id;
 		database.updateIgnore(msg, function() {
 			browserio.sockets.emit('ignore',msg);
+		});
+	});
+
+	socket.on('tablet',function(msg){
+		msg.connection_id = connection.id;
+		database.updateTablet(msg, function() {
+			browserio.sockets.emit('tablet',msg);
 		});
 	});
 
