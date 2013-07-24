@@ -19,6 +19,7 @@ function DB(browserSockets){
 	this.tweetsDb;
 	// this.moodDb;
 	this.pumpDb;
+	this.chorusDb;
 	this.browserIO = browserSockets;
 	
 	//console.log(storedMood);
@@ -43,6 +44,7 @@ function DB(browserSockets){
 		this.tweetsDb = db.collection('tweets');
 		// this.moodDb = db.collection('mood');
 		this.pumpDb = db.collection('pump');
+		this.chorusDb = db.collection('chorus');
 	});
 		
 }
@@ -382,7 +384,7 @@ DB.prototype.routeUpdate = function(message,connection){
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 
-DB.prototype.routeTouch = function(message,connection){
+DB.prototype.routeTouch = function(message,connection, callback){
 	
 	//May need to create dual index of device_id & plant index
 	var obj = {device_id: new BSON.ObjectID(String(message.device_id)), index: message.plant_index };
@@ -416,8 +418,41 @@ DB.prototype.routeTouch = function(message,connection){
 		
 	});
 
-}
+	// check if we have touches from more than 3 devices in 30 seconds
+	// make sure we haven't run in the last 30 minutes
 
+	// comment all this out for now and just pass false to the callback instead
+	callback(false);
+
+	var touchDate = new Date();
+	touchDate.setTime(touchDate.getTime() - 30*1000);
+
+	// touchesDb.distinct('device_id', { timestamp: { $gte: touchDate } }, function(err, docs) {
+	// 	if (err) console.log(err);
+	// 	if (docs.length >= 1) {
+
+	// 		var chorusDate = new Date();
+	// 		chorusDate.setMinutes( chorusDate.getMinutes() - 30 );		
+						  
+	// 		chorusDb.find({ timestamp: { $gte: chorusDate } }).toArray( function(err, res){
+	// 			if(err) console.error(err);
+
+	// 			if (res.length) {
+	// 				console.log('[CHORUS] Ran within last 30 minutes, not running again.');
+	// 				callback(false);
+	// 			} else {
+	// 				console.log('[CHORUS] Running chorus!');
+	// 				chorusDb.insert({ timestamp: new Date() }, function(err){
+	// 					if(err) console.error(err) //throw err;
+	// 				});
+	// 				callback(true);
+	// 			}
+
+	// 		});
+	// 	}
+	// });
+
+}
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -487,9 +522,7 @@ DB.prototype.neededTimeForPriming = function(callback) {
 	var time = new Date();
 	time.setMinutes( time.getMinutes() - minutes );		
 
-	var recent = {
-		timestamp: { $gte: time }
-	};
+	var recent = { timestamp: { $gte: time } };
 				  
 	pumpDb.find(recent).toArray( function(err,res){
 		if(err) console.error(err);

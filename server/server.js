@@ -41,7 +41,7 @@ var browsers = {};
 
 
 //Connect to twitter, pass callback for responding to tweets
-pgtwitter.start(twitterCallback);
+// pgtwitter.start(twitterCallback);
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -196,7 +196,19 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('touch',function(msg){
 		console.log('[INBOUND REQUEST]'.warn+' [TOUCH] '.info + JSON.stringify(msg).input);
-		database.routeTouch(msg,connection);
+		database.routeTouch(msg,connection, function(chorus) {
+			// callback receives a boolean for whether or not we should run the chorus
+			// based on if we get touches on 3+ plants in last 30 sec and it hasn't
+			// been run in 30 min
+			if (chorus) {
+				var obj = { start_time: new Date(), file_name: 'thissong_1.mp3' };
+				for (var key in clients) {
+					obj.connection_id = clients[key].id; 
+					obj.device_id = clients[key].device_id; 
+					clients[key].socket.emit('chorus', obj);
+				}
+			}
+		});
 		browserio.sockets.emit('touch',msg);
 	});
 

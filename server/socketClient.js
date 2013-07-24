@@ -9,6 +9,7 @@ socket.on('connect', function (data) {
 
 	// setTimeout(sendChorusOn, 5000);
 	setInterval(sendTablet, 3000);
+	// setInterval(sendTouch, 1000);
 });
 
 socket.on('register', function (data) {
@@ -43,4 +44,15 @@ function sendChorusOff() {
 
 function sendTablet() {
 	socket.emit('tablet', { device_id: device_id, volume: Math.random()*100, brightness: Math.random()*100, battery_status: Math.random()*100  });
+}
+
+function sendTouch() {
+	var obj = {
+		device_id: device_id,
+		plant_index: Math.floor(Math.random()*8),
+		cap_val: Math.floor(Math.random()*1000)+1000,
+		count: 1,
+		state: "content"
+	}
+	socket.emit('touch', obj);
 }
