@@ -69,9 +69,13 @@ socket.on('threshold',function(data){
 
 socket.on('tablet',function(data){
 	$('input.volume.client-'+data.connection_id).val(data.volume);
+	$('input.volume.client-'+data.connection_id).tooltip('destroy').tooltip({ animation: false, title: data.volume });
+
 	$('input.brightness.client-'+data.connection_id).val(data.brightness);
+	$('input.brightness.client-'+data.connection_id).tooltip({ animation: false, title: data.brightness });
+
 	$('div.battery.client-'+data.connection_id).css('width', data.battery_status+'%');
-	$('div.battery.client-'+data.connection_id).tooltip('destroy').tooltip({ animation: false, title: data.battery_status+'%' }).tooltip('show');
+	$('div.battery.client-'+data.connection_id).tooltip('destroy').tooltip({ animation: false, title: data.battery_status+'%' });
 });
 
 socket.on('touch',function(data){
@@ -79,6 +83,19 @@ socket.on('touch',function(data){
 	$('#'+device_id+'-plants .plant-table .plant-'+data.plant_index+' .state_touch').html(data.state);
 	$('#'+device_id+'-plants .plant-table .plant-'+data.plant_index+' .touch_count').html(data.count);
 	$('#'+device_id+'-plants .plant-table .plant-'+data.plant_index+' .incoming').html(data.cap_val);
+});
+
+socket.on('chorus',function(data){
+	var device_id = data.device_id;
+	var button = $('#'+device_id+' button.chorus-indicator');
+
+	if (data.curr_time != false) {
+		button.addClass('btn-success');
+		button.children('i').addClass('icon-volume-up').removeClass('icon-volume-off');
+	} else {
+		button.removeClass('btn-success');
+		button.children('i').addClass('icon-volume-off').removeClass('icon-volume-up');
+	}
 });
 
 socket.on('update',function(data){
@@ -130,7 +147,7 @@ function populate(socket, data){
 			var activeButton = '<button class="btn-mini firehose client-'+data.connection_id+'"><i class="icon-off"></i></button>';
 		}
 
-		var append = '<tr id="'+data.device_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td>'+activeButton+'</td><td>'+data.device_id+'</td><td>'+data.plants.length+'</td><td class="plant_type">'+data.plant_type+'</td><td class="state_touch">'+data.state.touch+'</td><td class="state_moisture">'+data.state.moisture+'</td><td>'+(new Date(data.date)).toLocaleString()+'</td></tr>';
+		var append = '<tr id="'+data.device_id+'" data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td>'+activeButton+' <button class="btn-mini chorus-indicator client-'+data.connection_id+'"><i class="icon-volume-off"></i></button></td><td>'+data.device_id+'</td><td>'+data.plants.length+'</td><td class="plant_type">'+data.plant_type+'</td><td class="state_touch">'+data.state.touch+'</td><td class="state_moisture">'+data.state.moisture+'</td><td>'+(new Date(data.date)).toLocaleString()+'</td></tr>';
 		$('.device-table > tbody').append(append);
 
 

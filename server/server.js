@@ -120,7 +120,7 @@ browserio.sockets.on('connection',function(browserSocket){
 	});
 
 	browserSocket.on('settings',function(msg){
-		// console.log(msg);
+		console.log(msg);
 		database.updateSettings(msg, function() {
 			clients['client-'+msg.connection_id].socket.emit('settings',msg);
 			browserSocket.broadcast.emit('settings', msg);
@@ -128,6 +128,7 @@ browserio.sockets.on('connection',function(browserSocket){
 	});
 
 	browserSocket.on('sprinklers',function(msg){
+		console.log(msg);
 		if (msg.state) {
 			// run for 10 minutes by default
 			pump.turnOnSprinklers(60 * 10);
@@ -211,6 +212,7 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('threshold',function(msg){
 		msg.connection_id = connection.id;
+		console.log('[CONTROL]'.warn+' [THRESHOLD] '.warn + JSON.stringify(msg).input);
 		database.updateThreshold(msg, function() {
 			browserio.sockets.emit('threshold',msg);
 		});
@@ -218,6 +220,7 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('ignore',function(msg){
 		msg.connection_id = connection.id;
+		console.log('[CONTROL]'.warn+' [IGNORE] '.warn + JSON.stringify(msg).input);
 		database.updateIgnore(msg, function() {
 			browserio.sockets.emit('ignore',msg);
 		});
@@ -225,13 +228,21 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('tablet',function(msg){
 		msg.connection_id = connection.id;
+		console.log('[CONTROL]'.warn+' [TABLET] '.warn + JSON.stringify(msg).input);
 		database.updateTablet(msg, function() {
 			browserio.sockets.emit('tablet',msg);
 		});
 	});
 
+	socket.on('chorus',function(msg){
+		msg.connection_id = connection.id;
+		console.log('[CONTROL]'.warn+' [CHORUS] '.warn + JSON.stringify(msg).input);
+		browserio.sockets.emit('chorus',msg);
+	});
+
 	socket.on('stream',function(msg){
 		msg.connection_id = connection.id;
+		console.log('[CONTROL]'.warn+' [STREAM] '.warn + JSON.stringify(msg).input);
 		browserio.sockets.emit('stream',msg);
 	});
 

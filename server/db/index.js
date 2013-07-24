@@ -300,6 +300,7 @@ DB.prototype.createSettings = function(message,connection,_db,num_plants){
 		light: {active: true, low:400, high: 1000},
 		touch: {active: true, low:1, high: 5, window: 30},
 		range: {active: true, low: 100},
+		tablet: {volume:100,brightness:100},
 		cap_thresh: cap_thresh
 	};
 	
