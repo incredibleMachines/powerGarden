@@ -429,7 +429,7 @@ DB.prototype.routeTouch = function(message,connection, callback){
 
 	// touchesDb.distinct('device_id', { timestamp: { $gte: touchDate } }, function(err, docs) {
 	// 	if (err) console.log(err);
-	// 	if (docs.length >= 1) {
+	// 	if (docs.length >= 3) {
 
 	// 		var chorusDate = new Date();
 	// 		chorusDate.setMinutes( chorusDate.getMinutes() - 30 );		
