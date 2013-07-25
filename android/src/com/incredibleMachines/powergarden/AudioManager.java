@@ -25,6 +25,7 @@ public class AudioManager extends Activity {
 	
 	private int numSamples = 0;
 	
+	
 	AudioManager(){
 		
 	}
@@ -32,6 +33,7 @@ public class AudioManager extends Activity {
 	public void setupAudio(){ //parses out all audio file names for this plant type from the dialog.json file
 		
 		Log.d("setupAudio", "plantType: "+ PowerGarden.Device.plantType);
+		
 		
 		try {
 			
@@ -181,6 +183,12 @@ public class AudioManager extends Activity {
 			PowerGarden.Device.deviceState = "content";
 			PowerGarden.soundPool.play(PowerGarden.touchResponseGoodAudio.get(whichFile), 1.0f, 1.0f, 1, 0, 1f); 
 			Log.wtf("play audio: ", thisAudioType.get(whichFile).toString());
+		}
+		
+		else if(plantIndex == -99){
+			Log.d("plantIndex: ", "-99");
+			PowerGarden.chorusAudio.start(); 
+			Log.wtf(TAG, "play chorus audio");
 		}
 	}
 	

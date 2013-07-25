@@ -1,9 +1,15 @@
 package com.incredibleMachines.powergarden;
 
 import java.net.MalformedURLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
@@ -271,7 +277,59 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 				//callbackActivity.signalToUi(PowerGarden.ThreshChange, PowerGarden.Device.ID);
 			}
 			
+			//**** CHORUS CONTROL ****//
+			else if(event.equals("chorus")){
+				//Log.d(TAG, "recieved CHORUS CONTROL: "+ j.toString());
+				if(j.has("start_time")){
+					  
+					try { //check to see if we have a bool for start_time
+						Boolean thisone = j.getBoolean("start_time"); // if it's a bool, it's FALSE aka stop audio
+						Log.d(TAG, "start_time == false");
+						callbackActivity.signalToUi(PowerGarden.SetChorusTime, "stop");
+						if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.SetChorusTime, "stop");
+					}
+					
+					catch(JSONException e){ //no bool, it's a UNIX timestamp
+						String startTimeString = j.getString("start_time");
 
+						long startTime = Long.valueOf(startTimeString); 
+						Log.d(TAG, "chorus start time set to: "+ Long.toString(startTime));
+						
+						long currentTime = System.currentTimeMillis();
+						Log.d(TAG, "current system time: "+ Long.toString(currentTime));
+						
+						long diff = startTime - currentTime;
+						Log.d(TAG, "diff in time: "+ Long.toString(diff));
+						
+						PowerGarden.Device.chorus_start_time = diff;
+	
+						if(j.has("file_name")){
+							Log.d(TAG, "chorus file_name: "+j.getString("file_name"));
+							PowerGarden.Device.chorus_filename = j.getString("file_name");
+						}
+
+						callbackActivity.signalToUi(PowerGarden.SetChorusTime, PowerGarden.Device.ID);
+						if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.SetChorusTime, PowerGarden.Device.chorus_start_time);
+					}
+				}
+			}
+			
+			//**** TABLET CONTROL ****//
+			else if(event.equals("tablet")){
+				Log.d(TAG, "recieved TABLET CONTROL: "+ j.toString());
+				if(j.has("brightness")){
+					Log.d(TAG, "brightness set to: "+j.getString("brightness"));
+					PowerGarden.Device.tablet_brightness = (Integer.valueOf(j.getString("brightness")))/100.f;
+					}
+				if(j.has("volume")){
+					Log.d(TAG, "volume set to: "+j.getString("volume"));
+					PowerGarden.Device.tablet_volume = (Integer.valueOf(j.getString("volume")))/100.f;
+				}
+				callbackActivity.signalToUi(PowerGarden.TabletSettings, PowerGarden.Device.ID);
+				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.TabletSettings, PowerGarden.Device.ID);
+			}
+
+			
 			//**** stream control update ****//
 			else if(event.equals("firehose")){
 				

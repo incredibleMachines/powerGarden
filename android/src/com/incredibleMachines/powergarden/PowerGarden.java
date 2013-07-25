@@ -1,5 +1,8 @@
 package com.incredibleMachines.powergarden;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Vector;
 
 import org.json.JSONArray;
@@ -8,6 +11,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 
 public class PowerGarden {
@@ -33,6 +37,7 @@ public class PowerGarden {
 	//--- audio
     public static SoundPool soundPool;
 	public static int numSounds = 8;
+	public static MediaPlayer chorusAudio;
 	static JSONArray allPlantAudio = new JSONArray();
 	static JSONArray plantAudio_touchRequest = new JSONArray(); 		 //holds audio file names
 	static Vector <Integer> touchRequestAudio = new Vector <Integer> (); //holds sound pool player refs
@@ -59,6 +64,8 @@ public class PowerGarden {
 	SharedPreferences.Editor editor = PowerGarden.mSettings.edit();
 	private static final String PREFS_NAME = "PowerGarden";
 	
+	
+	
 	public static void loadPrefs(Context context){
 		mSettings = context.getSharedPreferences(PREFS_NAME, 0);
 	}
@@ -83,6 +90,8 @@ public class PowerGarden {
 	public static int DisplayTweet = 100;
 	public static int Settings = 101;
 	public static int Unrecognized = 102;
+	public static int SetChorusTime = 103;
+	public static int TabletSettings = 104;
 			
 	//--- app status
 	public static boolean bAudioPlaying = false;
@@ -97,6 +106,7 @@ public class PowerGarden {
 	public static int SocketConnected = 90;
 	public static int Connected = 91;
 	public static int Disconnected = 92;
+	
 	
 	//-------------------------//	
 	//****** this device ******//
@@ -160,6 +170,10 @@ public class PowerGarden {
 		static boolean rangeActive = Boolean.valueOf(PowerGarden.getPrefString("range_active","true"));
 		static int rangeLowThresh = Integer.parseInt(PowerGarden.getPrefString("range_low","50"));
 		static long lastRangeHitTime = 0;
+		static String chorus_filename;
+		static long chorus_start_time;
+		static float tablet_brightness;
+		static float tablet_volume;
 
 	}
 	

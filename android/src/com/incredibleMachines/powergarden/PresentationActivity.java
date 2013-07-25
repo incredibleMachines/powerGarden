@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
 import android.net.Uri;
@@ -35,6 +36,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -63,9 +65,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	TextView twitterHandle;
 	LinearLayout twitterHeading;
 	
-    LonelyAudio lonelyAudioUpdater = new LonelyAudio();
-//    lonelyAudioUpdater.setActivity(this);
-    Timer lonelyAudioScheduling = new Timer();
+    ChorusAudio chorusAudioUpdater = new ChorusAudio();
+    Timer chorusAudioScheduling = new Timer();
 	
     int frameCount = 0;
 	
@@ -111,6 +112,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			//updateThresholds( data.toString() );
 		}
 		
+		/*** show arduino debug page ***/
 		else if(type == PowerGarden.StreamModeUpdate){
 			if(PowerGarden.Device.datastream_mode){
 				 Runnable showDebug = null;
@@ -126,9 +128,40 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				}
 			}
 		}
+		
+		/*** set chorus playback ***/
+		else if(type == PowerGarden.SetChorusTime){
+			if(data.toString().equals("stop")){
+				Log.d(TAG, "STOP CHORUS");
+				PowerGarden.chorusAudio.stop(); // we got a stop request !
+				PowerGarden.chorusAudio.prepareAsync(); //prepare the chorus audio to be sung again 
+			}
+			else {
+		      ChorusAudio chorusAudioUpdater = new ChorusAudio();
+		      chorusAudioUpdater.setActivity(this);
+		      Timer chorusScheduling = new Timer();
+		      chorusScheduling.schedule(chorusAudioUpdater, PowerGarden.Device.chorus_start_time);
+			}
+		}
+		
+		else if(type == PowerGarden.TabletSettings){
+			Runnable adjustBrightness = null;
+			adjustBrightness = new Runnable(){
+				public void run(){       
+				    WindowManager.LayoutParams lp = getWindow().getAttributes();
+				    //previousScreenBrightness = lp.screenBrightness;
+				    float brightness = PowerGarden.Device.tablet_brightness;
+				    lp.screenBrightness = brightness; 
+				    getWindow().setAttributes(lp); 
+				}
+			 };
+			if(adjustBrightness != null){
+				PresentationActivity.this.runOnUiThread(adjustBrightness);	
+			}
+		}
 	}
 	
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
@@ -298,6 +331,10 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    	try {
 	    		Log.wtf(TAG, "loading audio");
 	    		
+
+	    		PowerGarden.chorusAudio = MediaPlayer.create(PresentationActivity.this, R.raw.chorus_1812_all); // in 2nd param u have to pass your desire ringtone
+	    		PowerGarden.chorusAudio.prepareAsync();
+	    		
 		        for(int j=0; j<PowerGarden.plantAudio_touchRequest.length();j++){
 		        		int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchRequest.getString(j), "raw", getPackageName());
 						PowerGarden.touchRequestAudio.add(PowerGarden.soundPool.load(PresentationActivity.this, sound_id, 1));
@@ -358,11 +395,11 @@ public class PresentationActivity extends UsbActivity implements Connectable{
       //lonelyAudioScheduling.schedule(lonelyAudioUpdater, 3000);
 	}
 	
-	void ScheduleLonelyAudio(){
-		Log.wtf(TAG, "scheduledLonelyAudio");
-		lonelyAudioScheduling.schedule(lonelyAudioUpdater, (int)(2000+(Math.random()*2000)));
-		
-	}
+//	void ScheduleLonelyAudio(){
+//		Log.wtf(TAG, "scheduledLonelyAudio");
+//		lonelyAudioScheduling.schedule(lonelyAudioUpdater, (int)(2000+(Math.random()*2000)));
+//		
+//	}
 
 	
 	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
