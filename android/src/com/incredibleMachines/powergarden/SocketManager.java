@@ -323,7 +323,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 					}
 				if(j.has("volume")){
 					Log.d(TAG, "volume set to: "+j.getString("volume"));
-					PowerGarden.Device.tablet_volume = (Integer.valueOf(j.getString("volume")))/100.f;
+					PowerGarden.Device.tablet_volume = Integer.valueOf(j.getString("volume"));
 				}
 				callbackActivity.signalToUi(PowerGarden.TabletSettings, PowerGarden.Device.ID);
 				if(presentationCallback != null) presentationCallback.signalToUi(PowerGarden.TabletSettings, PowerGarden.Device.ID);

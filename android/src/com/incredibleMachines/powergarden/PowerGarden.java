@@ -173,7 +173,7 @@ public class PowerGarden {
 		static String chorus_filename;
 		static long chorus_start_time;
 		static float tablet_brightness;
-		static float tablet_volume;
+		static int tablet_volume;
 
 	}
 	

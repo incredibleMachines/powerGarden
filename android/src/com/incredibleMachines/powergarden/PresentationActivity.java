@@ -158,6 +158,23 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			if(adjustBrightness != null){
 				PresentationActivity.this.runOnUiThread(adjustBrightness);	
 			}
+			
+			AudioManager mgr=null;
+			mgr=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+			int currVol = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+			Log.d(TAG, "CURR VOL: "+Integer.toString(currVol));
+			if(currVol < PowerGarden.Device.tablet_volume){
+				int diff = PowerGarden.Device.tablet_volume - currVol;
+				for(int i=0; i<diff+1; i++)
+				mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0 );
+			} else {
+				int diff = currVol - PowerGarden.Device.tablet_volume;
+				for(int i=0; i<diff; i++)
+				mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0 );
+			}
+			//Log.wtf("MAX VOLUME: ", String.valueOf(mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC)));
+			//mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, PowerGarden.Device.tablet_volume, AudioManager.ADJUST_RAISE);
+
 		}
 	}
 	
