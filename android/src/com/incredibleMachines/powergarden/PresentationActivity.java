@@ -20,8 +20,10 @@ import com.incredibleMachines.powergarden.util.UsbActivity;
 import com.victorint.android.usb.interfaces.Connectable;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
@@ -172,12 +174,28 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				for(int i=0; i<diff; i++)
 				mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0 );
 			}
-			//Log.wtf("MAX VOLUME: ", String.valueOf(mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC)));
-			//mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, PowerGarden.Device.tablet_volume, AudioManager.ADJUST_RAISE);
-
+			try {
+				JSONObject j = new JSONObject();
+				j.put("battery_status", PowerGarden.Device.tablet_battery_level)
+					.put("brightness", (int)(PowerGarden.Device.tablet_brightness*100))
+					.put("volume", PowerGarden.Device.tablet_volume)
+					.put("device_id", PowerGarden.Device.ID);
+				PowerGarden.SM.sendMonkey("tablet", PowerGarden.Device.ID, j, this);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
+	private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
+		    @Override
+		    public void onReceive(Context arg0, Intent intent) {
+		      int level = intent.getIntExtra("level", 0);
+		      PowerGarden.Device.tablet_battery_level = level;
+		      Log.wtf(TAG, "BATTER STATUS CHANGE: "+Integer.toString(PowerGarden.Device.tablet_battery_level));
+		    }
+	};
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -196,6 +214,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		Log.wtf(TAG,"!!!START!!!");
 		setContentView(R.layout.activity_presentation);
 		
+		//set up broadcastListener for battery level status
+		this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		
 	    SM = new SocketManager();
 	    PowerGarden.SM = SM;

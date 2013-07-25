@@ -174,6 +174,7 @@ public class PowerGarden {
 		static long chorus_start_time;
 		static float tablet_brightness;
 		static int tablet_volume;
+		static int tablet_battery_level = 97;
 
 	}
 	
