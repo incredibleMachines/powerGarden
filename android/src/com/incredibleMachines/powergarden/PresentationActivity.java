@@ -150,8 +150,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				public void run(){       
 				    WindowManager.LayoutParams lp = getWindow().getAttributes();
 				    //previousScreenBrightness = lp.screenBrightness;
-				    float brightness = PowerGarden.Device.tablet_brightness;
-				    lp.screenBrightness = brightness; 
+				    float newBrightness = PowerGarden.Device.tablet_brightness;
+				    lp.screenBrightness = newBrightness; 
 				    getWindow().setAttributes(lp); 
 				}
 			 };
