@@ -426,7 +426,7 @@ $('.chorus').click(function() {
 		var timestamp = new Date();
 		timestamp.setSeconds(timestamp.getSeconds() + 15);
 
-		var obj = { start_time: timestamp }
+		var obj = { start_time: timestamp.getTime() }
 	}
 	if ($(this).hasClass('stop')) {
 		var obj = { start_time: false }
