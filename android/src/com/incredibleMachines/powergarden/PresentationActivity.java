@@ -194,6 +194,15 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		      int level = intent.getIntExtra("level", 0);
 		      PowerGarden.Device.tablet_battery_level = level;
 		      Log.wtf(TAG, "BATTER STATUS CHANGE: "+Integer.toString(PowerGarden.Device.tablet_battery_level));
+				try {
+					JSONObject j = new JSONObject();
+					j.put("battery_status", PowerGarden.Device.tablet_battery_level)
+						.put("device_id", PowerGarden.Device.ID);
+					PowerGarden.SM.sendMonkey("tablet", PowerGarden.Device.ID, j, PresentationActivity.this);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		    }
 	};
 
