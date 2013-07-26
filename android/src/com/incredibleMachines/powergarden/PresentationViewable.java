@@ -24,7 +24,6 @@ import com.victorint.android.usb.interfaces.Viewable;
 
 public class PresentationViewable extends TimerTask implements Connectable, Viewable, SeekBar.OnSeekBarChangeListener  {
 	private static String TAG = "PresentationViewable";
-	//private Activity activity_;
 	
 	private PresentationActivity activity_;
 	private int messageLevel_			= 22;
@@ -85,6 +84,8 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 					}
 				};
 			}
+			
+			
 			if(type == PowerGarden.ThreshChange){
 				Log.d(TAG, "from SignalToUi > type .ThreshChange");
 				final Object _d = data;
@@ -103,6 +104,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 				};
 			}
 			
+			//-- show debug screen
 			else if (type == PowerGarden.StreamModeUpdate){
 				Log.d(TAG, "from SignalToUi > type .StreamModeUpdate");
 				final Object _d = data;

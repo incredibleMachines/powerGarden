@@ -177,25 +177,16 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 		if(socketIOException.getMessage().equals("1+0")){
 			Log.d(TAG, "hit onError '1+0'");
 			PowerGarden.bConnected = false;
-			//backgroundTimer.schedule(this, connectTimeout);
-			//closeUpShop();
-			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		if(socketIOException.getMessage().equals("Timeout Error")){
 			PowerGarden.bConnected = false;
-			//closeUpShop();
-			//backgroundTimer.schedule(this, connectTimeout);
-			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
 		}
 		if(socketIOException.getMessage().equals("Error while handshaking")){
 			PowerGarden.bConnected = false;
-			//closeUpShop();
-			//backgroundTimer.schedule(this, connectTimeout);
-			//connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,callbackActivity);
+
 		}
-		//Error while handshaking
 		
-		if(!PowerGarden.bConnected){
+/*		if(!PowerGarden.bConnected){ //--- if one of these three errors happened, try reconnecting
 			socket = new SocketIO();
 			try {
 				socket.connect("http://"+PowerGarden.Device.host+":"+PowerGarden.Device.port+"/", this);
@@ -203,6 +194,16 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} 
+*/
+		
+		//--- regardless, restart connection 
+		socket = new SocketIO();
+		try {
+			socket.connect("http://"+PowerGarden.Device.host+":"+PowerGarden.Device.port+"/", this);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

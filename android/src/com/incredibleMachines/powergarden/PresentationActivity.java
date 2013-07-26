@@ -45,27 +45,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+ * PresentationActivity, 
  * 
- * @see SystemUiHider
+ * contains all "staging" of app, central UI, 
+ * all font and backgrounds
  */
-public class PresentationActivity extends UsbActivity implements Connectable{
 
+public class PresentationActivity extends UsbActivity implements Connectable{
+	private static String TAG = "PresentationActivity";
+	
 	private static final boolean AUTO_HIDE = true;			//show/hide menu vars
 	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 	private static final boolean TOGGLE_ON_CLICK = true;
 	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 	public SystemUiHider mSystemUiHider;
-	
-	private static String TAG = "PresentationActivity";
-	
-	SocketManager SM;
-	
 	FrameLayout wrapper;
 	TextView stageCopy;
 	TextView twitterHandle;
 	LinearLayout twitterHeading;
+	
+	SocketManager SM;
 	
     ChorusAudio chorusAudioUpdater = new ChorusAudio();
     Timer chorusAudioScheduling = new Timer();
@@ -84,9 +83,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	public void signalToUi(int type, Object data){
 		super.signalToUi(type, data);
 		Log.d(TAG, "PresentationActivty signalToUi");
-		Log.d(TAG, "GOT CALLBACK: " + Integer.toString(type));
 		if(data != null) Log.d(TAG, "DATA: " + data.toString());
-
 		
 		/*** connected ***/
 		if(type == PowerGarden.SocketConnected){
@@ -135,8 +132,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		else if(type == PowerGarden.SetChorusTime){
 			if(data.toString().equals("stop")){
 				Log.d(TAG, "STOP CHORUS");
-				PowerGarden.chorusAudio.stop(); // we got a stop request !
-				PowerGarden.chorusAudio.prepareAsync(); //prepare the chorus audio to be sung again 
+				PowerGarden.chorusAudio.stop(); // shut the hell up
+				PowerGarden.chorusAudio.prepareAsync(); // prepare the chorus audio to be sung again 
 			}
 			else {
 		      ChorusAudio chorusAudioUpdater = new ChorusAudio();
@@ -146,7 +143,10 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			}
 		}
 		
+		/*** set screen brightness & volume of tablet ***/
 		else if(type == PowerGarden.TabletSettings){
+			
+			//--- brightness (needs to be updated on ui thread)
 			Runnable adjustBrightness = null;
 			adjustBrightness = new Runnable(){
 				public void run(){       
@@ -157,23 +157,31 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				    getWindow().setAttributes(lp); 
 				}
 			 };
-			if(adjustBrightness != null){
-				PresentationActivity.this.runOnUiThread(adjustBrightness);	
-			}
+			if(adjustBrightness != null)
+				PresentationActivity.this.runOnUiThread(adjustBrightness);	//go
 			
+			
+			//--- volume control
 			AudioManager mgr=null;
-			mgr=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+			mgr = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 			int currVol = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
 			Log.d(TAG, "CURR VOL: "+Integer.toString(currVol));
-			if(currVol < PowerGarden.Device.tablet_volume){
+			
+			if(currVol < PowerGarden.Device.tablet_volume){ //TURN IT UP
 				int diff = PowerGarden.Device.tablet_volume - currVol;
-				for(int i=0; i<diff+1; i++)
-				mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0 );
-			} else {
+				while(diff > 0){ //count up to the new volume
+					mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0 );
+					diff--;
+				}
+			} else {										//TURN IT DOWN
 				int diff = currVol - PowerGarden.Device.tablet_volume;
-				for(int i=0; i<diff; i++)
-				mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0 );
+				while(diff > 0){
+					mgr.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0 );
+					diff--;
+				}
 			}
+			
+			//--- send an update to the server
 			try {
 				JSONObject j = new JSONObject();
 				j.put("battery_status", PowerGarden.Device.tablet_battery_level)
@@ -188,12 +196,13 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		}
 	}
 	
-	private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
+	//--- listener for battery status change ----
+	private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){ 
 		    @Override
 		    public void onReceive(Context arg0, Intent intent) {
 		      int level = intent.getIntExtra("level", 0);
 		      PowerGarden.Device.tablet_battery_level = level;
-		      Log.wtf(TAG, "BATTER STATUS CHANGE: "+Integer.toString(PowerGarden.Device.tablet_battery_level));
+		      Log.d(TAG, "BATTER STATUS CHANGE: "+Integer.toString(PowerGarden.Device.tablet_battery_level));
 				try {
 					JSONObject j = new JSONObject();
 					j.put("battery_status", PowerGarden.Device.tablet_battery_level)
@@ -206,16 +215,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		    }
 	};
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
-	        //do your stuff
-	    	Log.d(TAG,"BACK CLICKED");
-	    	//activity_.resetView();
-	    	//currentViewable_.debug = false;
-	    }
-	    return true;
-	}
+
 
 	@Override
 	protected void createAndSetViews() {
@@ -301,12 +301,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			}
 		});
 
-		// Upon interacting with UI controls, delay any scheduled hide()
-		// operations to prevent the jarring behavior of controls going away
-		// while interacting with the UI.
 		findViewById(R.id.setup_sockets_button).setOnTouchListener(
 				mDelayHideTouchListener
-				
 				);
 		//set up websockets
 		findViewById(R.id.setup_sockets_button).setOnClickListener(new Button.OnClickListener(){
@@ -315,9 +311,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				PresentationActivity.this.startActivity(setupSockets);
 			}
 		});
-		// Upon interacting with UI controls, delay any scheduled hide()
-		// operations to prevent the jarring behavior of controls going away
-		// while interacting with the UI.
+
 		findViewById(R.id.connect_arduino_button).setOnTouchListener(
 				mDelayHideTouchListener
 				
@@ -354,7 +348,6 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		
 		//****** setup soundPool player ******//
 		
-        //this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		PowerGarden.soundPool = new SoundPool(100, AudioManager.STREAM_MUSIC, 0);
 		PowerGarden.soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
             @Override
@@ -365,7 +358,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
             }
         });
         
-        PowerGarden.audioManager.setupAudio(); //does setup of all sound types
+        PowerGarden.audioManager.setupAudio(); //does setup of all sound file types
 		
         Log.d(TAG, "numSounds total found: "+Integer.toString(PowerGarden.audioManager.getNumAudioSamples()));
         
@@ -377,10 +370,10 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    	try {
 	    		Log.wtf(TAG, "loading audio");
 	    		
-
-	    		PowerGarden.chorusAudio = MediaPlayer.create(PresentationActivity.this, R.raw.chorus_1812_all); // in 2nd param u have to pass your desire ringtone
-	    		PowerGarden.chorusAudio.prepareAsync();
+	    		//first load up the chorusAudio track (to be moved later for song selection)
+	    		PowerGarden.chorusAudio = MediaPlayer.create(PresentationActivity.this, R.raw.chorus_1812_all);
 	    		
+	    		//now load up every soundPool up with associated sound type 
 		        for(int j=0; j<PowerGarden.plantAudio_touchRequest.length();j++){
 		        		int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchRequest.getString(j), "raw", getPackageName());
 						PowerGarden.touchRequestAudio.add(PowerGarden.soundPool.load(PresentationActivity.this, sound_id, 1));
@@ -427,26 +420,12 @@ public class PresentationActivity extends UsbActivity implements Connectable{
       signStageUpdater.setActivity(this);
       Timer signScheduling = new Timer();
       
-      signScheduling.schedule(signStageUpdater, 10000, 15000); // (task, initial delay, repeated delay
+      signScheduling.schedule(signStageUpdater, 10000, 10000); // (task, initial delay, repeated delay
       
       //*** send setup to arduino ***//
       PresentationActivity.super.sendData("setup");	
-//      //currentViewable_.
-//      
-////      LonelyAudio lonelyAudioUpdater = new LonelyAudio();
-//      lonelyAudioUpdater.setActivity(this);
-//      ScheduleLonelyAudio();
- //     Timer lonelyAudioScheduling = new Timer();
-      
-      //lonelyAudioScheduling.schedule(lonelyAudioUpdater, 3000);
 	}
 	
-//	void ScheduleLonelyAudio(){
-//		Log.wtf(TAG, "scheduledLonelyAudio");
-//		lonelyAudioScheduling.schedule(lonelyAudioUpdater, (int)(2000+(Math.random()*2000)));
-//		
-//	}
-
 	
 	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
 		@Override
@@ -778,4 +757,12 @@ public class PresentationActivity extends UsbActivity implements Connectable{
             tv.setTypeface(tf);
         }
     }
+    
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
+	    	Log.d(TAG,"BACK CLICKED");
+	    }
+	    return true;
+	}
 }

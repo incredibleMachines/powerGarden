@@ -5,6 +5,7 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.util.Log;
 
+/*** runnable called by a chorus timer set in PresentationActivity ***/
 
 class ChorusAudio extends TimerTask {
 	String TAG = "ChorusAudio";
