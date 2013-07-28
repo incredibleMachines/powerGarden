@@ -203,7 +203,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 					
 					delta = PowerGarden.Device.plants[i].capCalculator.getDelta();
 					
-					if(i < 2 || i == 7) {
+					if(i < 2 || i == 7) { //only have delta enabled on 0, 1, 7
 						plantDiffDisplay[i] = delta;
 						Log.d("plantDIFFDisplay[i]", String.valueOf(delta));
 					}
@@ -251,7 +251,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 										//PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
 										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, plantDiffDisplay[i], PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
 										//*******	
-										if (PowerGarden.stateManager.updateDeviceState() ){
+										if (PowerGarden.stateManager.updateDeviceState() ){ // returns true if changed
 											PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
 											//activity_.resetView(); //now done in timerTask run() method
 										}
@@ -317,7 +317,51 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 						activity_.runOnUiThread(runner);
 					}
 			    //}
-			}else if(dataType.equalsIgnoreCase("L")){
+			}
+			
+			//--- VIBRATION SENSOR DATA
+			else if(dataType.equalsIgnoreCase("V")){ 
+				
+				final int plantDisplay[] = new int [3];
+				int val = 0;
+				//updateView(); //quick refresh of all PowerGarden.statics
+				
+				for(int i = 0; i<parseData.length-1; i++){
+					val = Integer.parseInt(parseData[i+1]);
+					
+					plantDisplay[i+4] = val; //going to display on 4,5,6
+					
+					Log.d("plantVib[i]", String.valueOf(val));
+					
+					PowerGarden.Device.plants[i].capCalculator.addValue(val);
+					
+				//	delta = PowerGarden.Device.plants[i].capCalculator.getDelta();
+					
+					//if(i < 2 || i == 7) { //only have delta enabled on 0, 1, 7
+						plantDisplay[i+4] = val;
+						Log.d("plantVibDisplay[i]", String.valueOf(val));
+					//}
+					//PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
+					//plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
+					//Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
+				}
+				//PowerGarden.Device.light = Integer.parseInt(parseData[1]);
+				//createJson("light",PowerGarden.light);
+				//final int light = PowerGarden.Device.light;
+				if(debugSensors&& bSetup){
+					Runnable runner = new Runnable(){
+						public void run() {
+							//String lightStr = String.valueOf(light);
+							//lightval.setText(lightStr);
+						}
+					};
+					if(runner != null){
+						activity_.runOnUiThread(runner);
+					}
+			    }
+			}
+			
+			else if(dataType.equalsIgnoreCase("L")){
 				PowerGarden.Device.light = Integer.parseInt(parseData[1]);
 				//createJson("light",PowerGarden.light);
 				final int light = PowerGarden.Device.light;
@@ -332,7 +376,10 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 						activity_.runOnUiThread(runner);
 					}
 			    }
-			}else if(dataType.equalsIgnoreCase("M")){
+			}
+			
+			
+			else if(dataType.equalsIgnoreCase("M")){
 				PowerGarden.Device.moisture = Integer.parseInt(parseData[1]);
 				//createJson("moisture",PowerGarden.moisture);
 				final int moisture = PowerGarden.Device.moisture;
