@@ -1,0 +1,1120 @@
+{
+    "garden": {
+        "touchRequest": {
+            "stage_copy": [
+                "Get in touch with nature. Literally! Go ahead and touch the plants",
+                "Greetings! Come on over, the veggies would love to meet you.",
+                "Hi there! See what happens when you pet these plants…",
+                "You seem like a veggie lover. Wanna hang out with these plants?",
+                "Did you know these plants are extremely ticklish? Try it and see!",
+                "Help these plants grow big and tall: give 'em a pinch to grow an inch!"
+            ],
+            "audio": [
+            ]
+        },
+        "touchResponseGood": {
+            "stage_copy": [
+                "Who knew that veggies could be such fun friends?",
+                "Holy cow, you're like, the vegetable whisperer. Teach me your ways!",
+                "Hey, you've got the magic touch! Keep it up!",
+                "Perfect job, you're a natural!",
+                "You're a great playmate. Hope you visit every day!",
+                "Wow. Were you a vegetable in your past life?"
+            ],
+            "audio": [
+            ]
+        },
+        "touchResponseBad": {
+            "stage_copy": [
+                "Why not spread the love around a bit?",
+                "You guys are getting along great. The other veggies would love to meet you too!",
+                "It's time for the plants to get their beauty rest. Come back soon!",
+                "All of the hustle and bustle can be overwhelming for plants. They need to relax for a bit."
+            ],
+            "audio": [
+            ]
+        },
+        "waterRequest": {
+            "stage_copy": [
+                "Sounds like these plants need some water, can you help?",
+                "Mind watering these plants? They'd do it themselves, but they don't have arms.",
+                "If it gets any drier, these plants are going to become tumbleweeds!",
+                "These plants sure look dry! Can you send some water their way?"
+            ],
+            "audio": [
+            ]
+        },
+        "waterResponseGood": {
+            "stage_copy": [
+                "The veggies sure look refreshed! Way to beat the heat.",
+                "The plants are super appreciative. If they could send you a drink in return, they would!",
+                "Thanks for helping the veggies stay juicy!",
+                "Look at those water works! Nice job!",
+                "The plants love you for giving them a shower. They were really thirsty until you came along!",
+                "Thanks! Nothing beats a cool splash of water on a hot summer day.",
+                "Excellent water-wielding skills. I knew you could do it!",
+                "Great watering job, you must have done this before!",
+                "Thanks for keeping the veggies hydrated! You are a big help!",
+                "That drink really helped, the veggies feel better already!"
+            ],
+            "audio": []
+        },
+        "waterResponseBad": {
+            "stage_copy": [
+                "Being TOO generous with the water can drown the plants. Let's give 'em a break, shall we?",
+                "Swimming is a fun summer activity for people, not veggies! Can you ease up on the water please?",
+                "These veggies are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Plants love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+                "The plants need time to drink up this water before they get more. Check in on them soon!",
+                "Holy H2O! That's a lot of water. The plants probably need a break now…",
+                "Water is awesome but we don't want the veggies to float away… how about petting them instead?",
+                "Oh dear, these plants are drenched! Any more water would be too much of a good thing.",
+                "If the plants keep getting this much water, they're gonna need an umbrella!"
+            ],
+            "audio": []
+        },
+        "events": [
+            "Thanks for reaching out. Why not say \"Hi\" in person? Free Naked Juice tasting at 2 N Riverside Plaza, Chicago [DATE]",
+            "Thanks for checking in! There's a Naked Juice tasting at 2 N Riverside Plaza, Chicago [DATE]. We'd love to see you!",
+            "Plants love Tweets, but they love real touches more! Come to our next tasting at 2 N Riverside Plaza, Chicago [DATE]",
+            "Thanks for saying hi! If you're in Chicago why not do it IRL? Free Naked Juice tasting at 2 N Riverside Plaza [DATE]",
+            "Thanks for Tweeting! If you're in Chicago, drop by the garden! Free Naked Juice tasting at 2 N Riverside Plaza [DATE]",
+            "The plants appreciate the attention! If you're Chicago-based come try free Naked Juice at 2 N Riverside Plaza [DATE]"
+        ],
+        "eventsPast": [
+            "Thanks for reaching out. Why not say \"Hi\" in person? Final Naked Juice tasting at 2 N Riverside Plaza, Chicago on Labor Day",
+            "Thanks for checking in! The last Naked Juice tasting at 2 N Riverside Plaza, Chicago is on Labor Day. We'd love to see you!",
+            "Plants love Tweets, but they love real touches more! Come to the last tasting at 2 N Riverside Plaza, Chicago on Labor Day",
+            "Thanks for saying hi! If you're in Chicago why not do it IRL? Final Naked Juice tasting at 2 N Riverside Plaza on Labor Day",
+            "Thanks for Tweeting! If you're in Chicago, drop by the garden! Last Naked Juice tasting at 2 N Riverside Plaza on Labor Day",
+            "The plants appreciate the attention! If you're Chicago-based come try free Naked Juice at 2 N Riverside Plaza on Labor Day"
+        ]
+    },
+    "tomatoes": {
+        "touchRequest": {
+            "stage_copy": [
+                "Get in touch with nature. Literally! Go ahead and touch the tomatoes",
+                "Greetings! Come on over, the tomatoes would love to meet you.",
+                "Hi there! See what happens when you pet these tomatoes…",
+                "You seem like a veggie lover. Wanna hang out with these tomatoes?",
+                "Did you know that tomatoes are extremely ticklish? Try it and see!",
+                "Help these plants grow big and tall: give 'em a pinch to grow an inch!",
+                "This tomato has an itch it can't scratch. Can you help out?",
+                "Help wake these tomatoes up from their nap. Give 'em a poke!",
+                "Don't be a stranger – greet these tomatoes with a tiny handshake!",
+                "You’d get along with these tomatoes. Come on over and meet 'em!",
+                "These tomatoes would love to spend some time with you!",
+                "Plant your feet right here and get to know these amazing tomatoes.",
+                "They grow in bunches, but tomatoes still get lonely. Come say hi!"
+            ],
+            "audio": [
+                "large_tomatoes_proximity_1.mp3",
+                "large_tomatoes_proximity_2.mp3",
+                "large_tomatoes_proximity_3.mp3",
+                "large_tomatoes_proximity_4.mp3",
+                "large_tomatoes_proximity_5.mp3"
+            ]
+        },
+        "touchResponseGood": {
+            "stage_copy": [
+                "Who knew that veggies could be such fun friends?",
+                "Holy cow, you're like, the tomato whisperer. Teach me your ways!",
+                "Wow. Were you a tomato in your past life?",
+                "You sure know what tomatoes like! Thank goodness you're here.",
+                "The tomatoes are really digging all this attention. Thanks!",
+                "Fun, isn't it? Who knew tomatoes were so a-peel-ing?",
+                "You're a great playmate. Hope you visit every day!",
+                "Hey, you've got the magic touch! Keep it up!",
+                "Perfect job, you're a natural!",
+                "You're making the tomatoes so happy! Great job!",
+                "You must have a green thumb; the veggies are loving you!",
+                "You say tomato, I say tomato. You say delicious, I say delicious.",
+                "Did you know that the tomato's official name is Solanum lycopersicum. That's Latin for… well, tomato?",
+                "The first European explorers of the Americas actually mistook the tomato for a new breed of eggplant.",
+                "Tomatoes are very friendly plants. They help carrots, asparagus, and a variety of herbs grow.",
+                "Tomatoes are a great source of dietary fiber, vitamins, and antioxidants. Oh tomato, what can’t you do?"
+            ],
+            "audio": [
+                "large_tomatoes_happy_1.mp3",
+                "large_tomatoes_happy_2.mp3",
+                "large_tomatoes_happy_3.mp3",
+                "large_tomatoes_happy_4.mp3",
+                "large_tomatoes_happy_5.mp3",
+                "large_tomatoes_happy_6.mp3",
+                "large_tomatoes_happy_7.mp3",
+                "large_tomatoes_happy_8.mp3",
+                "large_tomatoes_happy_9.mp3"
+            ]
+        },
+        "touchResponseBad": {
+            "stage_copy": [
+                "Careful, if the tomatoes get too worked-up they'll fall off their vines!",
+                "Why not spread the love around a bit?",
+                "It's time for the tomatoes to get their beauty rest. Come back soon!",
+                "The tomatoes need to focus on growing right now. Can you play with the other veggies?",
+                "Tomatoes love attention, but so do the rest of the veggies! Don't ignore the carrots.",
+                "You guys are getting along great. The other veggies would love to meet you too!",
+                "All of the hustle and bustle can be overwhelming for tomatoes. They need to relax for a bit.",
+                "Sounds like these tomatoes need to calm down a little. Can you give the other veggies some attention?",
+                "The tomatoes are getting tuckered out. Want to play with some other veggies?",
+                "Looks like the tomatoes need to mellow out a little. Can you go say hi to other veggies in the garden?",
+                "Any more action and these tomatoes are going to turn into sauce!"
+            ],
+            "audio": [
+                "large_tomatoes_worked_up_1.mp3",
+                "large_tomatoes_worked_up_2.mp3",
+                "large_tomatoes_worked_up_3.mp3"
+            ]
+        },
+        "waterRequest": {
+            "stage_copy": [
+                "Sounds like these tomatoes need some water, can you help?",
+                "Mind watering these tomatoes? They'd do it themselves, but they don't have arms.",
+                "If it gets any drier, these tomatoes are going to become tumbleweeds!",
+                "These tomato plants sure look dry! Can you send some water their way?",
+                "Boy, are these tomatoes parched. Come quench their thirst!",
+                "These tomatoes could use a shower. Trust me, I'm standing right next to them!",
+                "Show the tomatoes you care – give them some good ol' H2O.",
+                "Tomatoes need water to grow. Can you help them out on this hot day?",
+                "Sun-dried tomatoes are great in a salad but not in a garden… Send them some water!"
+            ],
+            "audio": [
+                "large_tomatoes_dry_1.mp3",
+                "large_tomatoes_dry_2.mp3",
+                "large_tomatoes_dry_3.mp3",
+                "large_tomatoes_dry_4.mp3"
+            ]
+        },
+        "waterResponseGood": {
+            "stage_copy": [
+                "The tomatoes sure look refreshed! Way to beat the heat.",
+                "The tomatoes are super appreciative. If they could send you a drink in return, they would!",
+                "Thanks for helping the tomatoes stay juicy!",
+                "Look at those water works! Nice job!",
+                "The tomatoes love you for giving them a shower. They were really thirsty until you came along!",
+                "Thanks! Nothing beats a cool splash of water on a hot summer day.",
+                "Excellent water-wielding skills. I knew you could do it!",
+                "Great watering job, you must have done this before!",
+                "Thanks for keeping the tomatoes hydrated! You are a big help!"
+            ],
+            "audio": [
+                "large_tomatoes_wet_1.mp3",
+                "large_tomatoes_wet_2.mp3"
+            ]
+        },
+        "waterResponseBad": {
+            "stage_copy": [
+                "Being TOO generous with the water can drown the tomatoes. Let's give 'em a break, shall we?",
+                "Swimming is a fun summer activity for people, not tomatoes! Can you ease up on the water please?",
+                "These tomatoes are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Tomatoes love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+                "The tomatoes need time to drink up this water before they get more. Check in on them soon!",
+                "Holy H2O! That's a lot of water. The tomatoes probably need a break now…",
+                "Water is awesome but we don't want the tomatoes to float away… how about petting them instead?",
+                "Oh dear, these tomatoes are drenched! Any more water would be too much of a good thing.",
+                "If the tomatoes keep getting this much water, they're gonna need an umbrella!"
+            ],
+            "audio": []
+        },
+        "factoids": [
+            "Did you know that the tomato's official name is Solanum lycopersicum. That's Latin for… well, tomato?",
+            "The first European explorers of the Americas actually mistook the tomato for a new breed of eggplant.",
+            "Tomatoes are very friendly plants. They have mutually benefit growing relationships with carrot, asparagus, and a variety of herbs",
+            "Loaded with Vitamins A and C, tomatoes are also a great source of dietary fiber and disease-fighting antioxidants. Oh tomato, what can’t you do?"
+        ]
+    },
+    "cherry_tomatoes": {
+        "touchRequest": {
+            "stage_copy": [
+                "Get in touch with nature. Literally! Go ahead and touch the tomatoes",
+                "Greetings! Come on over, the tomatoes would love to meet you.",
+                "Hi there! See what happens when you pet these tomatoes…",
+                "You seem like a veggie lover. Wanna hang out with these tomatoes?",
+                "Did you know that tomatoes are extremely ticklish? Try it and see!",
+                "Help these plants grow big and tall: give 'em a pinch to grow an inch!",
+                "This tomato has an itch it can't scratch. Can you help out?",
+                "Help wake these tomatoes up from their nap. Give 'em a poke!",
+                "Don't be a stranger – greet these tomatoes with a tiny handshake!",
+                "You’d get along with these tomatoes. Come on over and meet 'em!",
+                "These tomatoes would love to spend some time with you!",
+                "Plant your feet right here and get to know these amazing tomatoes.",
+                "They grow in bunches, but tomatoes still get lonely. Come say hi!"
+            ],
+            "audio": [
+                "cherry_tomatoes_proximity_1.mp3",
+                "cherry_tomatoes_proximity_2.mp3",
+                "cherry_tomatoes_proximity_3.mp3",
+                "cherry_tomatoes_proximity_4.mp3",
+                "cherry_tomatoes_proximity_5.mp3"
+            ]
+        },
+        "touchResponseGood": {
+            "stage_copy": [
+                "Who knew that veggies could be such fun friends?",
+                "Holy cow, you're like, the tomato whisperer. Teach me your ways!",
+                "Wow. Were you a tomato in your past life?",
+                "You sure know what tomatoes like! Thank goodness you're here.",
+                "The tomatoes are really digging all this attention. Thanks!",
+                "Fun, isn't it? Who knew tomatoes were so a-peel-ing?",
+                "You're a great playmate. Hope you visit every day!",
+                "Hey, you've got the magic touch! Keep it up!",
+                "Perfect job, you're a natural!",
+                "You're making the tomatoes so happy! Great job!",
+                "You must have a green thumb; the veggies are loving you!",
+                "You say tomato, I say tomato. You say delicious, I say delicious.",
+                "Did you know that the tomato's official name is Solanum lycopersicum. That's Latin for… well, tomato?",
+                "The first European explorers of the Americas actually mistook the tomato for a new breed of eggplant.",
+                "Tomatoes are very friendly plants. They help carrots, asparagus, and a variety of herbs grow.",
+                "Tomatoes are a great source of dietary fiber, vitamins, and antioxidants. Oh tomato, what can’t you do?"
+            ],
+            "audio": [
+                "cherry_tomatoes_happy_1.mp3",
+                "cherry_tomatoes_happy_2.mp3",
+                "cherry_tomatoes_happy_3.mp3",
+                "cherry_tomatoes_happy_4.mp3",
+                "cherry_tomatoes_happy_5.mp3",
+                "cherry_tomatoes_happy_6.mp3",
+                "cherry_tomatoes_happy_7.mp3",
+                "cherry_tomatoes_happy_8.mp3",
+                "cherry_tomatoes_happy_9.mp3"
+            ]
+        },
+        "touchResponseBad": {
+            "stage_copy": [
+                "Careful, if the tomatoes get too worked-up they'll fall off their vines!",
+                "Why not spread the love around a bit?",
+                "It's time for the tomatoes to get their beauty rest. Come back soon!",
+                "The tomatoes need to focus on growing right now. Can you play with the other veggies?",
+                "Tomatoes love attention, but so do the rest of the veggies! Don't ignore the carrots.",
+                "You guys are getting along great. The other veggies would love to meet you too!",
+                "All of the hustle and bustle can be overwhelming for tomatoes. They need to relax for a bit.",
+                "Sounds like these tomatoes need to calm down a little. Can you give the other veggies some attention?",
+                "The tomatoes are getting tuckered out. Want to play with some other veggies?",
+                "Looks like the tomatoes need to mellow out a little. Can you go say hi to other veggies in the garden?",
+                "Any more action and these tomatoes are going to turn into sauce!"
+            ],
+            "audio": [
+                "cherry_tomatoes_worked_up_1.mp3",
+                "cherry_tomatoes_worked_up_2.mp3",
+                "cherry_tomatoes_worked_up_3.mp3",
+                "cherry_tomatoes_worked_up_4.mp3"
+            ]
+        },
+        "waterRequest": {
+            "stage_copy": [
+                "Sounds like these tomatoes need some water, can you help?",
+                "Mind watering these tomatoes? They'd do it themselves, but they don't have arms.",
+                "If it gets any drier, these tomatoes are going to become tumbleweeds!",
+                "These tomato plants sure look dry! Can you send some water their way?",
+                "Boy, are these tomatoes parched. Come quench their thirst!",
+                "These tomatoes could use a shower. Trust me, I'm standing right next to them!",
+                "Show the tomatoes you care – give them some good ol' H2O.",
+                "Tomatoes need water to grow. Can you help them out on this hot day?",
+                "Sun-dried tomatoes are great in a salad but not in a garden… Send them some water!"
+            ],
+            "audio": [
+                "cherry_tomatoes_dry_1.mp3",
+                "cherry_tomatoes_dry_2.mp3",
+                "cherry_tomatoes_dry_3.mp3",
+                "cherry_tomatoes_dry_4.mp3",
+                "cherry_tomatoes_dry_5.mp3",
+                "cherry_tomatoes_dry_6.mp3",
+                "cherry_tomatoes_dry_7.mp3"
+            ]
+        },
+        "waterResponseGood": {
+            "stage_copy": [
+                "The tomatoes sure look refreshed! Way to beat the heat.",
+                "The tomatoes are super appreciative. If they could send you a drink in return, they would!",
+                "Thanks for helping the tomatoes stay juicy!",
+                "Look at those water works! Nice job!",
+                "The tomatoes love you for giving them a shower. They were really thirsty until you came along!",
+                "Thanks! Nothing beats a cool splash of water on a hot summer day.",
+                "Excellent water-wielding skills. I knew you could do it!",
+                "Great watering job, you must have done this before!",
+                "Thanks for keeping the tomatoes hydrated! You are a big help!"
+            ],
+            "audio": [
+                "cherry_tomatoes_wet_1.mp3",
+                "cherry_tomatoes_wet_2.mp3",
+                "cherry_tomatoes_wet_3.mp3"
+            ]
+        },
+        "waterResponseBad": {
+            "stage_copy": [
+                "Being TOO generous with the water can drown the tomatoes. Let's give 'em a break, shall we?",
+                "Swimming is a fun summer activity for people, not tomatoes! Can you ease up on the water please?",
+                "These tomatoes are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Tomatoes love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+                "The tomatoes need time to drink up this water before they get more. Check in on them soon!",
+                "Holy H2O! That's a lot of water. The tomatoes probably need a break now…",
+                "Water is awesome but we don't want the tomatoes to float away… how about petting them instead?",
+                "Oh dear, these tomatoes are drenched! Any more water would be too much of a good thing.",
+                "If the tomatoes keep getting this much water, they're gonna need an umbrella!"
+            ],
+            "audio": []
+        },
+        "factoids": [
+            "Did you know that the tomato's official name is Solanum lycopersicum. That's Latin for… well, tomato?",
+            "The first European explorers of the Americas actually mistook the tomato for a new breed of eggplant.",
+            "Tomatoes are very friendly plants. They have mutually benefit growing relationships with carrot, asparagus, and a variety of herbs",
+            "Loaded with Vitamins A and C, tomatoes are also a great source of dietary fiber and disease-fighting antioxidants. Oh tomato, what can’t you do?"
+        ]
+    },
+    "peppers": {
+        "touchRequest": {
+            "stage_copy": [
+                "Get in touch with nature. Literally! Go ahead and touch a pepper.",
+                "Greetings! Come on over, the peppers would love to meet you.",
+                "Hi there! See what happens when you pet these peppers…",
+                "You seem like a veggie lover. Wanna hang out with these peppers?",
+                "Did you know that peppers are extremely ticklish? Try it and see!",
+                "These peppers are working hard to get tangy. Give 'em a high five for their efforts!",
+                "This pepper has an itch it can't scratch. Can you help out?",
+                "Help wake these peppers up from their nap. Give 'em a poke!",
+                "Don't be a stranger – greet these peppers with a tiny handshake!",
+                "You’d get along with these peppers. Come on over and meet 'em!",
+                "These peppers would love to spend some time with you!",
+                "Plant your feet right here and get to know these delicious peppers.",
+                "These peppers feel hollow on the inside. Would you cheer them up?",
+                "This pepper thinks it recognizes you… does it ring a bell?",
+                "Been living in the city so long you forgot what nature feels like? Come get your fix!"
+            ],
+            "audio": [
+                "peppers_proximity_1.mp3",
+                "peppers_proximity_2.mp3",
+                "peppers_proximity_3.mp3"
+            ]
+        },
+        "touchResponseGood": {
+            "stage_copy": [
+                "Who knew that veggies could be such fun friends?",
+                "Wow, you're like, the pepper whisperer. Teach me your ways!",
+                "Holy cow. Were you a pepper in your past life?",
+                "You sure know what peppers like! Thank goodness you're here.",
+                "The peppers are really digging all this attention. Thanks!",
+                "The peppers are loving that! Thanks for entertaining them.",
+                "You're a great playmate. Hope you visit every day!",
+                "Hey, you've got the magic touch! Keep it up!",
+                "Perfect job, you're a natural!",
+                "You're making the peppers so happy! Great job!",
+                "You must have a green thumb; the veggies are loving you!"
+            ],
+            "audio": [
+                "peppers_happy_1.mp3",
+                "peppers_happy_2.mp3",
+                "peppers_happy_3.mp3",
+                "peppers_happy_4.mp3",
+                "peppers_happy_5.mp3",
+                "peppers_happy_6.mp3",
+                "peppers_happy_7.mp3",
+                "peppers_happy_8.mp3"
+            ]
+        },
+        "touchResponseBad": {
+            "stage_copy": [
+                "Careful, if the peppers get too worked-up they'll fall off their vines!",
+                "Why not spread the love around a bit?",
+                "It's time for the peppers to get their beauty rest. Come back soon!",
+                "The peppers need to focus on growing right now. Can you play with the other veggies?",
+                "Peppers love attention, but so do the rest of the veggies! Don't ignore the peppers.",
+                "You guys are getting along great. The other veggies would love to meet you too!",
+                "All of the hustle and bustle can be overwhelming for peppers. They need to relax for a bit.",
+                "Sounds like these peppers need to calm down a little. Can you give the other veggies some attention?",
+                "The peppers are getting tuckered out. Want to play with some other veggies?",
+                "Looks like the peppers need to mellow out a bit. Can you go say hi to other veggies in the garden?",
+                "Any more action and these peppers are going to turn into paste!"
+            ],
+            "audio": [
+                "peppers_worked_up_1.mp3",
+                "peppers_worked_up_2.mp3",
+                "peppers_worked_up_3.mp3"
+            ]
+        },
+        "waterRequest": {
+            "stage_copy": [
+                "Sounds like these peppers need some water, can you help?",
+                "Mind watering these peppers? They'd do it themselves, but they don't have arms.",
+                "If it gets any drier, these peppers are going to become parched!",
+                "These peppers sure look dry! Can you send some water their way?",
+                "Boy, are these peppers parched. Come quench their thirst!",
+                "These peppers could use a shower. Trust me, I'm standing right next to them!",
+                "Show the peppers you care – give them some good ol' H2O.",
+                "Peppers need water to grow. Can you help them out on this hot day?",
+                "Pepper flakes are great on pizza but not in a garden. Send 'em some water before they dry out!"
+            ],
+            "audio": [
+                "peppers_dry_1.mp3",
+                "peppers_dry_2.mp3"
+            ]
+        },
+        "waterResponseGood": {
+            "stage_copy": [
+                "That drink really helped, the peppers feel better already!",
+                "The peppers sure look refreshed! Way to beat the heat.",
+                "The peppers are super appreciative. If they could send you a drink in return, they would!",
+                "Thanks for helping the peppers stay crisp!",
+                "Look at those water works! Nice job!",
+                "The peppers love you for giving them a shower. They were really thirsty until you came along!",
+                "Thanks! Nothing beats a cool splash of water on a hot summer day.",
+                "Excellent water-wielding skills. I knew you could do it!",
+                "Great watering job, you must have done this before!",
+                "Thanks for keeping the peppers hydrated! You are a big help!"
+            ],
+            "audio": [
+                "peppers_wet_1.mp3"
+            ]
+        },
+        "waterResponseBad": {
+            "stage_copy": [
+                "Uh oh, the peppers have had too much water. Better let their soil dry out a bit.",
+                "Being TOO generous with the water can drown the peppers. Let's give 'em a break, shall we?",
+                "Swimming is a fun summer activity for people, not peppers! Can you ease up on the water please?",
+                "These peppers are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Peppers love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+                "The peppers need time to drink up this water before they get more. Check in on them soon!",
+                "Holy H2O! That's a lot of water. The peppers probably need a break now…",
+                "Water is awesome but we don't want the peppers to float away… how about petting them instead?",
+                "Oh dear, these peppers are drenched! Any more water would be too much of a good thing.",
+                "If the peppers keep getting this much water, they're gonna need an umbrella!",
+                "Water droplets look neat on a pepper's waxy peel, but too much and these guy will be in trouble…"
+            ],
+            "audio": []
+        },
+        "factoids": [
+            "Like carrots, red bell peppers contain loads of beta carotene for healthy vision. And up to three times as much Vitamin C as an orange. Lots to love about bell peppers."
+        ]
+    },
+    "celery": {
+        "touchRequest": {
+            "stage_copy": [
+                "Get in touch with nature. Literally! Go ahead and touch some celery.",
+                "Greetings! Come on over, the celery would love to meet you.",
+                "Hi there! See what happens when you pet this celery…",
+                "You seem like a veggie lover. Wanna hang out with this celery?",
+                "Did you know that celery stalks are extremely ticklish? Try it and see!",
+                "This celery is working hard to get extra crunchy. Give 'em a high five for their efforts!",
+                "This celery has an itch it can't scratch. Can you help out?",
+                "Help wake this celery up from its nap. Give it a poke!",
+                "Don't be a stranger – greet this celery with a tiny handshake!",
+                "You’d get along with this celery. Come on over!",
+                "This celery would love to spend some time with you!",
+                "Plant your feet right here and get to know this nutritious celery.",
+                "This celery wants attention too! It's getting green with envy."
+            ],
+            "audio": [
+                "celery_proximity_1.mp3",
+                "celery_proximity_2.mp3",
+                "celery_proximity_3.mp3",
+                "celery_proximity_4.mp3",
+                "celery_proximity_5.mp3",
+                "celery_proximity_6.mp3"
+            ]
+        },
+        "touchResponseGood": {
+            "stage_copy": [
+                "Who knew that veggies could be such fun friends?",
+                "Oh my, you're like, the celery whisperer. Teach me your ways!",
+                "Whoa. Were you a celery in your past life?",
+                "You sure know what celery likes! Thank goodness you're here.",
+                "The celery is really digging all this attention. Thanks!",
+                "The celery is loving that! Thanks for entertaining!",
+                "You're a great playmate. Hope you visit every day!",
+                "Hey, you've got the magic touch! Keep it up!",
+                "Perfect job, you're a natural!",
+                "You're making the celery so happy! Great job!",
+                "You must have a green thumb; the veggies are loving you!"
+            ],
+            "audio": [
+                "celery_happy_1.mp3",
+                "celery_happy_2.mp3",
+                "celery_happy_3.mp3",
+                "celery_happy_4.mp3",
+                "celery_happy_5.mp3",
+                "celery_happy_6.mp3",
+                "celery_happy_7.mp3",
+                "celery_happy_8.mp3",
+                "celery_happy_9.mp3",
+                "celery_happy_10.mp3",
+                "celery_happy_11.mp3",
+                "celery_happy_12.mp3",
+                "celery_happy_13.mp3",
+                "celery_happy_14.mp3",
+                "celery_happy_15.mp3",
+                "celery_happy_16.mp3",
+                "celery_happy_17.mp3",
+                "celery_happy_18.mp3",
+                "celery_happy_19.mp3",
+                "celery_happy_20.mp3",
+                "celery_happy_21.mp3",
+                "celery_happy_22.mp3",
+                "celery_happy_23.mp3",
+                "celery_happy_24.mp3"
+            ]
+        },
+        "touchResponseBad": {
+            "stage_copy": [
+                "Careful, if the celery gets too worked-up they'll snap a stalk!",
+                "Why not spread the love around a bit?",
+                "It's time for the celery to get their beauty rest. Come back soon!",
+                "The celery needs to focus on growing right now. Can you play with the other veggies?",
+                "Celery love attention, but so do the rest of the veggies! Don't ignore the peppers.",
+                "The celery is getting tuckered out. Show some love to one of their neighbors",
+                "You guys are getting along great. The other veggies would love to meet you too!",
+                "All of the hustle and bustle can be overwhelming for peppers. They need to relax for a bit.",
+                "Sounds like these peppers need to calm down a little. Can you give the other veggies some attention?",
+                "The peppers are getting tuckered out. Want to play with some other veggies?",
+                "Looks like the peppers need to mellow out a bit. Can you go say hi to other veggies in the garden?",
+                "This celery is so excited it's gonna get its stalks all tangled up! Don't forget about the rest of the garden…",
+                "Celery sticks are good to eat, but these are still growing! Let them rest for a bit."
+            ],
+            "audio": [
+                "celery_worked_up_1.mp3",
+                "celery_worked_up_2.mp3",
+                "celery_worked_up_3.mp3",
+                "celery_worked_up_4.mp3",
+                "celery_worked_up_5.mp3",
+                "celery_worked_up_6.mp3",
+                "celery_worked_up_7.mp3"
+            ]
+        },
+        "waterRequest": {
+            "stage_copy": [
+                "Sounds like the celery needs some water, can you help?",
+                "Mind watering this celery? They'd do it themselves, but they don't have arms.",
+                "If it gets any drier, this celery is going to become parched!",
+                "This celery sure looks dry! Can you send some water their way?",
+                "Boy, are this celery is parched. Come quench their thirst @ThePowerGarden!",
+                "These celery could use a shower. Trust me, I'm standing right next to them!",
+                "Show the celery you care – give them some good ol' H2O.",
+                "Celery needs water to grow. Can you help them out on this hot day?",
+                "We're on the verge of some major wilt-age. Celery needs water pronto!"
+            ],
+            "audio": [
+                "celery_dry_1.mp3",
+                "celery_dry_2.mp3",
+                "celery_dry_3.mp3",
+                "celery_dry_4.mp3",
+                "celery_dry_5.mp3",
+                "celery_dry_6.mp3",
+                "celery_dry_7.mp3",
+                "celery_dry_8.mp3"
+            ]
+        },
+        "waterResponseGood": {
+            "stage_copy": [
+                "That drink really helped, the celery feels better already!",
+                "The celery sure looks refreshed! Way to beat the heat.",
+                "The celery is super appreciative. If it could send you a drink in return, it would!",
+                "Thanks for helping the celery stay crunchy!",
+                "Look at those water works! Nice job!",
+                "The celery loves you for giving it a shower. It was really thirsty until you came along!",
+                "Thanks! Nothing beats a cool splash of water on a hot summer day.",
+                "Excellent water-wielding skills. I knew you could do it!",
+                "Great watering job, you must have done this before!",
+                "Thanks for keeping the celery hydrated! You are a big help!",
+                "Thanks for keeping the celery a lean, green crunchy machine!"
+            ],
+            "audio": [
+                "celery_wet_1.mp3",
+                "celery_wet_2.mp3",
+                "celery_wet_3.mp3",
+                "celery_wet_4.mp3",
+                "celery_wet_5.mp3",
+                "celery_wet_6.mp3"
+            ]
+        },
+        "waterResponseBad": {
+            "stage_copy": [
+                "Uh oh, the celery has had too much water. Better let the soil dry out a bit.",
+                "Being TOO generous with the water can drown the celery. Let's give it a break, shall we?",
+                "Swimming is a fun summer activity for people, not celery! Can you ease up on the water please?",
+                "This celery is getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Celery loves water, but too much of a good thing can be dangerous. Better cut it off before it starts swimming!",
+                "The celery needs time to drink up this water before it gets more. Check in on it soon!",
+                "Holy H2O! That's a lot of water. The celery probably needs a break now…",
+                "Water is awesome but we don't want the celery to float away… how about petting it instead?",
+                "Oh dear, this celery is drenched! Any more water would be too much of a good thing.",
+                "If the celery keeps getting this much water, it's gonna need an umbrella!"
+            ],
+            "audio": []
+        },
+        "factoids": [
+            "It’s not just a simple green stalk. Studies show that celery can lower cholesterol and reduce cell damage caused by free radicals. Studies also show that celery is perfect with tomato juice."
+        ]
+    },
+    "orange_carrots": {
+        "touchRequest": {
+            "stage_copy": [
+                "Get in touch with nature. Literally! Go ahead and touch those carrots.",
+                "Greetings! Come on over, the carrots would love to meet you.",
+                "Hi there! See what happens when you pet these carrots…",
+                "You seem like a veggie lover. Wanna hang out with some carrots?",
+                "Did you know that carrots are extremely ticklish? Try it and see!",
+                "These carrots are working hard to get crunchy and sweet. Give 'em a high five for their efforts!",
+                "These carrots have an itch they can't scratch. Can you help out?",
+                "Help wake these carrots up from their nap. Give 'em a poke!",
+                "Don't be a stranger – greet these carrots with a tiny handshake!",
+                "You’d get along with these carrots. Come on over!",
+                "These carrots would love to spend some time with you!",
+                "Plant your feet right here and get to know these amazing carrots.",
+                "Don't mistake a carrots underground hideout for shyness. They definitely want to play with you!",
+                "Did you know that carrots contain iron and Vitamins A, B6, E, C and K (and more)? They're nature’s vitamin store."
+            ],
+            "audio": [
+                "orange_carrots_proximity_1.mp3",
+                "orange_carrots_proximity_2.mp3",
+                "orange_carrots_proximity_3.mp3",
+                "orange_carrots_proximity_4.mp3",
+                "orange_carrots_proximity_5.mp3",
+                "orange_carrots_proximity_6.mp3",
+                "orange_carrots_proximity_7.mp3"
+            ]
+        },
+        "touchResponseGood": {
+            "stage_copy": [
+                "Who knew that veggies could be such fun friends?",
+                "Wow, you're like, the carrot whisperer. Teach me your ways!",
+                "Holy Cow. Were you a carrot in your past life?",
+                "You sure know what carrots likes! Thank goodness you're here.",
+                "The carrots are really digging all this attention. Thanks!",
+                "The carrots are loving that! Thanks for entertaining them!",
+                "You're a great playmate. Hope you visit every day!",
+                "Hey, you've got the magic touch! Keep it up!",
+                "Perfect job, you're a natural!",
+                "You're making the carrots so happy! Great job!",
+                "You must have a green thumb, the veggies are loving you!",
+                "Good thing you're not a rabbit. When they hang with carrots it never ends well."
+            ],
+            "audio": [
+                "orange_carrots_happy_1.mp3",
+                "orange_carrots_happy_2.mp3",
+                "orange_carrots_happy_3.mp3",
+                "orange_carrots_happy_4.mp3",
+                "orange_carrots_happy_5.mp3",
+                "orange_carrots_happy_6.mp3",
+                "orange_carrots_happy_7.mp3",
+                "orange_carrots_happy_8.mp3",
+                "orange_carrots_happy_9.mp3",
+                "orange_carrots_happy_10.mp3",
+                "orange_carrots_happy_11.mp3",
+                "orange_carrots_happy_12.mp3",
+                "orange_carrots_happy_13.mp3",
+                "orange_carrots_happy_14.mp3",
+                "orange_carrots_happy_15.mp3",
+                "orange_carrots_happy_16.mp3",
+                "orange_carrots_happy_17.mp3",
+                "orange_carrots_happy_18.mp3",
+                "orange_carrots_happy_19.mp3",
+                "orange_carrots_happy_20.mp3",
+                "orange_carrots_happy_21.mp3",
+                "orange_carrots_happy_22.mp3",
+                "orange_carrots_happy_23.mp3",
+                "orange_carrots_happy_24.mp3",
+                "orange_carrots_happy_25.mp3",
+                "orange_carrots_happy_26.mp3",
+                "orange_carrots_happy_27.mp3",
+                "orange_carrots_happy_28.mp3",
+                "orange_carrots_happy_29.mp3",
+                "orange_carrots_happy_30.mp3",
+                "orange_carrots_happy_31.mp3",
+                "orange_carrots_happy_32.mp3"
+            ]
+        },
+        "touchResponseBad": {
+            "stage_copy": [
+                "Careful, if the carrots get too worked-up they'll dig themselves up!",
+                "Why not spread the love around a bit?",
+                "It's time for the carrots to get their beauty rest. Come back soon!",
+                "The carrots need to focus on growing right now. Can you play with the other veggies?",
+                "Carrots love attention, but so do the rest of the veggies! Don't ignore the beets.",
+                "The carrots are getting tuckered out. Show some love to one of their neighbors",
+                "You guys are getting along great. The other veggies would love to meet you too!",
+                "All of the hustle and bustle can be overwhelming for carrots. They need to relax for a bit.",
+                "Sounds like these carrots need to calm down a little. Can you give the other veggies some attention?",
+                "The carrots are getting tuckered out. Want to play with some other veggies?",
+                "Looks like the carrots need to mellow out a bit. Can you go say hi to other veggies in the garden?",
+                "Too much attention and these carrots are gonna burrow on outta here.",
+                "Carrots are good to eat, but these are still growing! Let them rest for a bit."
+            ],
+            "audio": [
+                "orange_carrots_worked_up_1.mp3",
+                "orange_carrots_worked_up_2.mp3",
+                "orange_carrots_worked_up_3.mp3",
+                "orange_carrots_worked_up_4.mp3",
+                "orange_carrots_worked_up_5.mp3",
+                "orange_carrots_worked_up_6.mp3"
+            ]
+        },
+        "waterRequest": {
+            "stage_copy": [
+                "Sounds like the carrots need some water, can you help?",
+                "Mind watering these carrots? They'd do it themselves, but they don't have arms.",
+                "If it gets any drier, these carrots are going to become parched!",
+                "These carrots sure look dry! Can you send some water their way?",
+                "Boy, are these carrots is parched. Come quench their thirst @ThePowerGarden!",
+                "These carrots could use a shower. Trust me, I'm standing right next to them!",
+                "Show the carrots you care – give them some good ol' H2O.",
+                "Carrots need water to grow. Can you help them out on this hot day?",
+                "If these dudes don't get some water, we're going to have a carrot riot on our hands! Help!"
+            ],
+            "audio": [
+                "orange_carrots_dry_1.mp3",
+                "orange_carrots_dry_2.mp3",
+                "orange_carrots_dry_3.mp3",
+                "orange_carrots_dry_4.mp3",
+                "orange_carrots_dry_5.mp3",
+                "orange_carrots_dry_6.mp3"
+            ]
+        },
+        "waterResponseGood": {
+            "stage_copy": [
+                "That drink really helped, the carrots feel better already!",
+                "The carrots sure look refreshed! Way to beat the heat.",
+                "The carrots are super appreciative. If they could send you a drink in return, they would!",
+                "Thanks for helping the carrots stay sweet!",
+                "Look at those water works! Nice job!",
+                "The carrots love you for giving them a shower. They were really thirsty until you came along!",
+                "Thanks! Nothing beats a cool splash of water on a hot summer day.",
+                "Excellent water-wielding skills. I knew you could do it!",
+                "Great watering job, you must have done this before!",
+                "Thanks for keeping the carrots hydrated! You are a big help!"
+            ],
+            "audio": [
+                "orange_carrots_wet_1.mp3",
+                "orange_carrots_wet_2.mp3",
+                "orange_carrots_wet_3.mp3"
+            ]
+        },
+        "waterResponseBad": {
+            "stage_copy": [
+                "Uh oh, the carrots have had too much water. Better let their soil dry out a bit.",
+                "Being TOO generous with the water can drown the carrots. Let's give 'em a break, shall we?",
+                "Swimming is a fun summer activity for people, not carrots! Can you ease up on the water please?",
+                "These carrots are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Carrots love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+                "The carrots need time to drink up this water before they get more. Check in on them soon!",
+                "Holy H2O! That's a lot of water. The carrots probably need a break now…",
+                "Water is awesome but we don't want the carrots to float away… how about petting them instead?",
+                "Oh dear, these carrots are drenched! Any more water would be too much of a good thing.",
+                "If the carrots keep getting this much water, they're gonna need an umbrella!"
+            ],
+            "audio": []
+        },
+        "factoids": [
+            "Everyone knows that carrots have Vitamin A. But did you know they also contain iron and Vitamins B6, E, C and K (and more)? Yep. A carrot is nature’s vitamin store."
+        ]
+    },
+    "purple_carrots": {
+        "touchRequest": {
+            "stage_copy": [
+                "Get in touch with nature. Literally! Go ahead and touch those carrots.",
+                "Greetings! Come on over, the carrots would love to meet you.",
+                "Hi there! See what happens when you pet these carrots…",
+                "You seem like a veggie lover. Wanna hang out with some carrots?",
+                "Did you know that carrots are extremely ticklish? Try it and see!",
+                "These carrots are working hard to get crunchy and sweet. Give 'em a high five for their efforts!",
+                "These carrots have an itch they can't scratch. Can you help out?",
+                "Help wake these carrots up from their nap. Give 'em a poke!",
+                "Don't be a stranger – greet these carrots with a tiny handshake!",
+                "You’d get along with these carrots. Come on over!",
+                "These carrots would love to spend some time with you!",
+                "Plant your feet right here and get to know these amazing carrots.",
+                "Don't mistake a carrots underground hideout for shyness. They definitely want to play with you!",
+                "Purple carrots are supercharged with antioxidants. Plus they’re purple, which is pretty cool all by itself."
+            ],
+            "audio": [
+                "purple_carrots_proximity_1.mp3",
+                "purple_carrots_proximity_2.mp3",
+                "purple_carrots_proximity_3.mp3",
+                "purple_carrots_proximity_4.mp3",
+                "purple_carrots_proximity_5.mp3",
+                "purple_carrots_proximity_6.mp3"
+            ]
+        },
+        "touchResponseGood": {
+            "stage_copy": [
+                "Who knew that veggies could be such fun friends?",
+                "Wow, you're like, the carrot whisperer. Teach me your ways!",
+                "Holy Cow. Were you a carrot in your past life?",
+                "You sure know what carrots likes! Thank goodness you're here.",
+                "The carrots are really digging all this attention. Thanks!",
+                "The carrots are loving that! Thanks for entertaining them!",
+                "You're a great playmate. Hope you visit every day!",
+                "Hey, you've got the magic touch! Keep it up!",
+                "Perfect job, you're a natural!",
+                "You're making the carrots so happy! Great job!",
+                "You must have a green thumb, the veggies are loving you!",
+                "Good thing you're not a rabbit. When they hang with carrots it never ends well."
+            ],
+            "audio": [
+                "purple_carrots_happy_1.mp3",
+                "purple_carrots_happy_2.mp3",
+                "purple_carrots_happy_3.mp3",
+                "purple_carrots_happy_4.mp3",
+                "purple_carrots_happy_5.mp3",
+                "purple_carrots_happy_6.mp3",
+                "purple_carrots_happy_7.mp3",
+                "purple_carrots_happy_8.mp3",
+                "purple_carrots_happy_9.mp3",
+                "purple_carrots_happy_10.mp3",
+                "purple_carrots_happy_11.mp3",
+                "purple_carrots_happy_12.mp3",
+                "purple_carrots_happy_13.mp3",
+                "purple_carrots_happy_14.mp3",
+                "purple_carrots_happy_15.mp3",
+                "purple_carrots_happy_16.mp3",
+                "purple_carrots_happy_17.mp3",
+                "purple_carrots_happy_18.mp3",
+                "purple_carrots_happy_19.mp3",
+                "purple_carrots_happy_20.mp3"
+            ]
+        },
+        "touchResponseBad": {
+            "stage_copy": [
+                "Careful, if the carrots get too worked-up they'll dig themselves up!",
+                "Why not spread the love around a bit?",
+                "It's time for the carrots to get their beauty rest. Come back soon!",
+                "The carrots need to focus on growing right now. Can you play with the other veggies?",
+                "Carrots love attention, but so do the rest of the veggies! Don't ignore the beets.",
+                "The carrots are getting tuckered out. Show some love to one of their neighbors",
+                "You guys are getting along great. The other veggies would love to meet you too!",
+                "All of the hustle and bustle can be overwhelming for carrots. They need to relax for a bit.",
+                "Sounds like these carrots need to calm down a little. Can you give the other veggies some attention?",
+                "The carrots are getting tuckered out. Want to play with some other veggies?",
+                "Looks like the carrots need to mellow out a bit. Can you go say hi to other veggies in the garden?",
+                "Too much attention and these carrots are gonna burrow on outta here.",
+                "Carrots are good to eat, but these are still growing! Let them rest for a bit."
+            ],
+            "audio": [
+                "purple_carrots_worked_up_1.mp3",
+                "purple_carrots_worked_up_2.mp3",
+                "purple_carrots_worked_up_3.mp3",
+                "purple_carrots_worked_up_4.mp3",
+                "purple_carrots_worked_up_5.mp3"
+            ]
+        },
+        "waterRequest": {
+            "stage_copy": [
+                "Sounds like the carrots need some water, can you help?",
+                "Mind watering these carrots? They'd do it themselves, but they don't have arms.",
+                "If it gets any drier, these carrots are going to become parched!",
+                "These carrots sure look dry! Can you send some water their way?",
+                "Boy, are these carrots is parched. Come quench their thirst @ThePowerGarden!",
+                "These carrots could use a shower. Trust me, I'm standing right next to them!",
+                "Show the carrots you care – give them some good ol' H2O.",
+                "Carrots need water to grow. Can you help them out on this hot day?",
+                "If these dudes don't get some water, we're going to have a carrot riot on our hands! Help!"
+            ],
+            "audio": [
+                "purple_carrots_dry_1.mp3",
+                "purple_carrots_dry_2.mp3",
+                "purple_carrots_dry_3.mp3",
+                "purple_carrots_dry_4.mp3",
+                "purple_carrots_dry_5.mp3",
+                "purple_carrots_dry_6.mp3",
+                "purple_carrots_dry_7.mp3",
+                "purple_carrots_dry_8.mp3"
+            ]
+        },
+        "waterResponseGood": {
+            "stage_copy": [
+                "That drink really helped, the carrots feel better already!",
+                "The carrots sure look refreshed! Way to beat the heat.",
+                "The carrots are super appreciative. If they could send you a drink in return, they would!",
+                "Thanks for helping the carrots stay sweet!",
+                "Look at those water works! Nice job!",
+                "The carrots love you for giving them a shower. They were really thirsty until you came along!",
+                "Thanks! Nothing beats a cool splash of water on a hot summer day.",
+                "Excellent water-wielding skills. I knew you could do it!",
+                "Great watering job, you must have done this before!",
+                "Thanks for keeping the carrots hydrated! You are a big help!"
+            ],
+            "audio": [
+                "purple_carrots_wet_1.mp3"
+            ]
+        },
+        "waterResponseBad": {
+            "stage_copy": [
+                "Uh oh, the carrots have had too much water. Better let their soil dry out a bit.",
+                "Being TOO generous with the water can drown the carrots. Let's give 'em a break, shall we?",
+                "Swimming is a fun summer activity for people, not carrots! Can you ease up on the water please?",
+                "These carrots are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Carrots love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+                "The carrots need time to drink up this water before they get more. Check in on them soon!",
+                "Holy H2O! That's a lot of water. The carrots probably need a break now…",
+                "Water is awesome but we don't want the carrots to float away… how about petting them instead?",
+                "Oh dear, these carrots are drenched! Any more water would be too much of a good thing.",
+                "If the carrots keep getting this much water, they're gonna need an umbrella!"
+            ],
+            "audio": []
+        },
+        "factoids": [
+            "Everyone knows that carrots have Vitamin A. But did you know they also contain iron and Vitamins B6, E, C and K (and more)? Yep. A carrot is nature’s vitamin store.",
+            "Among many health benefits, purple carrots have supercharged antioxidant abilities. Plus they’re purple, which is obviously kind of cool in itself."
+        ]
+    },
+    "beets": {
+        "touchRequest": {
+            "stage_copy": [
+                "Get in touch with nature. Literally! Go ahead and touch those beet.",
+                "Greetings! Come on over, the beets would love to meet you.",
+                "Hi there! See what happens when you pet these beets…",
+                "You seem like a veggie lover. Wanna hang out with some beets?",
+                "Did you know that beets are extremely ticklish? Try it and see!",
+                "These beets are working hard to get crunchy and sweet. Give 'em a high five for their efforts!",
+                "These beets have an itch they can't scratch. Can you help out?",
+                "Help wake these beets up from their nap. Give 'em a poke!",
+                "Don't be a stranger – greet these beets with a tiny handshake!",
+                "You’d get along with these beets. Come on over!",
+                "These beets would love to spend some time with you!",
+                "Plant your feet right here and get to know these amazing beets.",
+                "Don't mistake a beets underground hideout for shyness. They definitely want to play with you!",
+                "Beets are supercharged with antioxidants. Plus they’re purple, which is pretty cool all by itself."
+            ],
+            "audio": [
+                "beets_proximity_1.mp3",
+                "beets_proximity_2.mp3",
+                "beets_proximity_3.mp3",
+                "beets_proximity_4.mp3",
+                "beets_proximity_5.mp3",
+                "beets_proximity_6.mp3",
+                "beets_proximity_7.mp3"
+            ]
+        },
+        "touchResponseGood": {
+            "stage_copy": [
+                "Who knew that veggies could be such fun friends?",
+                "Wow, you're like, the beet whisperer. Teach me your ways!",
+                "Holy Cow. Were you a beet in your past life?",
+                "You sure know what beets likes! Thank goodness you're here.",
+                "The beets are really digging all this attention. Thanks!",
+                "The beets are loving that! Thanks for entertaining them!",
+                "You're a great playmate. Hope you visit every day!",
+                "Hey, you've got the magic touch! Keep it up!",
+                "Perfect job, you're a natural!",
+                "You're making the beets so happy! Great job!",
+                "You must have a green thumb, the veggies are loving you!"
+            ],
+            "audio": [
+                "beets_happy_1.mp3",
+                "beets_happy_2.mp3",
+                "beets_happy_3.mp3",
+                "beets_happy_4.mp3",
+                "beets_happy_5.mp3",
+                "beets_happy_6.mp3",
+                "beets_happy_7.mp3",
+                "beets_happy_8.mp3",
+                "beets_happy_9.mp3",
+                "beets_happy_10.mp3",
+                "beets_happy_11.mp3",
+                "beets_happy_12.mp3",
+                "beets_happy_13.mp3",
+                "beets_happy_14.mp3",
+                "beets_happy_15.mp3",
+                "beets_happy_16.mp3",
+                "beets_happy_17.mp3",
+                "beets_happy_18.mp3",
+                "beets_happy_19.mp3",
+                "beets_happy_20.mp3",
+                "beets_happy_21.mp3",
+                "beets_happy_22.mp3",
+                "beets_happy_23.mp3",
+                "beets_happy_24.mp3",
+                "beets_happy_25.mp3",
+                "beets_happy_26.mp3",
+                "beets_happy_27.mp3",
+                "beets_happy_28.mp3",
+                "beets_happy_29.mp3",
+                "beets_happy_30.mp3",
+                "beets_happy_31.mp3",
+                "beets_happy_32.mp3"
+            ]
+        },
+        "touchResponseBad": {
+            "stage_copy": [
+                "Careful, if the beets get too worked-up they'll dig themselves up!",
+                "Why not spread the love around a bit?",
+                "It's time for the beets to get their beauty rest. Come back soon!",
+                "The beets need to focus on growing right now. Can you play with the other veggies?",
+                "beets love attention, but so do the rest of the veggies! Don't ignore the beets.",
+                "The beets are getting tuckered out. Show some love to one of their neighbors",
+                "You guys are getting along great. The other veggies would love to meet you too!",
+                "All of the hustle and bustle can be overwhelming for beets. They need to relax for a bit.",
+                "Sounds like these beets need to calm down a little. Can you give the other veggies some attention?",
+                "The beets are getting tuckered out. Want to play with some other veggies?",
+                "Looks like the beets need to mellow out a bit. Can you go say hi to other veggies in the garden?",
+                "Too much attention and these beets are gonna burrow on outta here.",
+                "Beets are good to eat, but these are still growing! Let them rest for a bit."
+            ],
+            "audio": [
+                "beets_worked_up_1.mp3",
+                "beets_worked_up_2.mp3",
+                "beets_worked_up_3.mp3",
+                "beets_worked_up_4.mp3",
+                "beets_worked_up_5.mp3",
+                "beets_worked_up_6.mp3"
+            ]
+        },
+        "waterRequest": {
+            "stage_copy": [
+                "Sounds like the beets need some water, can you help?",
+                "Mind watering these beets? They'd do it themselves, but they don't have arms.",
+                "If it gets any drier, these beets are going to become parched!",
+                "These beets sure look dry! Can you send some water their way?",
+                "Boy, are these beets is parched. Come quench their thirst @ThePowerGarden!",
+                "These beets could use a shower. Trust me, I'm standing right next to them!",
+                "Show the beets you care – give them some good ol' H2O.",
+                "beets need water to grow. Can you help them out on this hot day?",
+                "If these dudes don't get some water, we're going to have a beet riot on our hands! Help!"
+            ],
+            "audio": [
+                "beets_dry_1.mp3",
+                "beets_dry_2.mp3",
+                "beets_dry_3.mp3",
+                "beets_dry_4.mp3",
+                "beets_dry_5.mp3",
+                "beets_dry_6.mp3"
+            ]
+        },
+        "waterResponseGood": {
+            "stage_copy": [
+                "That drink really helped, the beets feel better already!",
+                "The beets sure look refreshed! Way to beat the heat.",
+                "The beets are super appreciative. If they could send you a drink in return, they would!",
+                "Thanks for helping the beets stay hearty!",
+                "Look at those water works! Nice job!",
+                "The beets love you for giving them a shower. They were really thirsty until you came along!",
+                "Thanks! Nothing beats a cool splash of water on a hot summer day.",
+                "Excellent water-wielding skills. I knew you could do it!",
+                "Great watering job, you must have done this before!",
+                "Thanks for keeping the beets hydrated! You are a big help!",
+                "The beets sure look refreshed! Way to \"beet\" the heat. (Get it?)"
+            ],
+            "audio": [
+                "beets_wet_1.mp3",
+                "beets_wet_2.mp3",
+                "beets_wet_3.mp3"
+            ]
+        },
+        "waterResponseBad": {
+            "stage_copy": [
+                "Uh oh, the beets have had too much water. Better let their soil dry out a bit.",
+                "Being TOO generous with the water can drown the beets. Let's give 'em a break, shall we?",
+                "Swimming is a fun summer activity for people, not beets! Can you ease up on the water please?",
+                "These beets are getting soaked! The water is very refreshing but let's not over-do it, eh?",
+                "Beets love water, but too much of a good thing can be dangerous. Better cut 'em off before they start swimming!",
+                "The beets need time to drink up this water before they get more. Check in on them soon!",
+                "Holy H2O! That's a lot of water. The beets probably need a break now…",
+                "Water is awesome but we don't want the beets to float away… how about petting them instead?",
+                "Oh dear, these beets are drenched! Any more water would be too much of a good thing.",
+                "If the beets keep getting this much water, they're gonna need an umbrella!",
+                "That's not how you make beet juice! Cut back on the water, will ya?"
+            ],
+            "audio": []
+        },
+        "factoids": [
+            "High in fiber, red beets reduce cholesterol. They also contain nutrients that act as natural anti-inflammatory agents. Way to be, red beets."
+        ]
+    }
+}
