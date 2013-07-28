@@ -8,8 +8,6 @@ $(document).ready(function(){
 		
 		//check if json file has the requested type
 		if(json.hasOwnProperty($request)){
-			
-			
 			//append the text to the page
 			$('body').html(JSON.stringify(json[$request]));
 			//console.log(json[$request]);
