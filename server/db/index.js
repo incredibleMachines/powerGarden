@@ -22,6 +22,8 @@ function DB(browserSockets){
 	this.chorusDb;
 	this.browserIO = browserSockets;
 	
+	this.WateringEnabled = true;
+	
 	//console.log(storedMood);
 	
 	//this.statusMood = new moods();
@@ -476,6 +478,12 @@ DB.prototype.updateDocument = function(collection,id,json){
 DB.prototype.calculateGardenWaterNeeds = function(callback) {
 
 	// Amount of time to increase the sprinkler duration length for different moisture moods
+	var duration=0;
+	if(this.WateringEnabled==true) duration = 30;
+	else duration = 0;
+	
+	callback(duration);
+/*
 	var durations = {
 		low: 5,
 		medium: 2,
@@ -502,6 +510,7 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 		// console.log('calculateGardenWaterNeeds: returning '+duration);
 		callback(duration);
 	});
+*/
 }
 
 DB.prototype.logPump = function(duration) {

@@ -9,6 +9,8 @@ var pump = require('./pump/index');
 var colors = require('colors');
 var dialogue = require('./dialogue');
 
+var dialogue = require('./dialogue.json');
+//console.log(dialogue);
 
 var express = require('express');
 var app = express();
@@ -45,7 +47,11 @@ var browsers = {};
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
-
+app.get('/dialogue',function(req,res,next){
+	res.writeHead(200, { 'Content-Type': 'application/json' }); 
+	var type=req.param('type');
+	res.end(JSON.stringify(dialogue[type]));
+});
 
 app.use(express.favicon(__dirname+'/public/favicon.ico'));
 app.use(express.static(__dirname+'/public'));
@@ -128,15 +134,20 @@ browserio.sockets.on('connection',function(browserSocket){
 	});
 
 	browserSocket.on('sprinklers',function(msg){
-		console.log(msg);
+		//console.log(msg);
 		if (msg.state) {
 			// run for 10 minutes by default
-			pump.turnOnSprinklers(60 * 10);
+			pump.turnOnSprinklers(60 * 5);
 		} else {
 			pump.turnOffSprinklers();
 		}
 	});
-
+	browserSocket.on('pump', function(msg){
+		//console.log(msg);
+		db.WateringEnabled = msg.state;
+		
+		console.log("[PUMP] Watering State Set: "+ db.WateringEnabled);
+	});
 	// browserSocket.on('restart-twitter-stream',function(msg){
 	// 	pgtwitter.restart();
 	// });
@@ -308,8 +319,8 @@ function twitterCallback(data, raw) {
 
 		// look up water needs of all devices
 		var pumpDuration = 30;
-		// database.calculateGardenWaterNeeds(function(pumpDuration) {
-			// console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
+		database.calculateGardenWaterNeeds(function(pumpDuration) {
+			console.log('Result from calculateGardenWaterNeeds() is: ' + pumpDuration);
 
 			if (pumpDuration > 0) {
 
@@ -362,7 +373,7 @@ function twitterCallback(data, raw) {
 				var responses = dialogue['garden'].waterResponseBad.stage_copy;
 				processResponses(plant, responses);
 			}
-		// });
+		});
 
 	} else {
 
