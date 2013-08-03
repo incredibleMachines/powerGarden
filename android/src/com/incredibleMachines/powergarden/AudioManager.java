@@ -102,16 +102,15 @@ public class AudioManager extends Activity {
 			String state = PowerGarden.stateManager.getPlantState(plantIndex);
 			Log.d("playAudio", "state: "+state);
 			
-			//.play(audio[i], leftVol, rightVol, priority, loop, rate);
 			float leftChannelVol = 1.0f;
 			float rightChannelVol = 1.0f;
 			
-			if(plantIndex >= 0 && plantIndex <= 3){
-				rightChannelVol = 0.0f;
-			}
-			if(plantIndex > 3){
-				leftChannelVol = 0.0f;
-			}
+//			if(plantIndex >= 0 && plantIndex <= 3){ //all plants on all channels for now !
+//				rightChannelVol = 0.0f;
+//			}
+//			if(plantIndex > 3){
+//				leftChannelVol = 0.0f;
+//			}
 		//**************
 			if(state.equals("lonely")){
 	        	PowerGarden.soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
@@ -185,7 +184,7 @@ public class AudioManager extends Activity {
 			Log.wtf("play audio: ", thisAudioType.get(whichFile).toString());
 		}
 		
-		else if(plantIndex == -99){
+		else if(plantIndex == -99){ //chorus !
 			Log.d("plantIndex: ", "-99");
 			PowerGarden.chorusAudio.start(); 
 			Log.wtf(TAG, "play chorus audio");

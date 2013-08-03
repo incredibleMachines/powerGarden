@@ -16,10 +16,13 @@ e-mail   :  support@circuitsathome.com
 */
 package com.incredibleMachines.powergarden.util;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import com.android.future.usb.UsbManager;
+import com.incredibleMachines.powergarden.ConnectSockets;
+import com.incredibleMachines.powergarden.PresentationActivity;
 import com.incredibleMachines.powergarden.R;
 import com.incredibleMachines.powergarden.R.id;
 import com.incredibleMachines.powergarden.R.menu;
@@ -244,7 +247,12 @@ public abstract class UsbActivity extends Activity implements Connectable {
 			resources_ = getResources();
 		}
 
-        createAndSetViews();
+        try {
+			createAndSetViews();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         logMessage("before register receiver");
 		//registerReceiver(usbReceiver_, filter);
         
@@ -260,8 +268,9 @@ public abstract class UsbActivity extends Activity implements Connectable {
     
     /**
      * This method is implemented in the ArduinoTerminalActivity class.
+     * @throws IOException 
      */
-    protected abstract void createAndSetViews();
+    protected abstract void createAndSetViews() throws IOException;
     
 	@Override
 	public void onDestroy() {
@@ -348,11 +357,14 @@ public abstract class UsbActivity extends Activity implements Connectable {
  		logMessage("onOptionsItemSelected");
  	    // Handle item selection
  	    switch (item.getItemId()) {
- 	    case R.id.mainMenuConnect:
- 	        onConnectMenu();
+ 	    case R.id.mainMenuSensorDebug:
+	    	//sendData("setup");
+	    	//currentViewable_.setState("debug");
  	       return true;
- 	    case R.id.mainMenuSettings:
- 	    	//startActivity(new Intent(this, Preferences.class));
+ 	    case R.id.mainMenuSocketDebug:
+ 	    	//Intent setupSockets = new Intent(getApplicationContext(), ConnectSockets.class);
+			//startActivity(setupSockets);
+			//currentViewable_.setState("debugServer");
  	        return true;
  	    case R.id.mainMenuExit:
  	        try {

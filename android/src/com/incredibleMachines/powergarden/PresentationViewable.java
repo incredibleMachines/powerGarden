@@ -238,52 +238,40 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 										
 										//*** TOUCHED ***//
 										PowerGarden.Device.plants[i].triggered = true; //set triggered to true for this plant
-										
 										PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis(); //record timestamp
-										
 										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp); //add timestamp to overall touchStamps vector
-										
 										PowerGarden.stateManager.updatePlantStates(); //check this plant's state
 										
-										//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
 										//******* for now
-										
-										//PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, PowerGarden.Device.plants[i].getFilteredValue(), PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
 										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, plantDiffDisplay[i], PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
 										//*******	
 										if (PowerGarden.stateManager.updateDeviceState() ){ // returns true if changed
 											PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
 											//activity_.resetView(); //now done in timerTask run() method
 										}
-										
-		 	
 									}
 									
 									
-									else if(plantDiffDisplay[i] == 20001 && !PowerGarden.Device.isWatering && !PowerGarden.Device.plants[i].triggered){
-										
-										Log.d(TAG, "currDelta == 200001 !! -> shorted");
-										//*** TOUCHED ***//
-										PowerGarden.Device.plants[i].triggered = true; //set triggered to true for this plant
-										
-										PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis(); //record timestamp
-										
-										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp); //add timestamp to overall touchStamps vector
-										
-										PowerGarden.stateManager.updatePlantStates(); //check this plant's state
-										
-										//sendJson("touch", new Monkey("device_id",PowerGarden.Device.ID), new Monkey("index",i)); //let's save this for when we get crazy
-										//******* for now
-										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, plantDiffDisplay[i], PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
-										//*******	
-										if (PowerGarden.stateManager.updateDeviceState() ){
-											PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
-											//activity_.resetView(); //now done in timerTask run() method
-										}
-										
-										//play correct sound for this plant here
-										PowerGarden.audioManager.playSound(i); 	
-									}
+//									else if(plantDiffDisplay[i] == 20001 && !PowerGarden.Device.isWatering && !PowerGarden.Device.plants[i].triggered){
+//										
+//										Log.d(TAG, "currDelta == 200001 !! -> shorted");
+//										//*** TOUCHED ***//
+//										PowerGarden.Device.plants[i].triggered = true; //set triggered to true for this plant
+//										PowerGarden.Device.plants[i].touchedTimestamp = System.currentTimeMillis(); //record timestamp
+//										PowerGarden.Device.plants[i].touchStamps.add(PowerGarden.Device.plants[i].touchedTimestamp); //add timestamp to overall touchStamps vector
+//										PowerGarden.stateManager.updatePlantStates(); //check this plant's state
+//										
+//										//******* for now
+//										PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i, plantDiffDisplay[i], PowerGarden.Device.plants[i].state, PowerGarden.Device.plants[i].touchStamps.size(), PresentationViewable.this );
+//										//*******	
+//										if (PowerGarden.stateManager.updateDeviceState() ){
+//											PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+//											//activity_.resetView(); //now done in timerTask run() method
+//										}
+//										
+//										//play correct sound for this plant here
+//										PowerGarden.audioManager.playSound(i); 	
+//									}
 											
 									if(bSetup){
 										if(PowerGarden.Device.plants[i].triggered)
@@ -322,37 +310,55 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 			//--- VIBRATION SENSOR DATA
 			else if(dataType.equalsIgnoreCase("V")){ 
 				
-				final int plantDisplay[] = new int [3];
+				final int plantDisplay[] = new int [8];
 				int val = 0;
 				//updateView(); //quick refresh of all PowerGarden.statics
 				
 				for(int i = 0; i<parseData.length-1; i++){
-					val = Integer.parseInt(parseData[i+1]);
 					
-					plantDisplay[i+4] = val; //going to display on 4,5,6
-					
-					Log.d("plantVib[i]", String.valueOf(val));
-					
-					PowerGarden.Device.plants[i].capCalculator.addValue(val);
-					
-				//	delta = PowerGarden.Device.plants[i].capCalculator.getDelta();
-					
-					//if(i < 2 || i == 7) { //only have delta enabled on 0, 1, 7
-						plantDisplay[i+4] = val;
-						Log.d("plantVibDisplay[i]", String.valueOf(val));
-					//}
-					//PowerGarden.Device.plants[i].addValue(Integer.parseInt(parseData[i+1]));
-					//plantDisplay[i] = PowerGarden.Device.plants[i].getFilteredValue(); //set the final here
-					//Log.d(TAG, "cap: "+ Integer.toString(plantDisplay[i]));
+					if(PowerGarden.Device.plants[i+4].enabled){ //only if this plant is enabled
+						val = Integer.parseInt(parseData[i+1]);
+						plantDisplay[i+4] = val; //going to display on 4,5,6
+						Log.d("plantVib"+Integer.toString((i+4)), String.valueOf(val));
+					}
 				}
-				//PowerGarden.Device.light = Integer.parseInt(parseData[1]);
-				//createJson("light",PowerGarden.light);
-				//final int light = PowerGarden.Device.light;
-				if(debugSensors&& bSetup){
+				
+				if(bSetup){ //update the debug screen if it's on
 					Runnable runner = new Runnable(){
 						public void run() {
-							//String lightStr = String.valueOf(light);
-							//lightval.setText(lightStr);
+
+							for(int i=0; i<3; i++){ //display vibration on plants 4, 5, 6
+								
+								if(System.currentTimeMillis() - PowerGarden.Device.plants[i+4].touchedTimestamp > triggerTime){ //if we've hit trigger time max
+									PowerGarden.Device.plants[i+4].triggered = false;
+								}
+								
+								if((plantDisplay[i+4] < 10) && !PowerGarden.Device.plants[i+4].triggered){ //if we're over the threshold AND we're not triggered:
+									
+									Log.d(TAG, "currVIB over threshold : "+Integer.toString(plantDisplay[i+4]));
+									//play correct sound for this plant here
+									PowerGarden.audioManager.playSound(i+4);
+									
+									//*** TOUCHED ***//
+									PowerGarden.Device.plants[i+4].triggered = true; //set triggered to true for this plant
+									PowerGarden.Device.plants[i+4].touchedTimestamp = System.currentTimeMillis(); //record timestamp
+									PowerGarden.Device.plants[i+4].touchStamps.add(PowerGarden.Device.plants[i+4].touchedTimestamp); //add timestamp to overall touchStamps vector
+									PowerGarden.stateManager.updatePlantStates(); //check this plant's state
+									PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i+4, plantDisplay[i+4], PowerGarden.Device.plants[i+4].state, PowerGarden.Device.plants[i+4].touchStamps.size(), PresentationViewable.this );
+									//*******	
+									if (PowerGarden.stateManager.updateDeviceState() ){ // returns true if changed
+										PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+										//activity_.resetView(); //now done in timerTask run() method
+									}
+								}
+								
+								if(debugSensors){
+									if(PowerGarden.Device.plants[i+4].triggered)
+										plantValView[i+4].setTextColor(Color.GREEN);
+									else plantValView[i+4].setTextColor(Color.WHITE);
+									plantValView[i+4].setText(String.valueOf(plantDisplay[i+4]));
+								}
+							}
 						}
 					};
 					if(runner != null){

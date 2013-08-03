@@ -197,7 +197,7 @@ public class SocketManager extends TimerTask  implements  IOCallback, Connectabl
 		} 
 */
 		
-		//--- regardless, restart connection 
+		//--- regardless, onError, restart connection 
 		socket = new SocketIO();
 		try {
 			socket.connect("http://"+PowerGarden.Device.host+":"+PowerGarden.Device.port+"/", this);
