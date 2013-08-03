@@ -22,6 +22,8 @@ function DB(browserSockets){
 	this.chorusDb;
 	this.browserIO = browserSockets;
 	
+	this.WateringEnabled = true;
+	
 	//console.log(storedMood);
 	
 	//this.statusMood = new moods();
@@ -427,30 +429,30 @@ DB.prototype.routeTouch = function(message,connection, callback){
 	var touchDate = new Date();
 	touchDate.setTime(touchDate.getTime() - 30*1000);
 
-	// touchesDb.distinct('device_id', { timestamp: { $gte: touchDate } }, function(err, docs) {
-	// 	if (err) console.log(err);
-	// 	if (docs.length >= 3) {
+	 touchesDb.distinct('device_id', { timestamp: { $gte: touchDate } }, function(err, docs) {
+	 	if (err) console.log(err);
+	 	if (docs.length >= 3) {
 
-	// 		var chorusDate = new Date();
-	// 		chorusDate.setMinutes( chorusDate.getMinutes() - 30 );		
+	 		var chorusDate = new Date();
+	 		chorusDate.setMinutes( chorusDate.getMinutes() - 30 );		
 						  
-	// 		chorusDb.find({ timestamp: { $gte: chorusDate } }).toArray( function(err, res){
-	// 			if(err) console.error(err);
+	 		chorusDb.find({ timestamp: { $gte: chorusDate } }).toArray( function(err, res){
+	 			if(err) console.error(err);
 
-	// 			if (res.length) {
-	// 				console.log('[CHORUS] Ran within last 30 minutes, not running again.');
-	// 				callback(false);
-	// 			} else {
-	// 				console.log('[CHORUS] Running chorus!');
-	// 				chorusDb.insert({ timestamp: new Date() }, function(err){
-	// 					if(err) console.error(err) //throw err;
-	// 				});
-	// 				callback(true);
-	// 			}
+	 			if (res.length) {
+	 				console.log('[CHORUS] Ran within last 30 minutes, not running again.');
+	 				callback(false);
+	 			} else {
+	 				console.log('[CHORUS] Running chorus!');
+	 				chorusDb.insert({ timestamp: new Date() }, function(err){
+	 					if(err) console.error(err) //throw err;
+	 				});
+	 				callback(true);
+	 			}
 
-	// 		});
-	// 	}
-	// });
+	 		});
+	 	}
+	 });
 
 }
 
@@ -476,6 +478,12 @@ DB.prototype.updateDocument = function(collection,id,json){
 DB.prototype.calculateGardenWaterNeeds = function(callback) {
 
 	// Amount of time to increase the sprinkler duration length for different moisture moods
+	var duration=0;
+	if(this.WateringEnabled==true) duration = 30;
+	else duration = 0;
+	
+	callback(duration);
+/*
 	var durations = {
 		low: 5,
 		medium: 2,
@@ -502,6 +510,7 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 		// console.log('calculateGardenWaterNeeds: returning '+duration);
 		callback(duration);
 	});
+*/
 }
 
 DB.prototype.logPump = function(duration) {

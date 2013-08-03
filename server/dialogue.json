@@ -108,11 +108,11 @@
                 "They grow in bunches, but tomatoes still get lonely. Come say hi!"
             ],
             "audio": [
-                "large_tomatoes_proximity_1.mp3",
-                "large_tomatoes_proximity_2.mp3",
-                "large_tomatoes_proximity_3.mp3",
-                "large_tomatoes_proximity_4.mp3",
-                "large_tomatoes_proximity_5.mp3"
+                "large_tomatoes_proximity_1",
+                "large_tomatoes_proximity_2",
+                "large_tomatoes_proximity_3",
+                "large_tomatoes_proximity_4",
+                "large_tomatoes_proximity_5"
             ]
         },
         "touchResponseGood": {
@@ -135,15 +135,15 @@
                 "Tomatoes are a great source of dietary fiber, vitamins, and antioxidants. Oh tomato, what can’t you do?"
             ],
             "audio": [
-                "large_tomatoes_happy_1.mp3",
-                "large_tomatoes_happy_2.mp3",
-                "large_tomatoes_happy_3.mp3",
-                "large_tomatoes_happy_4.mp3",
-                "large_tomatoes_happy_5.mp3",
-                "large_tomatoes_happy_6.mp3",
-                "large_tomatoes_happy_7.mp3",
-                "large_tomatoes_happy_8.mp3",
-                "large_tomatoes_happy_9.mp3"
+                "large_tomatoes_happy_1",
+                "large_tomatoes_happy_2",
+                "large_tomatoes_happy_3",
+                "large_tomatoes_happy_4",
+                "large_tomatoes_happy_5",
+                "large_tomatoes_happy_6",
+                "large_tomatoes_happy_7",
+                "large_tomatoes_happy_8",
+                "large_tomatoes_happy_9"
             ]
         },
         "touchResponseBad": {
@@ -161,9 +161,9 @@
                 "Any more action and these tomatoes are going to turn into sauce!"
             ],
             "audio": [
-                "large_tomatoes_worked_up_1.mp3",
-                "large_tomatoes_worked_up_2.mp3",
-                "large_tomatoes_worked_up_3.mp3"
+                "large_tomatoes_worked_up_1",
+                "large_tomatoes_worked_up_2",
+                "large_tomatoes_worked_up_3"
             ]
         },
         "waterRequest": {
@@ -179,10 +179,10 @@
                 "Sun-dried tomatoes are great in a salad but not in a garden… Send them some water!"
             ],
             "audio": [
-                "large_tomatoes_dry_1.mp3",
-                "large_tomatoes_dry_2.mp3",
-                "large_tomatoes_dry_3.mp3",
-                "large_tomatoes_dry_4.mp3"
+                "large_tomatoes_dry_1",
+                "large_tomatoes_dry_2",
+                "large_tomatoes_dry_3",
+                "large_tomatoes_dry_4"
             ]
         },
         "waterResponseGood": {
@@ -198,8 +198,8 @@
                 "Thanks for keeping the tomatoes hydrated! You are a big help!"
             ],
             "audio": [
-                "large_tomatoes_wet_1.mp3",
-                "large_tomatoes_wet_2.mp3"
+                "large_tomatoes_wet_1",
+                "large_tomatoes_wet_2"
             ]
         },
         "waterResponseBad": {
@@ -241,11 +241,11 @@
                 "They grow in bunches, but tomatoes still get lonely. Come say hi!"
             ],
             "audio": [
-                "cherry_tomatoes_proximity_1.mp3",
-                "cherry_tomatoes_proximity_2.mp3",
-                "cherry_tomatoes_proximity_3.mp3",
-                "cherry_tomatoes_proximity_4.mp3",
-                "cherry_tomatoes_proximity_5.mp3"
+                "cherry_tomatoes_proximity_1",
+                "cherry_tomatoes_proximity_2",
+                "cherry_tomatoes_proximity_3",
+                "cherry_tomatoes_proximity_4",
+                "cherry_tomatoes_proximity_5"
             ]
         },
         "touchResponseGood": {
@@ -268,15 +268,15 @@
                 "Tomatoes are a great source of dietary fiber, vitamins, and antioxidants. Oh tomato, what can’t you do?"
             ],
             "audio": [
-                "cherry_tomatoes_happy_1.mp3",
-                "cherry_tomatoes_happy_2.mp3",
-                "cherry_tomatoes_happy_3.mp3",
-                "cherry_tomatoes_happy_4.mp3",
-                "cherry_tomatoes_happy_5.mp3",
-                "cherry_tomatoes_happy_6.mp3",
-                "cherry_tomatoes_happy_7.mp3",
-                "cherry_tomatoes_happy_8.mp3",
-                "cherry_tomatoes_happy_9.mp3"
+                "cherry_tomatoes_happy_1",
+                "cherry_tomatoes_happy_2",
+                "cherry_tomatoes_happy_3",
+                "cherry_tomatoes_happy_4",
+                "cherry_tomatoes_happy_5",
+                "cherry_tomatoes_happy_6",
+                "cherry_tomatoes_happy_7",
+                "cherry_tomatoes_happy_8",
+                "cherry_tomatoes_happy_9"
             ]
         },
         "touchResponseBad": {
@@ -294,10 +294,10 @@
                 "Any more action and these tomatoes are going to turn into sauce!"
             ],
             "audio": [
-                "cherry_tomatoes_worked_up_1.mp3",
-                "cherry_tomatoes_worked_up_2.mp3",
-                "cherry_tomatoes_worked_up_3.mp3",
-                "cherry_tomatoes_worked_up_4.mp3"
+                "cherry_tomatoes_worked_up_1",
+                "cherry_tomatoes_worked_up_2",
+                "cherry_tomatoes_worked_up_3",
+                "cherry_tomatoes_worked_up_4"
             ]
         },
         "waterRequest": {
@@ -313,13 +313,13 @@
                 "Sun-dried tomatoes are great in a salad but not in a garden… Send them some water!"
             ],
             "audio": [
-                "cherry_tomatoes_dry_1.mp3",
-                "cherry_tomatoes_dry_2.mp3",
-                "cherry_tomatoes_dry_3.mp3",
-                "cherry_tomatoes_dry_4.mp3",
-                "cherry_tomatoes_dry_5.mp3",
-                "cherry_tomatoes_dry_6.mp3",
-                "cherry_tomatoes_dry_7.mp3"
+                "cherry_tomatoes_dry_1",
+                "cherry_tomatoes_dry_2",
+                "cherry_tomatoes_dry_3",
+                "cherry_tomatoes_dry_4",
+                "cherry_tomatoes_dry_5",
+                "cherry_tomatoes_dry_6",
+                "cherry_tomatoes_dry_7"
             ]
         },
         "waterResponseGood": {
@@ -335,9 +335,9 @@
                 "Thanks for keeping the tomatoes hydrated! You are a big help!"
             ],
             "audio": [
-                "cherry_tomatoes_wet_1.mp3",
-                "cherry_tomatoes_wet_2.mp3",
-                "cherry_tomatoes_wet_3.mp3"
+                "cherry_tomatoes_wet_1",
+                "cherry_tomatoes_wet_2",
+                "cherry_tomatoes_wet_3"
             ]
         },
         "waterResponseBad": {
@@ -381,9 +381,9 @@
                 "Been living in the city so long you forgot what nature feels like? Come get your fix!"
             ],
             "audio": [
-                "peppers_proximity_1.mp3",
-                "peppers_proximity_2.mp3",
-                "peppers_proximity_3.mp3"
+                "peppers_proximity_1",
+                "peppers_proximity_2",
+                "peppers_proximity_3"
             ]
         },
         "touchResponseGood": {
@@ -401,14 +401,14 @@
                 "You must have a green thumb; the veggies are loving you!"
             ],
             "audio": [
-                "peppers_happy_1.mp3",
-                "peppers_happy_2.mp3",
-                "peppers_happy_3.mp3",
-                "peppers_happy_4.mp3",
-                "peppers_happy_5.mp3",
-                "peppers_happy_6.mp3",
-                "peppers_happy_7.mp3",
-                "peppers_happy_8.mp3"
+                "peppers_happy_1",
+                "peppers_happy_2",
+                "peppers_happy_3",
+                "peppers_happy_4",
+                "peppers_happy_5",
+                "peppers_happy_6",
+                "peppers_happy_7",
+                "peppers_happy_8"
             ]
         },
         "touchResponseBad": {
@@ -426,9 +426,9 @@
                 "Any more action and these peppers are going to turn into paste!"
             ],
             "audio": [
-                "peppers_worked_up_1.mp3",
-                "peppers_worked_up_2.mp3",
-                "peppers_worked_up_3.mp3"
+                "peppers_worked_up_1",
+                "peppers_worked_up_2",
+                "peppers_worked_up_3"
             ]
         },
         "waterRequest": {
@@ -444,8 +444,8 @@
                 "Pepper flakes are great on pizza but not in a garden. Send 'em some water before they dry out!"
             ],
             "audio": [
-                "peppers_dry_1.mp3",
-                "peppers_dry_2.mp3"
+                "peppers_dry_1",
+                "peppers_dry_2"
             ]
         },
         "waterResponseGood": {
@@ -462,7 +462,7 @@
                 "Thanks for keeping the peppers hydrated! You are a big help!"
             ],
             "audio": [
-                "peppers_wet_1.mp3"
+                "peppers_wet_1"
             ]
         },
         "waterResponseBad": {
@@ -503,12 +503,12 @@
                 "This celery wants attention too! It's getting green with envy."
             ],
             "audio": [
-                "celery_proximity_1.mp3",
-                "celery_proximity_2.mp3",
-                "celery_proximity_3.mp3",
-                "celery_proximity_4.mp3",
-                "celery_proximity_5.mp3",
-                "celery_proximity_6.mp3"
+                "celery_proximity_1",
+                "celery_proximity_2",
+                "celery_proximity_3",
+                "celery_proximity_4",
+                "celery_proximity_5",
+                "celery_proximity_6"
             ]
         },
         "touchResponseGood": {
@@ -526,30 +526,30 @@
                 "You must have a green thumb; the veggies are loving you!"
             ],
             "audio": [
-                "celery_happy_1.mp3",
-                "celery_happy_2.mp3",
-                "celery_happy_3.mp3",
-                "celery_happy_4.mp3",
-                "celery_happy_5.mp3",
-                "celery_happy_6.mp3",
-                "celery_happy_7.mp3",
-                "celery_happy_8.mp3",
-                "celery_happy_9.mp3",
-                "celery_happy_10.mp3",
-                "celery_happy_11.mp3",
-                "celery_happy_12.mp3",
-                "celery_happy_13.mp3",
-                "celery_happy_14.mp3",
-                "celery_happy_15.mp3",
-                "celery_happy_16.mp3",
-                "celery_happy_17.mp3",
-                "celery_happy_18.mp3",
-                "celery_happy_19.mp3",
-                "celery_happy_20.mp3",
-                "celery_happy_21.mp3",
-                "celery_happy_22.mp3",
-                "celery_happy_23.mp3",
-                "celery_happy_24.mp3"
+                "celery_happy_1",
+                "celery_happy_2",
+                "celery_happy_3",
+                "celery_happy_4",
+                "celery_happy_5",
+                "celery_happy_6",
+                "celery_happy_7",
+                "celery_happy_8",
+                "celery_happy_9",
+                "celery_happy_10",
+                "celery_happy_11",
+                "celery_happy_12",
+                "celery_happy_13",
+                "celery_happy_14",
+                "celery_happy_15",
+                "celery_happy_16",
+                "celery_happy_17",
+                "celery_happy_18",
+                "celery_happy_19",
+                "celery_happy_20",
+                "celery_happy_21",
+                "celery_happy_22",
+                "celery_happy_23",
+                "celery_happy_24"
             ]
         },
         "touchResponseBad": {
@@ -569,13 +569,13 @@
                 "Celery sticks are good to eat, but these are still growing! Let them rest for a bit."
             ],
             "audio": [
-                "celery_worked_up_1.mp3",
-                "celery_worked_up_2.mp3",
-                "celery_worked_up_3.mp3",
-                "celery_worked_up_4.mp3",
-                "celery_worked_up_5.mp3",
-                "celery_worked_up_6.mp3",
-                "celery_worked_up_7.mp3"
+                "celery_worked_up_1",
+                "celery_worked_up_2",
+                "celery_worked_up_3",
+                "celery_worked_up_4",
+                "celery_worked_up_5",
+                "celery_worked_up_6",
+                "celery_worked_up_7"
             ]
         },
         "waterRequest": {
@@ -591,14 +591,14 @@
                 "We're on the verge of some major wilt-age. Celery needs water pronto!"
             ],
             "audio": [
-                "celery_dry_1.mp3",
-                "celery_dry_2.mp3",
-                "celery_dry_3.mp3",
-                "celery_dry_4.mp3",
-                "celery_dry_5.mp3",
-                "celery_dry_6.mp3",
-                "celery_dry_7.mp3",
-                "celery_dry_8.mp3"
+                "celery_dry_1",
+                "celery_dry_2",
+                "celery_dry_3",
+                "celery_dry_4",
+                "celery_dry_5",
+                "celery_dry_6",
+                "celery_dry_7",
+                "celery_dry_8"
             ]
         },
         "waterResponseGood": {
@@ -616,12 +616,12 @@
                 "Thanks for keeping the celery a lean, green crunchy machine!"
             ],
             "audio": [
-                "celery_wet_1.mp3",
-                "celery_wet_2.mp3",
-                "celery_wet_3.mp3",
-                "celery_wet_4.mp3",
-                "celery_wet_5.mp3",
-                "celery_wet_6.mp3"
+                "celery_wet_1",
+                "celery_wet_2",
+                "celery_wet_3",
+                "celery_wet_4",
+                "celery_wet_5",
+                "celery_wet_6"
             ]
         },
         "waterResponseBad": {
@@ -662,13 +662,13 @@
                 "Did you know that carrots contain iron and Vitamins A, B6, E, C and K (and more)? They're nature’s vitamin store."
             ],
             "audio": [
-                "orange_carrots_proximity_1.mp3",
-                "orange_carrots_proximity_2.mp3",
-                "orange_carrots_proximity_3.mp3",
-                "orange_carrots_proximity_4.mp3",
-                "orange_carrots_proximity_5.mp3",
-                "orange_carrots_proximity_6.mp3",
-                "orange_carrots_proximity_7.mp3"
+                "orange_carrots_proximity_1",
+                "orange_carrots_proximity_2",
+                "orange_carrots_proximity_3",
+                "orange_carrots_proximity_4",
+                "orange_carrots_proximity_5",
+                "orange_carrots_proximity_6",
+                "orange_carrots_proximity_7"
             ]
         },
         "touchResponseGood": {
@@ -687,38 +687,38 @@
                 "Good thing you're not a rabbit. When they hang with carrots it never ends well."
             ],
             "audio": [
-                "orange_carrots_happy_1.mp3",
-                "orange_carrots_happy_2.mp3",
-                "orange_carrots_happy_3.mp3",
-                "orange_carrots_happy_4.mp3",
-                "orange_carrots_happy_5.mp3",
-                "orange_carrots_happy_6.mp3",
-                "orange_carrots_happy_7.mp3",
-                "orange_carrots_happy_8.mp3",
-                "orange_carrots_happy_9.mp3",
-                "orange_carrots_happy_10.mp3",
-                "orange_carrots_happy_11.mp3",
-                "orange_carrots_happy_12.mp3",
-                "orange_carrots_happy_13.mp3",
-                "orange_carrots_happy_14.mp3",
-                "orange_carrots_happy_15.mp3",
-                "orange_carrots_happy_16.mp3",
-                "orange_carrots_happy_17.mp3",
-                "orange_carrots_happy_18.mp3",
-                "orange_carrots_happy_19.mp3",
-                "orange_carrots_happy_20.mp3",
-                "orange_carrots_happy_21.mp3",
-                "orange_carrots_happy_22.mp3",
-                "orange_carrots_happy_23.mp3",
-                "orange_carrots_happy_24.mp3",
-                "orange_carrots_happy_25.mp3",
-                "orange_carrots_happy_26.mp3",
-                "orange_carrots_happy_27.mp3",
-                "orange_carrots_happy_28.mp3",
-                "orange_carrots_happy_29.mp3",
-                "orange_carrots_happy_30.mp3",
-                "orange_carrots_happy_31.mp3",
-                "orange_carrots_happy_32.mp3"
+                "orange_carrots_happy_1",
+                "orange_carrots_happy_2",
+                "orange_carrots_happy_3",
+                "orange_carrots_happy_4",
+                "orange_carrots_happy_5",
+                "orange_carrots_happy_6",
+                "orange_carrots_happy_7",
+                "orange_carrots_happy_8",
+                "orange_carrots_happy_9",
+                "orange_carrots_happy_10",
+                "orange_carrots_happy_11",
+                "orange_carrots_happy_12",
+                "orange_carrots_happy_13",
+                "orange_carrots_happy_14",
+                "orange_carrots_happy_15",
+                "orange_carrots_happy_16",
+                "orange_carrots_happy_17",
+                "orange_carrots_happy_18",
+                "orange_carrots_happy_19",
+                "orange_carrots_happy_20",
+                "orange_carrots_happy_21",
+                "orange_carrots_happy_22",
+                "orange_carrots_happy_23",
+                "orange_carrots_happy_24",
+                "orange_carrots_happy_25",
+                "orange_carrots_happy_26",
+                "orange_carrots_happy_27",
+                "orange_carrots_happy_28",
+                "orange_carrots_happy_29",
+                "orange_carrots_happy_30",
+                "orange_carrots_happy_31",
+                "orange_carrots_happy_32"
             ]
         },
         "touchResponseBad": {
@@ -738,12 +738,12 @@
                 "Carrots are good to eat, but these are still growing! Let them rest for a bit."
             ],
             "audio": [
-                "orange_carrots_worked_up_1.mp3",
-                "orange_carrots_worked_up_2.mp3",
-                "orange_carrots_worked_up_3.mp3",
-                "orange_carrots_worked_up_4.mp3",
-                "orange_carrots_worked_up_5.mp3",
-                "orange_carrots_worked_up_6.mp3"
+                "orange_carrots_worked_up_1",
+                "orange_carrots_worked_up_2",
+                "orange_carrots_worked_up_3",
+                "orange_carrots_worked_up_4",
+                "orange_carrots_worked_up_5",
+                "orange_carrots_worked_up_6"
             ]
         },
         "waterRequest": {
@@ -759,12 +759,12 @@
                 "If these dudes don't get some water, we're going to have a carrot riot on our hands! Help!"
             ],
             "audio": [
-                "orange_carrots_dry_1.mp3",
-                "orange_carrots_dry_2.mp3",
-                "orange_carrots_dry_3.mp3",
-                "orange_carrots_dry_4.mp3",
-                "orange_carrots_dry_5.mp3",
-                "orange_carrots_dry_6.mp3"
+                "orange_carrots_dry_1",
+                "orange_carrots_dry_2",
+                "orange_carrots_dry_3",
+                "orange_carrots_dry_4",
+                "orange_carrots_dry_5",
+                "orange_carrots_dry_6"
             ]
         },
         "waterResponseGood": {
@@ -781,9 +781,9 @@
                 "Thanks for keeping the carrots hydrated! You are a big help!"
             ],
             "audio": [
-                "orange_carrots_wet_1.mp3",
-                "orange_carrots_wet_2.mp3",
-                "orange_carrots_wet_3.mp3"
+                "orange_carrots_wet_1",
+                "orange_carrots_wet_2",
+                "orange_carrots_wet_3"
             ]
         },
         "waterResponseBad": {
@@ -824,12 +824,12 @@
                 "Purple carrots are supercharged with antioxidants. Plus they’re purple, which is pretty cool all by itself."
             ],
             "audio": [
-                "purple_carrots_proximity_1.mp3",
-                "purple_carrots_proximity_2.mp3",
-                "purple_carrots_proximity_3.mp3",
-                "purple_carrots_proximity_4.mp3",
-                "purple_carrots_proximity_5.mp3",
-                "purple_carrots_proximity_6.mp3"
+                "purple_carrots_proximity_1",
+                "purple_carrots_proximity_2",
+                "purple_carrots_proximity_3",
+                "purple_carrots_proximity_4",
+                "purple_carrots_proximity_5",
+                "purple_carrots_proximity_6"
             ]
         },
         "touchResponseGood": {
@@ -848,26 +848,26 @@
                 "Good thing you're not a rabbit. When they hang with carrots it never ends well."
             ],
             "audio": [
-                "purple_carrots_happy_1.mp3",
-                "purple_carrots_happy_2.mp3",
-                "purple_carrots_happy_3.mp3",
-                "purple_carrots_happy_4.mp3",
-                "purple_carrots_happy_5.mp3",
-                "purple_carrots_happy_6.mp3",
-                "purple_carrots_happy_7.mp3",
-                "purple_carrots_happy_8.mp3",
-                "purple_carrots_happy_9.mp3",
-                "purple_carrots_happy_10.mp3",
-                "purple_carrots_happy_11.mp3",
-                "purple_carrots_happy_12.mp3",
-                "purple_carrots_happy_13.mp3",
-                "purple_carrots_happy_14.mp3",
-                "purple_carrots_happy_15.mp3",
-                "purple_carrots_happy_16.mp3",
-                "purple_carrots_happy_17.mp3",
-                "purple_carrots_happy_18.mp3",
-                "purple_carrots_happy_19.mp3",
-                "purple_carrots_happy_20.mp3"
+                "purple_carrots_happy_1",
+                "purple_carrots_happy_2",
+                "purple_carrots_happy_3",
+                "purple_carrots_happy_4",
+                "purple_carrots_happy_5",
+                "purple_carrots_happy_6",
+                "purple_carrots_happy_7",
+                "purple_carrots_happy_8",
+                "purple_carrots_happy_9",
+                "purple_carrots_happy_10",
+                "purple_carrots_happy_11",
+                "purple_carrots_happy_12",
+                "purple_carrots_happy_13",
+                "purple_carrots_happy_14",
+                "purple_carrots_happy_15",
+                "purple_carrots_happy_16",
+                "purple_carrots_happy_17",
+                "purple_carrots_happy_18",
+                "purple_carrots_happy_19",
+                "purple_carrots_happy_20"
             ]
         },
         "touchResponseBad": {
@@ -887,11 +887,11 @@
                 "Carrots are good to eat, but these are still growing! Let them rest for a bit."
             ],
             "audio": [
-                "purple_carrots_worked_up_1.mp3",
-                "purple_carrots_worked_up_2.mp3",
-                "purple_carrots_worked_up_3.mp3",
-                "purple_carrots_worked_up_4.mp3",
-                "purple_carrots_worked_up_5.mp3"
+                "purple_carrots_worked_up_1",
+                "purple_carrots_worked_up_2",
+                "purple_carrots_worked_up_3",
+                "purple_carrots_worked_up_4",
+                "purple_carrots_worked_up_5"
             ]
         },
         "waterRequest": {
@@ -907,14 +907,14 @@
                 "If these dudes don't get some water, we're going to have a carrot riot on our hands! Help!"
             ],
             "audio": [
-                "purple_carrots_dry_1.mp3",
-                "purple_carrots_dry_2.mp3",
-                "purple_carrots_dry_3.mp3",
-                "purple_carrots_dry_4.mp3",
-                "purple_carrots_dry_5.mp3",
-                "purple_carrots_dry_6.mp3",
-                "purple_carrots_dry_7.mp3",
-                "purple_carrots_dry_8.mp3"
+                "purple_carrots_dry_1",
+                "purple_carrots_dry_2",
+                "purple_carrots_dry_3",
+                "purple_carrots_dry_4",
+                "purple_carrots_dry_5",
+                "purple_carrots_dry_6",
+                "purple_carrots_dry_7",
+                "purple_carrots_dry_8"
             ]
         },
         "waterResponseGood": {
@@ -931,7 +931,7 @@
                 "Thanks for keeping the carrots hydrated! You are a big help!"
             ],
             "audio": [
-                "purple_carrots_wet_1.mp3"
+                "purple_carrots_wet_1"
             ]
         },
         "waterResponseBad": {
@@ -973,13 +973,13 @@
                 "Beets are supercharged with antioxidants. Plus they’re purple, which is pretty cool all by itself."
             ],
             "audio": [
-                "beets_proximity_1.mp3",
-                "beets_proximity_2.mp3",
-                "beets_proximity_3.mp3",
-                "beets_proximity_4.mp3",
-                "beets_proximity_5.mp3",
-                "beets_proximity_6.mp3",
-                "beets_proximity_7.mp3"
+                "beets_proximity_1",
+                "beets_proximity_2",
+                "beets_proximity_3",
+                "beets_proximity_4",
+                "beets_proximity_5",
+                "beets_proximity_6",
+                "beets_proximity_7"
             ]
         },
         "touchResponseGood": {
@@ -997,38 +997,38 @@
                 "You must have a green thumb, the veggies are loving you!"
             ],
             "audio": [
-                "beets_happy_1.mp3",
-                "beets_happy_2.mp3",
-                "beets_happy_3.mp3",
-                "beets_happy_4.mp3",
-                "beets_happy_5.mp3",
-                "beets_happy_6.mp3",
-                "beets_happy_7.mp3",
-                "beets_happy_8.mp3",
-                "beets_happy_9.mp3",
-                "beets_happy_10.mp3",
-                "beets_happy_11.mp3",
-                "beets_happy_12.mp3",
-                "beets_happy_13.mp3",
-                "beets_happy_14.mp3",
-                "beets_happy_15.mp3",
-                "beets_happy_16.mp3",
-                "beets_happy_17.mp3",
-                "beets_happy_18.mp3",
-                "beets_happy_19.mp3",
-                "beets_happy_20.mp3",
-                "beets_happy_21.mp3",
-                "beets_happy_22.mp3",
-                "beets_happy_23.mp3",
-                "beets_happy_24.mp3",
-                "beets_happy_25.mp3",
-                "beets_happy_26.mp3",
-                "beets_happy_27.mp3",
-                "beets_happy_28.mp3",
-                "beets_happy_29.mp3",
-                "beets_happy_30.mp3",
-                "beets_happy_31.mp3",
-                "beets_happy_32.mp3"
+                "beets_happy_1",
+                "beets_happy_2",
+                "beets_happy_3",
+                "beets_happy_4",
+                "beets_happy_5",
+                "beets_happy_6",
+                "beets_happy_7",
+                "beets_happy_8",
+                "beets_happy_9",
+                "beets_happy_10",
+                "beets_happy_11",
+                "beets_happy_12",
+                "beets_happy_13",
+                "beets_happy_14",
+                "beets_happy_15",
+                "beets_happy_16",
+                "beets_happy_17",
+                "beets_happy_18",
+                "beets_happy_19",
+                "beets_happy_20",
+                "beets_happy_21",
+                "beets_happy_22",
+                "beets_happy_23",
+                "beets_happy_24",
+                "beets_happy_25",
+                "beets_happy_26",
+                "beets_happy_27",
+                "beets_happy_28",
+                "beets_happy_29",
+                "beets_happy_30",
+                "beets_happy_31",
+                "beets_happy_32"
             ]
         },
         "touchResponseBad": {
@@ -1048,12 +1048,12 @@
                 "Beets are good to eat, but these are still growing! Let them rest for a bit."
             ],
             "audio": [
-                "beets_worked_up_1.mp3",
-                "beets_worked_up_2.mp3",
-                "beets_worked_up_3.mp3",
-                "beets_worked_up_4.mp3",
-                "beets_worked_up_5.mp3",
-                "beets_worked_up_6.mp3"
+                "beets_worked_up_1",
+                "beets_worked_up_2",
+                "beets_worked_up_3",
+                "beets_worked_up_4",
+                "beets_worked_up_5",
+                "beets_worked_up_6"
             ]
         },
         "waterRequest": {
@@ -1069,12 +1069,12 @@
                 "If these dudes don't get some water, we're going to have a beet riot on our hands! Help!"
             ],
             "audio": [
-                "beets_dry_1.mp3",
-                "beets_dry_2.mp3",
-                "beets_dry_3.mp3",
-                "beets_dry_4.mp3",
-                "beets_dry_5.mp3",
-                "beets_dry_6.mp3"
+                "beets_dry_1",
+                "beets_dry_2",
+                "beets_dry_3",
+                "beets_dry_4",
+                "beets_dry_5",
+                "beets_dry_6"
             ]
         },
         "waterResponseGood": {
@@ -1092,9 +1092,9 @@
                 "The beets sure look refreshed! Way to \"beet\" the heat. (Get it?)"
             ],
             "audio": [
-                "beets_wet_1.mp3",
-                "beets_wet_2.mp3",
-                "beets_wet_3.mp3"
+                "beets_wet_1",
+                "beets_wet_2",
+                "beets_wet_3"
             ]
         },
         "waterResponseBad": {

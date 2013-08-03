@@ -31,6 +31,8 @@ socket.on('device_disconn',function(data){
 	}
 });
 
+//Incoming Firehouse
+
 socket.on('firehose',function(data){
 	var $elem = $('button.firehose.client-'+data.connection_id);
 	if(data.stream) {
@@ -42,6 +44,8 @@ socket.on('firehose',function(data){
 		$elem.children('i').addClass('icon-off').removeClass('icon-fire');
 	}
 });
+
+//incoming ignore plant
 
 socket.on('ignore',function(data){
 	var $elem = $('button.plant-'+data.plant_index+'.disablePlant.client-'+data.connection_id);
@@ -58,6 +62,8 @@ socket.on('ignore',function(data){
 	
 });
 
+
+
 socket.on('threshold',function(data){
 	if(data.type=='cap'){
 		var input = $('input.plant-'+data.plant_index+'.cap.client-'+data.connection_id);
@@ -66,6 +72,7 @@ socket.on('threshold',function(data){
 		$('td.plant-'+data.plant_index+'.value.client-'+data.connection_id).html(data.value);
 	}
 });
+
 
 socket.on('tablet',function(data){
 	$('input.volume.client-'+data.connection_id).val(data.volume);
@@ -340,7 +347,7 @@ function buildSettings(data) {
 		settingsString += '<tr><td>'+activeButton+'</td><td>'+key+'</td><td class="'+key+' reading"></td><td><input class="input-small" type="text" name="low" placeholder="low" value="'+d[key].low+'" data-sensor="'+key+'"></td><td>'+highString+'</td><td>'+windowString+'</td></tr>'
 	}
 
-	var tabletString = '<table class="table table-condensed tablet-table"><thead><tr><th width="25%">Tablet Hardware Settings</th><th width="25%">Volume</th><th width="25%">Brightness</th><th width="25%">Battery Level</th></tr></thead><tbody><tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td><button class="btn-mini btn-warning sleep client-'+data.connection_id+'"><i class="icon-adjust"></i> Sleep</button></td><td><input type="range" min="0" max="15" step="1" value="'+d['tablet'].volume+'" class="volume client-'+data.connection_id+'"></td><td><input type="range" min="0" max="100" step="1" value="'+d['tablet'].brightness+'" class="brightness client-'+data.connection_id+'"></td><td><div class="progress progress-info progress-striped"><div class="bar battery client-'+data.connection_id+'" style="width: 0%;"></div></div></td></tr></tbody></table>';
+	var tabletString = '<table class="table table-condensed tablet-table"><thead><tr><th width="25%">Tablet Hardware Settings</th><th width="25%">Volume</th><th width="25%">Brightness</th><th width="25%">Battery Level</th></tr></thead><tbody><tr data-connection="'+data.connection_id+'" data-device="'+data.device_id+'"><td><button class="btn-mini btn-warning sleep client-'+data.connection_id+'"><i class="icon-adjust"></i> Sleep</button></td><td><input type="range" min="0" max="15"  step="1"  value="15" class="volume client-'+data.connection_id+'"></td><td><input type="range" min="0" max="100" step="1"  value="100"  class="brightness client-'+data.connection_id+'"></td><td><div class="progress progress-info progress-striped"><div class="bar battery client-'+data.connection_id+'" style="width: 0%;"></div></div></td></tr></tbody></table>';
 
 	// build append string for sensor settings
 	var append = settingsPre + settingsString + settingsPost;
@@ -417,6 +424,14 @@ $('.turn-on-sprinklers').click(function() {
 $('.turn-off-sprinklers').click(function() {
 	socket.emit('sprinklers', { state: false })
 });
+$('.turn-on-pump').click(function() {
+	console.log('clicked!');
+	socket.emit('pump', { state: true })
+});
+$('.turn-off-pump').click(function() {
+	socket.emit('pump', { state: false })
+});
+
 $('.restart-twitter-stream').click(function() {
 	socket.emit('twitter-restart');
 });
