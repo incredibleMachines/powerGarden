@@ -48,7 +48,7 @@ var browsers = {};
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
 app.get('/dialogue',function(req,res,next){
-	res.writeHead(200, { 'Content-Type': 'application/json' }); 
+	res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' }); 
 	var type=req.param('type');
 	var json = '{"'+type+'" : '+JSON.stringify(dialogue[type])+'}';
 	
