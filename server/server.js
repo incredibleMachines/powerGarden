@@ -50,7 +50,9 @@ var browsers = {};
 app.get('/dialogue',function(req,res,next){
 	res.writeHead(200, { 'Content-Type': 'application/json' }); 
 	var type=req.param('type');
-	res.end(JSON.stringify(dialogue[type]));
+	var json = '{"'+type+'" : '+JSON.stringify(dialogue[type])+'}';
+	
+	res.end(json);
 });
 
 app.use(express.favicon(__dirname+'/public/favicon.ico'));
