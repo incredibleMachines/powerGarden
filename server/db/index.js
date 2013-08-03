@@ -429,30 +429,30 @@ DB.prototype.routeTouch = function(message,connection, callback){
 	var touchDate = new Date();
 	touchDate.setTime(touchDate.getTime() - 30*1000);
 
-	// touchesDb.distinct('device_id', { timestamp: { $gte: touchDate } }, function(err, docs) {
-	// 	if (err) console.log(err);
-	// 	if (docs.length >= 3) {
+	 touchesDb.distinct('device_id', { timestamp: { $gte: touchDate } }, function(err, docs) {
+	 	if (err) console.log(err);
+	 	if (docs.length >= 3) {
 
-	// 		var chorusDate = new Date();
-	// 		chorusDate.setMinutes( chorusDate.getMinutes() - 30 );		
+	 		var chorusDate = new Date();
+	 		chorusDate.setMinutes( chorusDate.getMinutes() - 30 );		
 						  
-	// 		chorusDb.find({ timestamp: { $gte: chorusDate } }).toArray( function(err, res){
-	// 			if(err) console.error(err);
+	 		chorusDb.find({ timestamp: { $gte: chorusDate } }).toArray( function(err, res){
+	 			if(err) console.error(err);
 
-	// 			if (res.length) {
-	// 				console.log('[CHORUS] Ran within last 30 minutes, not running again.');
-	// 				callback(false);
-	// 			} else {
-	// 				console.log('[CHORUS] Running chorus!');
-	// 				chorusDb.insert({ timestamp: new Date() }, function(err){
-	// 					if(err) console.error(err) //throw err;
-	// 				});
-	// 				callback(true);
-	// 			}
+	 			if (res.length) {
+	 				console.log('[CHORUS] Ran within last 30 minutes, not running again.');
+	 				callback(false);
+	 			} else {
+	 				console.log('[CHORUS] Running chorus!');
+	 				chorusDb.insert({ timestamp: new Date() }, function(err){
+	 					if(err) console.error(err) //throw err;
+	 				});
+	 				callback(true);
+	 			}
 
-	// 		});
-	// 	}
-	// });
+	 		});
+	 	}
+	 });
 
 }
 
