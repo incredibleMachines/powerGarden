@@ -445,7 +445,6 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    		
 	    		//now load up every soundPool up with associated sound type 
 		        for(int j=0; j<PowerGarden.plantAudio_touchRequest.length();j++){
-		        		Log.wtf("plantAudio_touchRequest fileName:", PowerGarden.plantAudio_touchRequest.getString(j));
 		        		int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchRequest.getString(j), "raw", getPackageName());
 						PowerGarden.touchRequestAudio.add(PowerGarden.soundPool.load(PresentationActivity.this, sound_id, 1));
 		        }

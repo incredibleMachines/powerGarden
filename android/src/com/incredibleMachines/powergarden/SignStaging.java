@@ -107,9 +107,10 @@ class SignStaging extends TimerTask {
 			  }
 			});
 	  }
-		//String rawJson = getJson();
+
 		
-		
+		/*** old method using dialogue.json file locally ***/
+	
 //		InputStream is = Parent.getResources().openRawResource(R.raw.dialogue);
 //		Writer writer = new StringWriter();
 //		Reader reader = null;
@@ -126,6 +127,5 @@ class SignStaging extends TimerTask {
 //		PowerGarden.dialogue = new JSONObject(writer.toString());
 		
 		//Log.d("LOADDIALOGUE", PowerGarden.dialogue.toString());
-//	}
 }
 

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.TimerTask;
 
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 public class StateManager extends Activity {
@@ -85,18 +87,18 @@ public class StateManager extends Activity {
 	public static String getDeviceState(){
 		String thisState = "null";
 
-//		if(PowerGarden.Device.totalNumPlantTouches < PowerGarden.Device.touchLowThresh){
-//			thisState = "lonely";
-//			PowerGarden.deviceStateIndex = 0;
-//		}
-//		if(PowerGarden.Device.totalNumPlantTouches >= PowerGarden.Device.touchLowThresh){
-//			thisState = "content";
-//			PowerGarden.deviceStateIndex = 1;
-//		}		
-//		if(PowerGarden.Device.totalNumPlantTouches >= PowerGarden.Device.touchHighThresh){
-//			thisState = "worked_up";
-//			PowerGarden.deviceStateIndex = 2;
-//		}
+		if(PowerGarden.Device.totalNumPlantTouches < PowerGarden.Device.touchLowThresh){
+			thisState = "lonely";
+			PowerGarden.deviceStateIndex = 0;
+		}
+		if(PowerGarden.Device.totalNumPlantTouches >= PowerGarden.Device.touchLowThresh){
+			thisState = "content";
+			PowerGarden.deviceStateIndex = 1;
+		}		
+		if(PowerGarden.Device.totalNumPlantTouches >= PowerGarden.Device.touchHighThresh){
+			thisState = "worked_up";
+			PowerGarden.deviceStateIndex = 2;
+		}
 			
 		//check distance and moisture if state:lonely AND range is inside thresh
 //		if(thisState.equals("lonely") && PowerGarden.Device.distance < PowerGarden.Device.rangeLowThresh && PowerGarden.Device.rangeActive
@@ -165,13 +167,15 @@ public class StateManager extends Activity {
 
 	public boolean updateDeviceState() { //check getDeviceState(), if it's new send an update
 		
-		if(PowerGarden.Device.deviceState.equals(PowerGarden.stateManager.getDeviceState())){ //are we still at the same device state?
+		if(PowerGarden.Device.deviceState.equals(getDeviceState())){ //are we still at the same device state?
 			Log.wtf("current device state:", PowerGarden.Device.deviceState);
 			return false;
 			
 		} else {	
-			PowerGarden.Device.deviceState = PowerGarden.stateManager.getDeviceState(); //we have changed the device state !
+			PowerGarden.Device.deviceState = getDeviceState(); //we have changed the device state !
 			Log.wtf("updateDeviceState()", "NEW: "+PowerGarden.Device.deviceState);
+			//set deviceStateIndex
+			PowerGarden.deviceStateIndex = Arrays.asList(PowerGarden.plantState).indexOf(PowerGarden.Device.deviceState);
 //			Toast toast = Toast.makeText(getApplicationContext(), "NEW device state: "+PowerGarden.Device.deviceState, Toast.LENGTH_LONG);
 //			toast.show();
 			PowerGarden.SM.updateData("update", PowerGarden.Device.ID, null); //send an update to server about our state change

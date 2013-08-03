@@ -117,7 +117,8 @@ public class AudioManager extends Activity {
 				PowerGarden.soundPool.play(PowerGarden.touchResponseGoodAudio.get((int)(Math.random()*PowerGarden.touchResponseGoodAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
 			}
 			if(state.equals("worked_up")){
-				PowerGarden.soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
+				PowerGarden.soundPool.play(PowerGarden.touchResponseGoodAudio.get((int)(Math.random()*PowerGarden.touchResponseGoodAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f);
+				//PowerGarden.soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
 			}
 		} 
 		
