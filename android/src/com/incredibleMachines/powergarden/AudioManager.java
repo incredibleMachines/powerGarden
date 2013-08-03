@@ -34,9 +34,7 @@ public class AudioManager extends Activity {
 		
 		Log.d("setupAudio", "plantType: "+ PowerGarden.Device.plantType);
 		
-		
 		try {
-			
 			//int index = 0;
 			for(int i=0; i<6; i++){ //6 types of audio
 				if(i==0) {
@@ -121,46 +119,8 @@ public class AudioManager extends Activity {
 			if(state.equals("worked_up")){
 				PowerGarden.soundPool.play(PowerGarden.touchResponseBadAudio.get((int)(Math.random()*PowerGarden.touchResponseBadAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
 			}
-		//****************
-			
-//			if(state == 3){
-//				PowerGarden.soundPool.play(PowerGarden.waterResponseGoodAudio.get((int)(Math.random()*PowerGarden.waterResponseGoodAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
-//			}
-//			if(state == 4){ //NEVER PLAYING THIS AUDIO
-//				PowerGarden.soundPool.play(PowerGarden.waterResponseBadAudio.get((int)(Math.random()*PowerGarden.waterResponseBadAudio.size())), 1.0f, 1.0f, 1, 0, 1f); 
-//			}
-//			if(state == 4){
-//				PowerGarden.soundPool.play(PowerGarden.waterRequestAudio.get((int)(Math.random()*PowerGarden.waterRequestAudio.size())), leftChannelVol, rightChannelVol, 1, 0, 1f); 
-//			}
-			
-			
 		} 
-//		
-//		else if (plantIndex == -1){ //debug flag : "play sound" button from sensor config view
-//			if ( PowerGarden.waterResponseGoodAudio.size() > 0) {
-//				
-//				Vector <Integer> thisAudioType = PowerGarden.waterResponseGoodAudio; //which audio type to test
-//				Log.d("plantType: ", PowerGarden.Device.plantType);
-//				Log.d("size() =  ", Integer.toString(thisAudioType.size()));
-//				int whichFile = (int)(Math.random()*thisAudioType.size());
-//				Log.d("play audio test: ", Integer.toString(whichFile));
-//				PowerGarden.soundPool.play(thisAudioType.get(whichFile), 1.0f, 1.0f, 1, 0, 1f);
-//				Log.wtf("play audio: ", thisAudioType.get(whichFile).toString());
-//			} else {
-////				Toast toast = Toast.makeText(getApplicationContext(), "no files for this type", Toast.LENGTH_SHORT);
-////				toast.show();
-//			}
-//		}
-//		
-//		else if (plantIndex == -2){
-//			Log.wtf("playAudio", "playing touch request audio!");
-//			PowerGarden.soundPool.play(PowerGarden.touchRequestAudio.get((int)(Math.random()*PowerGarden.touchRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f);
-//		}
-//		
-//		else if (plantIndex == -3){
-//			PowerGarden.soundPool.play(PowerGarden.waterRequestAudio.get((int)(Math.random()*PowerGarden.waterRequestAudio.size())), 1.0f, 1.0f, 1, 0, 1f);
-//		}
-//		
+		
 		else if (plantIndex == -4){ //**** watering audio ****//
 			Vector <Integer> thisAudioType = PowerGarden.waterResponseGoodAudio;
 			int whichFile = (int)(Math.random()*thisAudioType.size());

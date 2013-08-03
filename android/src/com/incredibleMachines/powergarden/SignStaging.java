@@ -4,23 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.TimerTask;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,7 +23,6 @@ import android.widget.Toast;
 class SignStaging extends TimerTask {
 	String TAG = "SignStaging";
 	private PresentationActivity activity_;
-	private Boolean title = false;
 	  
 	@Override
 	public void run() {
@@ -59,47 +53,59 @@ class SignStaging extends TimerTask {
 		activity_ = (PresentationActivity) activity;
 	}
 	
-	/*** happens onCreate -- load up .json file with all dialogue ***/
+	/*** happens onCreate of PresActivity -- load up .json file with all dialogue ***/
 	public void loadDialogue() throws IOException, JSONException{
 		
 		
 	    StringBuilder builder = new StringBuilder();
 	     
 	    try {
-	      HttpClient client = new DefaultHttpClient();
-	      HttpGet httpGet = new HttpGet("http://192.168.1.22:8080/dialogue?type=cherry_tomatoes");
-	   
-	      HttpResponse response = client.execute(httpGet);
-	      int statusCode = response.getStatusLine().getStatusCode();
-	       
-	      if (statusCode == 200) {
-	        HttpEntity entity = response.getEntity();
-	        InputStream content = entity.getContent();
-	        InputStreamReader reader1 = new InputStreamReader(content);
-	        BufferedReader reader = new BufferedReader(reader1);
-	        String line;
-	        while ((line = reader.readLine()) != null) {
-	          builder.append(line);
-	        }
-	        JSONObject jobj = new JSONObject(builder.toString());
-	        builder = new StringBuilder(jobj.toString());//(jobj.get("status").toString());
-	        //JSONArray jar = jobj.optJSONArray("friends");
-	        //builder.append(jar.length());
-	      }
-	    }
-	    catch(Exception e) {
-	      e.printStackTrace();
-	      builder.append(e);
-	    }
-	     
-	    final String str = builder.toString();
-	    activity_.runOnUiThread(new Runnable() {
-	      @Override
-	      public void run() {
-	    	  Log.wtf("JSON RECEIVED: ", str);
-	        Toast.makeText(activity_, str, Toast.LENGTH_LONG).show();
-	      }
-	    });
+			  HttpClient client = new DefaultHttpClient();
+			  String url = "http://192.168.1.22:8080/dialogue?type="+PowerGarden.Device.plantType;
+			  Log.wtf("REQUESTING JSON FROM: ", url);
+			  HttpGet httpGet = new HttpGet(url);
+			   
+		      HttpResponse response = client.execute(httpGet);
+		      int statusCode = response.getStatusLine().getStatusCode();
+		       
+		      if (statusCode == 200) {
+		        HttpEntity entity = response.getEntity();
+		        InputStream content = entity.getContent();
+		        InputStreamReader reader1 = new InputStreamReader(content);
+		        BufferedReader reader = new BufferedReader(reader1);
+		        String line;
+		        while ((line = reader.readLine()) != null) {
+		          builder.append(line);
+		        }
+		        JSONObject jobj = new JSONObject(builder.toString());
+		        builder = new StringBuilder(jobj.toString());//(jobj.get("status").toString());
+			//JSONArray jar = jobj.optJSONArray("friends");
+			//builder.append(jar.length());
+			  }
+			}
+			catch(Exception e) {
+			  e.printStackTrace();
+			  builder.append(e);
+			}
+			 
+			final String str = builder.toString();
+			activity_.runOnUiThread(new Runnable() {
+			  @Override
+			  public void run() {
+				Log.wtf("JSON RECEIVED: ", str);
+				try {
+					PowerGarden.dialogue = new JSONObject(str); //load in all dialogue !
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			    Toast.makeText(activity_, str, Toast.LENGTH_LONG).show();
+			    Message msg = new Message();
+			    msg.arg1 = 0;
+			    msg.arg2 = 0;
+			    PresentationActivity.jsonDlHandler.sendMessage(msg);
+			    //activity_.progressBar.dismiss();
+			  }
+			});
 	  }
 		//String rawJson = getJson();
 		
@@ -121,7 +127,5 @@ class SignStaging extends TimerTask {
 		
 		//Log.d("LOADDIALOGUE", PowerGarden.dialogue.toString());
 //	}
-	
-
 }
 

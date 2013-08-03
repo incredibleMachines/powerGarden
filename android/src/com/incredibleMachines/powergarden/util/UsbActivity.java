@@ -358,13 +358,13 @@ public abstract class UsbActivity extends Activity implements Connectable {
  	    // Handle item selection
  	    switch (item.getItemId()) {
  	    case R.id.mainMenuSensorDebug:
-	    	//sendData("setup");
-	    	//currentViewable_.setState("debug");
+	    	sendData("setup");
+	    	currentViewable_.setState("debug");
  	       return true;
  	    case R.id.mainMenuSocketDebug:
- 	    	//Intent setupSockets = new Intent(getApplicationContext(), ConnectSockets.class);
-			//startActivity(setupSockets);
-			//currentViewable_.setState("debugServer");
+ 	    	Intent setupSockets = new Intent(getApplicationContext(), ConnectSockets.class);
+			startActivity(setupSockets);
+			currentViewable_.setState("debugServer");
  	        return true;
  	    case R.id.mainMenuExit:
  	        try {

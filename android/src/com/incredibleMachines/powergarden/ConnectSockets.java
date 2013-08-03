@@ -45,8 +45,11 @@ public class ConnectSockets extends Activity implements Connectable {
 	      
 	      //if(PowerGarden.getPrefString("deviceID", "set_id") != null){
 	      mID.setText(PowerGarden.getPrefString("deviceID", "set_id"));
-	      //} else
-	    	  
+	      
+	      //String plantIndex[] = {"cherry_tomatoes","tomatoes","orange_carrots","purple_carrots", "beets", "celery","peppers"}; //list in the order of the spinner
+	      ArrayAdapter myAdap = (ArrayAdapter) mplantList.getAdapter(); //cast to an ArrayAdapter
+	      int spinnerIndex = myAdap.getPosition(PowerGarden.Device.plantType);
+	      mplantList.setSelection(spinnerIndex);
 	    	  
 	      mNumPlants.setText(PowerGarden.getPrefString("numPlants","8"));  
 	   }

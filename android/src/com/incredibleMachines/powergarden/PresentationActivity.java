@@ -69,14 +69,11 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	TextView twitterHandle;
 	LinearLayout twitterHeading;
 	
-	private static ProgressDialog dialog;
-	private Thread downloadThread;
-	private static Handler jsonDlHandler;
+	public ProgressDialog progressBar;
+	public static Handler jsonDlHandler;
 	
 	SocketManager SM;
-	
 	SignStaging signStageUpdater;
-	
     ChorusAudio chorusAudioUpdater = new ChorusAudio();
     Timer chorusAudioScheduling = new Timer();
 	
@@ -103,7 +100,6 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			PowerGarden.Device.plantType = PowerGarden.getPrefString("plantType", null);
 			PowerGarden.Device.PlantNum = Integer.parseInt(PowerGarden.getPrefString("numPlants", null));
 			PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, PowerGarden.Device.PlantNum, PowerGarden.Device.plantType, this);
-			//PowerGarden.SM.authDevice("register", PowerGarden.Device.ID, this);
 		}
 		
 		/*** registered ***/
@@ -235,6 +231,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		Log.wtf(TAG,"!!!START!!!");
 		setContentView(R.layout.activity_presentation);
 		
+				
 		//set up broadcastListener for battery level status
 		this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		
@@ -252,6 +249,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    if(PowerGarden.getPrefString("deviceID", null) == null){
 	    	Log.wtf(TAG, "getPref 'deviceID'=null");
 	    }else{
+	    	PowerGarden.Device.plantType = PowerGarden.getPrefString("plantType", "orange_carrots");
 	    	PowerGarden.Device.ID = PowerGarden.getPrefString("deviceID", null);
 	    	PowerGarden.Device.host = PowerGarden.getPrefString("hostname", null);
 	    	PowerGarden.Device.port = PowerGarden.getPrefString("port", null);
@@ -341,73 +339,86 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		    	currentViewable_.setState("debug");
 			}
 		});
+		
+		//-- attach viewable
         currentViewable_ = new PresentationViewable();
         currentViewable_.setActivity(this);
         
-        new Thread() {
-        	  public void run() {
-        		  
-        		 try {
-					signStageUpdater.loadDialogue();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        	  }
-        	}.start();
-        
-//		try {
-			//signStageUpdater.loadDialogue();
-			 // Create a handler to update the UI
-			//jsonDlHandler = new Handler();
+		// prepare for a progress bar dialog 
+		progressBar = new ProgressDialog(contentView.getContext());
+		progressBar.setCancelable(true);
+		progressBar.setMessage("downloading JSON...");
+		progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progressBar.show();
 
-			/*** TO BE REMOVED: ***/
-			InputStream is = getResources().openRawResource(R.raw.dialogue);
-			Writer writer = new StringWriter();
-			Reader reader = null;
-			char[] buffer = new char[1024];
-			try {
-				reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-			    int n;
-			    while ((n = reader.read(buffer)) != -1) {
-			        writer.write(buffer, 0, n);
-			    }
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				is.close();
-			}
-			try {
-				PowerGarden.dialogue = new JSONObject(writer.toString());
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	}
-//		} catch (IOException e) {
+        new Thread() {
+        	public void run() {
+        		try {
+        			signStageUpdater.loadDialogue();
+        		} catch (IOException e) {
+        			e.printStackTrace();
+        		} catch (JSONException e) {
+        			e.printStackTrace();
+        		}
+        	}
+    	}.start();
+    	
+        jsonDlHandler = new Handler() { 
+	        @Override 
+	        public void handleMessage(Message msg) {  //only called when we're done loading all JSON
+	        	PowerGarden.audioManager.setupAudio(); //does setup of all sound file types from JSON
+	        	setupSoundpool();
+	        	progressBar.dismiss();
+	        } 
+        };
+    
+//    	while(progressBar.isShowing()){ 
+//    		Log.d("PROGRESS BAR", "IS SHOWING");
+//    		//sit in this while loop, do not go on until all json is downloaded!
+//    	}
+
+		/*** TO BE REMOVED: ***/
+//		InputStream is = getResources().openRawResource(R.raw.dialogue);
+//		Writer writer = new StringWriter();
+//		Reader reader = null;
+//		char[] buffer = new char[1024];
+//		try {
+//			reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+//		    int n;
+//		    while ((n = reader.read(buffer)) != -1) {
+//		        writer.write(buffer, 0, n);
+//		    }
+//		} catch (UnsupportedEncodingException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
-//		} catch (JSONException f) {
+//		} finally {
+//			is.close();
+//		}
+//		try {
+//			PowerGarden.dialogue = new JSONObject(writer.toString());
+//		} catch (JSONException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-	//}
+	}
 
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		Log.d(TAG, "onPostCreate");
-		delayedHide(100);
-		
-		PowerGarden.Device.plantType = PowerGarden.getPrefString("plantType", "orange_carrots");
-		
+		delayedHide(1500);
+	
+		//**** sign staging setup ****//
+		Timer signScheduling = new Timer();
+		signScheduling.schedule(signStageUpdater, 10000, 10000); // (task, initial delay, repeated delay
+      
+		//*** send setup to arduino ***//
+		PresentationActivity.super.sendData("setup");	
+	}
+	
+	private void setupSoundpool(){
 		//****** setup soundPool player ******//
-		
 		PowerGarden.soundPool = new SoundPool(100, AudioManager.STREAM_MUSIC, 0);
 		PowerGarden.soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
             @Override
@@ -418,7 +429,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
             }
         });
         
-        PowerGarden.audioManager.setupAudio(); //does setup of all sound file types
+        PowerGarden.audioManager.setupAudio(); //does setup of all sound file types from JSON
 		
         Log.d(TAG, "numSounds total found: "+Integer.toString(PowerGarden.audioManager.getNumAudioSamples()));
         
@@ -435,6 +446,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    		
 	    		//now load up every soundPool up with associated sound type 
 		        for(int j=0; j<PowerGarden.plantAudio_touchRequest.length();j++){
+		        		Log.wtf("plantAudio_touchRequest fileName:", PowerGarden.plantAudio_touchRequest.getString(j));
 		        		int sound_id = getResources().getIdentifier(PowerGarden.plantAudio_touchRequest.getString(j), "raw", getPackageName());
 						PowerGarden.touchRequestAudio.add(PowerGarden.soundPool.load(PresentationActivity.this, sound_id, 1));
 		        }
@@ -468,19 +480,11 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
-       
 			}
 		};
 		if(audioSetup != null){
 			PresentationActivity.this.runOnUiThread(audioSetup);	
 		}
-		
-	  //**** sign staging setup ****//
-      Timer signScheduling = new Timer();
-      signScheduling.schedule(signStageUpdater, 10000, 10000); // (task, initial delay, repeated delay
-      
-      //*** send setup to arduino ***//
-      PresentationActivity.super.sendData("setup");	
 	}
 	
 	
@@ -494,15 +498,10 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		}
 	};
 	
-
-	
-
-
 	Handler mHideHandler = new Handler();
 	Runnable mHideRunnable = new Runnable() {
 		@Override
 		public void run() {
-			
 			mSystemUiHider.hide();
 		}
 	};
@@ -706,9 +705,6 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 				stageCopy.setAllCaps(true);
 			}
 
-//			if(PowerGarden.stateManager.getDeviceState().equals("lonely")){
-//				ScheduleLonelyAudio();
-//			}
 			
 			PowerGarden.Device.displayMode = PowerGarden.DisplayMode.MessageCopy;
 			try {

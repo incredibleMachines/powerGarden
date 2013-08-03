@@ -75,6 +75,7 @@ public class StateManager extends Activity {
 				currentPlantState = 2; //worked_up
 				
 			PowerGarden.Device.plants[i].state = PowerGarden.plantState[currentPlantState]; //set state String with index
+			PowerGarden.deviceStateIndex = currentPlantState;
 		}
 		PowerGarden.Device.totalNumPlantTouches = totalNumAllPlantTouches;
 	}
@@ -129,6 +130,7 @@ public class StateManager extends Activity {
 					PowerGarden.Device.rangeActive){
 					PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
 					PowerGarden.Device.deviceState ="content";
+					PowerGarden.deviceStateIndex = 1;
 					PowerGarden.audioManager.playSound(-10);
 					PowerGarden.Device.lastRangeHitTime = System.currentTimeMillis();
 				} 
