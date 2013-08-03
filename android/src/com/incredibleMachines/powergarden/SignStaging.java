@@ -61,7 +61,7 @@ class SignStaging extends TimerTask {
 	     
 	    try {
 			  HttpClient client = new DefaultHttpClient();
-			  String url = "http://192.168.1.22:8080/dialogue?type="+PowerGarden.Device.plantType;
+			  String url = "http://"+PowerGarden.Device.host+":8080/dialogue?type="+PowerGarden.Device.plantType;
 			  Log.wtf("REQUESTING JSON FROM: ", url);
 			  HttpGet httpGet = new HttpGet(url);
 			   

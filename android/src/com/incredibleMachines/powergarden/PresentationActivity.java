@@ -425,7 +425,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
             public void onLoadComplete(SoundPool soundPool, int sampleId,
                     int status) {
                 PowerGarden.audioLoaded = true;
-                Log.wtf(TAG, "soundpool audioLoaded TRUE");
+                Log.wtf(TAG, "soundpool audioLoaded TRUE, sample: "+Integer.toString(sampleId));
             }
         });
         
@@ -435,9 +435,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
         
         Runnable audioSetup = null;
         audioSetup = new Runnable(){
-				public void run(){       
 	
-	
+        	public void run(){       
 	    	try {
 	    		Log.wtf(TAG, "loading audio");
 	    		
