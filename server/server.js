@@ -9,7 +9,6 @@ var pump = require('./pump/index');
 var colors = require('colors');
 var dialogue = require('./dialogue');
 
-var dialogue = require('./dialogue.json');
 //console.log(dialogue);
 
 var express = require('express');
