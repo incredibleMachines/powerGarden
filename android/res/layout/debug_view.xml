@@ -230,7 +230,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 4 sense: "
+                       android:text="plant 4 vib: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -271,7 +271,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 5 sense: "
+                       android:text="plant 5 vib: "
                        android:textSize="26dp" />
 
                    <TextView
@@ -312,7 +312,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true"
-                       android:text="plant 6 sense: "
+                       android:text="plant 6 vib: "
                        android:textSize="26dp" />
 
                    <TextView
