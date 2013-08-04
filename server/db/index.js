@@ -479,8 +479,7 @@ DB.prototype.calculateGardenWaterNeeds = function(callback) {
 
 	// Amount of time to increase the sprinkler duration length for different moisture moods
 	var duration=0;
-	if(this.WateringEnabled==true) duration = 30;
-	else duration = 0;
+	if(this.WateringEnabled===true) duration = 30;
 	
 	callback(duration);
 /*

@@ -42,7 +42,7 @@ var browsers = {};
 
 
 //Connect to twitter, pass callback for responding to tweets
-// pgtwitter.start(twitterCallback);
+//pgtwitter.start(twitterCallback);
 
 /* ******************************************************************************************* */
 /* ******************************************************************************************* */
@@ -145,9 +145,9 @@ browserio.sockets.on('connection',function(browserSocket){
 	});
 	browserSocket.on('pump', function(msg){
 		//console.log(msg);
-		db.WateringEnabled = msg.state;
+		database.WateringEnabled = msg.state;
 		
-		console.log("[PUMP] Watering State Set: "+ db.WateringEnabled);
+		console.log("[PUMP] Watering State Set: "+ database.WateringEnabled);
 	});
 	// browserSocket.on('restart-twitter-stream',function(msg){
 	// 	pgtwitter.restart();
