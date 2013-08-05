@@ -35,7 +35,7 @@ var profanity = [
 ];
 
 // Set up keywords to respond to
-var waterKeywords = ['rain', 'rained', 'raining', 'water', 'thirsty', 'drink', 'sprinkle', 'sprinkler', 'sprinkers', 'mist', 'misty', 'shower', 'showers'];
+var waterKeywords = ['rain', 'rains', 'rained', 'raining', 'water', 'waters', 'watered', 'watering', 'thirsty', 'drink', 'drinks', 'drank', 'drinking', 'sprinkle', 'sprinkles', 'sprinkled', 'sprinkling', 'sprinkler', 'sprinklers', 'mist', 'misty', 'mists', 'misted', 'misting', 'shower', 'showers', 'showered', 'showering'];
 // precipitation?
 
 // PLACE MORE SPECIFIC KEYWORDS FIRST SO THEY GET CAUGHT FIRST IN THE WORD SEARCH LOOP
