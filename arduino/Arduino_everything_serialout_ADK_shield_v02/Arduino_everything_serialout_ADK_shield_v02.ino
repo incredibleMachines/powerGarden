@@ -1,6 +1,6 @@
   
 /*** includes vibration sensors on:
-pins: Ax 8,10,13
+pins: Ax8,10,13
 ***/
 
 #include <Wire.h> //for i2c
@@ -18,6 +18,10 @@ pins: Ax 8,10,13
 
 #include <adk.h>
 
+//******************//
+boolean debug = false;
+//******************//
+
 USB Usb;
 //USBHub     Hub(&Usb);
 
@@ -34,11 +38,6 @@ ADK adk(&Usb,"IncredibleMachines, Inc.",
 //'Teensy_capsense_send_serial.ino' runs on the Teensy, sends serial to Arduino
 //connect cap sensors to Teensy pins (0,1,15,16,17,18,19,22,23)
 //touchRead() pins must be defined in the 'Teensy_capsense_send_serial.ino' file
-
-
-//*******************
-boolean debug = false;
-//*******************
 
 //__________________________________________________________
 // INIT CAP SENSE 
@@ -112,7 +111,8 @@ uint8_t rcode;
 
 //// SENDING DATA/////////
 /*
- D = ALL SENSOR DATA (NO CAP DATA)
+ V = VIBRATION SENSOR DATA
+ D = ALL SENSOR DATA (NO CAP OR VIB DATA)
  C = CAP DATA
  L = LIGHT DATA
  M = MOISTURE
@@ -127,7 +127,7 @@ void setup(){
   enable_light_sensor = true;
   enable_moisture_sensor = true;
   enable_temphum_sensor = true  ;
-  enable_cap_sensor = false; //--- false for cherry and large tomatoes
+  enable_cap_sensor = false; //--- false for cherry tomatoes, large tomatoes, pepper, and beets as of 4-Aug-2013
   enable_rangefinder = true;
   enable_vib_sensor = true; //--- new 
        

@@ -110,11 +110,12 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 				myrun = new Runnable(){
 					String stream_mode = _d.toString();
 					public void run(){
-						streamMode.setText(stream_mode);
 						if (Boolean.valueOf(stream_mode)){
+							setState("debug");
+							streamMode.setText(stream_mode);
 							streamMode.setTextColor(Color.GREEN);
-						} else streamMode.setTextColor(Color.DKGRAY);
-						if(PowerGarden.Device.datastream_mode == false){
+						}
+						else{
 						    debugSensors = false;
 							activity_.resetView();
 							activity_.mSystemUiHider.hide();
@@ -284,36 +285,60 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 						plantDisplay[i+4] = val; //going to display on 4,5,6
 						Log.d("plantVib"+Integer.toString((i+4)), String.valueOf(val));
 					}
+				
+				
+					if(System.currentTimeMillis() - PowerGarden.Device.plants[i+4].touchedTimestamp > triggerTime){ //if we've hit trigger time max
+						PowerGarden.Device.plants[i+4].triggered = false;
+					}
+					
+					if((plantDisplay[i+4] < 10) && !PowerGarden.Device.plants[i+4].triggered){ //if we're over the threshold AND we're not triggered:
+						
+						Log.d(TAG, "currVIB over threshold : "+Integer.toString(plantDisplay[i+4]));
+						//play correct sound for this plant here
+						PowerGarden.audioManager.playSound(i+4);
+						
+						//*** TOUCHED ***//
+						PowerGarden.Device.plants[i+4].triggered = true; //set triggered to true for this plant
+						PowerGarden.Device.plants[i+4].touchedTimestamp = System.currentTimeMillis(); //record timestamp
+						PowerGarden.Device.plants[i+4].touchStamps.add(PowerGarden.Device.plants[i+4].touchedTimestamp); //add timestamp to overall touchStamps vector
+						PowerGarden.stateManager.updatePlantStates(); //check this plant's state
+						PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i+4, plantDisplay[i+4], PowerGarden.Device.plants[i+4].state, PowerGarden.Device.plants[i+4].touchStamps.size(), PresentationViewable.this );
+						//*******	
+						if (PowerGarden.stateManager.updateDeviceState() ){ // returns true if changed
+							PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+							//activity_.resetView(); //now done in timerTask run() method
+						}
+					}
 				}
 				
-				if(bSetup){ //update the debug screen if it's on
+				//if(bSetup){ //update the debug screen if it's on
 					Runnable runner = new Runnable(){
 						public void run() {
 
 							for(int i=0; i<3; i++){ //display vibration on plants 4, 5, 6
 								
-								if(System.currentTimeMillis() - PowerGarden.Device.plants[i+4].touchedTimestamp > triggerTime){ //if we've hit trigger time max
-									PowerGarden.Device.plants[i+4].triggered = false;
-								}
-								
-								if((plantDisplay[i+4] < 10) && !PowerGarden.Device.plants[i+4].triggered){ //if we're over the threshold AND we're not triggered:
-									
-									Log.d(TAG, "currVIB over threshold : "+Integer.toString(plantDisplay[i+4]));
-									//play correct sound for this plant here
-									PowerGarden.audioManager.playSound(i+4);
-									
-									//*** TOUCHED ***//
-									PowerGarden.Device.plants[i+4].triggered = true; //set triggered to true for this plant
-									PowerGarden.Device.plants[i+4].touchedTimestamp = System.currentTimeMillis(); //record timestamp
-									PowerGarden.Device.plants[i+4].touchStamps.add(PowerGarden.Device.plants[i+4].touchedTimestamp); //add timestamp to overall touchStamps vector
-									PowerGarden.stateManager.updatePlantStates(); //check this plant's state
-									PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i+4, plantDisplay[i+4], PowerGarden.Device.plants[i+4].state, PowerGarden.Device.plants[i+4].touchStamps.size(), PresentationViewable.this );
-									//*******	
-									if (PowerGarden.stateManager.updateDeviceState() ){ // returns true if changed
-										PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
-										//activity_.resetView(); //now done in timerTask run() method
-									}
-								}
+//								if(System.currentTimeMillis() - PowerGarden.Device.plants[i+4].touchedTimestamp > triggerTime){ //if we've hit trigger time max
+//									PowerGarden.Device.plants[i+4].triggered = false;
+//								}
+//								
+//								if((plantDisplay[i+4] < 10) && !PowerGarden.Device.plants[i+4].triggered){ //if we're over the threshold AND we're not triggered:
+//									
+//									Log.d(TAG, "currVIB over threshold : "+Integer.toString(plantDisplay[i+4]));
+//									//play correct sound for this plant here
+//									PowerGarden.audioManager.playSound(i+4);
+//									
+//									//*** TOUCHED ***//
+//									PowerGarden.Device.plants[i+4].triggered = true; //set triggered to true for this plant
+//									PowerGarden.Device.plants[i+4].touchedTimestamp = System.currentTimeMillis(); //record timestamp
+//									PowerGarden.Device.plants[i+4].touchStamps.add(PowerGarden.Device.plants[i+4].touchedTimestamp); //add timestamp to overall touchStamps vector
+//									PowerGarden.stateManager.updatePlantStates(); //check this plant's state
+//									PowerGarden.SM.plantTouch("touch", PowerGarden.Device.ID, i+4, plantDisplay[i+4], PowerGarden.Device.plants[i+4].state, PowerGarden.Device.plants[i+4].touchStamps.size(), PresentationViewable.this );
+//									//*******	
+//									if (PowerGarden.stateManager.updateDeviceState() ){ // returns true if changed
+//										PowerGarden.Device.messageCopy = PowerGarden.stateManager.updateCopy();
+//										//activity_.resetView(); //now done in timerTask run() method
+//									}
+//								}
 								
 								if(debugSensors){
 									if(PowerGarden.Device.plants[i+4].triggered)
@@ -327,7 +352,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 					if(runner != null){
 						activity_.runOnUiThread(runner);
 					}
-			    }
+			    //}
 			}
 			
 			else if(dataType.equalsIgnoreCase("L")){

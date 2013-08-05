@@ -114,7 +114,10 @@ public abstract class UsbActivity extends Activity implements Connectable {
 			 	        } catch (Exception e) {
 			 	        	if (debug_) showMessage("Close App: " +e.getMessage() + "\n");
 			 	        }
-			 	       if (exitOnDetach_) finish();
+			 	       if (exitOnDetach_){
+			 	    	   
+			 	    	   finish();
+			 	       }
 					}
             	});
             	break;

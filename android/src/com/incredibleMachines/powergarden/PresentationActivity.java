@@ -87,6 +87,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		resetView();
 	}
 	
+	
+	
 	@Override
 	public void signalToUi(int type, Object data){
 		super.signalToUi(type, data);
@@ -368,6 +370,14 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	        public void handleMessage(Message msg) {  //only called when we're done loading all JSON
 	        	PowerGarden.audioManager.setupAudio(); //does setup of all sound file types from JSON
 	        	setupSoundpool();
+	        	
+	    		//**** sign staging setup ****//
+	    		Timer signScheduling = new Timer();
+	    		signScheduling.schedule(signStageUpdater, 10000, 10000); // (task, initial delay, repeated delay
+	          
+	    		//*** send setup to arduino ***//
+	    		PresentationActivity.super.sendData("setup");	
+	    		
 	        	progressBar.dismiss();
 	        } 
         };
@@ -409,12 +419,12 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		Log.d(TAG, "onPostCreate");
 		delayedHide(1500);
 	
-		//**** sign staging setup ****//
-		Timer signScheduling = new Timer();
-		signScheduling.schedule(signStageUpdater, 10000, 10000); // (task, initial delay, repeated delay
-      
-		//*** send setup to arduino ***//
-		PresentationActivity.super.sendData("setup");	
+//		//**** sign staging setup ****//
+//		Timer signScheduling = new Timer();
+//		signScheduling.schedule(signStageUpdater, 10000, 10000); // (task, initial delay, repeated delay
+//      
+//		//*** send setup to arduino ***//
+//		PresentationActivity.super.sendData("setup");	
 	}
 	
 	private void setupSoundpool(){
@@ -791,5 +801,12 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    	Log.d(TAG,"BACK CLICKED");
 	    }
 	    return true;
+	}
+	
+	@Override
+	public void onStop()
+	{
+	    unregisterReceiver(mBatInfoReceiver);
+	    super.onStop();
 	}
 }
