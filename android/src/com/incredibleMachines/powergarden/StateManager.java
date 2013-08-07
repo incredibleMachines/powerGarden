@@ -114,20 +114,13 @@ public class StateManager extends Activity {
 //			PowerGarden.audioManager.playSound(-3); //WATER_REQUEST audio !
 //		}
 		
-		if(Math.abs(PowerGarden.Device.distance - PowerGarden.Device.lastDistance) > 5 && PowerGarden.Device.rangeActive){
-			
-//			if(PowerGarden.Device.distance < 35
-//						&& System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000 
-//						&& PowerGarden.Device.distance != PowerGarden.Device.lastDistance){
-//					PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
-//					PowerGarden.Device.deviceState ="content";
-//					PowerGarden.deviceStateIndex = 1;
-//					PowerGarden.audioManager.playSound(-11);
-//					PowerGarden.Device.lastRangeHitTime = System.currentTimeMillis();
-//				}
+		if(Math.abs(PowerGarden.Device.distance - PowerGarden.Device.lastDistance) > 5 
+				&& PowerGarden.Device.rangeActive 
+				&& PowerGarden.plantStateIndex < 1){
+			//there is real movement + range is active + we are in a lonely state !
 			
 			if (PowerGarden.Device.distance > 75
-					&& System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000 && 
+					&& System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > (int)(6000+(Math.random()*6000)) && 
 					PowerGarden.Device.distance != PowerGarden.Device.lastDistance &&
 					PowerGarden.Device.rangeActive){
 					PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
@@ -136,16 +129,6 @@ public class StateManager extends Activity {
 					PowerGarden.audioManager.playSound(-10);
 					PowerGarden.Device.lastRangeHitTime = System.currentTimeMillis();
 				} 
-			
-			
-//			else if (Math.abs(PowerGarden.Device.distance - PowerGarden.Device.lastDistance) > 5 
-//					&&	System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){ //(PowerGarden.Device.distance > 75 && System.currentTimeMillis() - PowerGarden.Device.lastRangeHitTime > 4000){
-//						PowerGarden.Device.lastDistance = PowerGarden.Device.distance;
-//						PowerGarden.Device.deviceState ="lonely";
-//						PowerGarden.deviceStateIndex = 0;
-//						PowerGarden.audioManager.playSound(-10);
-//						PowerGarden.Device.lastRangeHitTime = System.currentTimeMillis();
-//			}
 		}
 			
 		

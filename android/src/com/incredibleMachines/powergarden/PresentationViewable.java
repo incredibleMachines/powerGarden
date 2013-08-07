@@ -353,63 +353,10 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 						activity_.runOnUiThread(runner);
 					}
 			    //}
-			}
 			
-			else if(dataType.equalsIgnoreCase("L")){
-				PowerGarden.Device.light = Integer.parseInt(parseData[1]);
-				//createJson("light",PowerGarden.light);
-				final int light = PowerGarden.Device.light;
-				if(debugSensors&& bSetup){
-					Runnable runner = new Runnable(){
-						public void run() {
-							String lightStr = String.valueOf(light);
-							lightval.setText(lightStr);
-						}
-					};
-					if(runner != null){
-						activity_.runOnUiThread(runner);
-					}
-			    }
-			}
-			
-			else if(dataType.equalsIgnoreCase("M")){
-				PowerGarden.Device.moisture = Integer.parseInt(parseData[1]);
-				//createJson("moisture",PowerGarden.moisture);
-				final int moisture = PowerGarden.Device.moisture;
-				if(debugSensors&& bSetup){
-					Runnable runner = new Runnable(){
-						public void run() {
-							String moistStr = String.valueOf(moisture);
-							moistval.setText(moistStr);
-						}
-					};
-					if(runner != null){
-						activity_.runOnUiThread(runner);
-					}
-			    }
-			}else if(dataType.equalsIgnoreCase("T")){
-				Log.d(TAG, "GOT DATA MODE = "+dataType);
-				PowerGarden.Device.temp = Integer.parseInt(parseData[1]);
-				PowerGarden.Device.hum = Integer.parseInt(parseData[2]);
-				//createJson("temperature",PowerGarden.temp, "humidity", PowerGarden.hum);
-				final int temp = PowerGarden.Device.temp;
-				final int hum = PowerGarden.Device.hum;
-				if(debugSensors && bSetup){
-					Runnable runner = new Runnable(){
-						public void run() {
-							String tempStr = String.valueOf(temp);
-							String humStr = String.valueOf(hum);
-							tempval.setText(tempStr);
-							humval.setText(humStr);
-						}
-					};
-					if(runner != null){
-						activity_.runOnUiThread(runner);
-					}
-			    }
 			}else if(dataType.equalsIgnoreCase("R")){ // RANGE
 				PowerGarden.Device.distance = Integer.parseInt(parseData[1]);
-				Log.d("distqnce: ", Integer.toString(PowerGarden.Device.distance) );
+				Log.d("distance: ", Integer.toString(PowerGarden.Device.distance) );
 				//createJson("distance",PowerGarden.distance);
 //				if(PowerGarden.Device.distance > PowerGarden.Device.rangeLowThresh && )
 //					PowerGarden.Device.rangeActive = true;
@@ -426,6 +373,7 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 					PowerGarden.SM.updateData("update", PowerGarden.Device.ID, this);
 				
 				final int distance = PowerGarden.Device.distance;
+				
 				if(debugSensors && bSetup){
 					Runnable runner = new Runnable(){
 						public void run() {
@@ -437,7 +385,9 @@ public class PresentationViewable extends TimerTask implements Connectable, View
 						activity_.runOnUiThread(runner);
 					}
 			    }
-			}else if(dataType.equalsIgnoreCase("D")){
+			}
+			
+			else if(dataType.equalsIgnoreCase("D")){
 				//LIGHT, TEMP, HUM, MOIST, RANGE
 				Log.d(TAG, "received 'D' ! ");
 				PowerGarden.Device.light = Integer.parseInt(parseData[1]);

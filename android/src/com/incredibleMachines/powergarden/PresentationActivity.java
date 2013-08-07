@@ -83,10 +83,8 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	public void onResume(){
 		super.onResume();
 		Log.d(TAG, "onResume");
-
 		resetView();
 	}
-	
 	
 	
 	@Override
@@ -106,6 +104,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 		
 		/*** registered ***/
 		else if(type == PowerGarden.Registered){
+			Log.wtf(TAG, "bRegistered set TRUE");
 			PowerGarden.bRegistered = true;
 		}
 		
@@ -246,7 +245,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    PowerGarden.SM = SM;
 	    PowerGarden.loadPrefs(getApplicationContext());
 	    
-	    Log.wtf(TAG, "getPrefString: " + PowerGarden.getPrefString("deviceID", null));
+	    Log.d(TAG, "getPrefString: " + PowerGarden.getPrefString("deviceID", null));
 	    
 	    if(PowerGarden.getPrefString("deviceID", null) == null){
 	    	Log.wtf(TAG, "getPref 'deviceID'=null");
@@ -256,6 +255,7 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 	    	PowerGarden.Device.host = PowerGarden.getPrefString("hostname", null);
 	    	PowerGarden.Device.port = PowerGarden.getPrefString("port", null);
 	    	PowerGarden.SM.connectToServer(PowerGarden.Device.host,PowerGarden.Device.port,this);
+	    	PowerGarden.bRegistered = true;
 	    }
 	    
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
@@ -342,45 +342,48 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 			}
 		});
 		
+		
 		//-- attach viewable
         currentViewable_ = new PresentationViewable();
         currentViewable_.setActivity(this);
         
-		// prepare for a progress bar dialog 
-		progressBar = new ProgressDialog(contentView.getContext());
-		progressBar.setCancelable(true);
-		progressBar.setMessage("downloading JSON...");
-		progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		progressBar.show();
-
-        new Thread() {
-        	public void run() {
-        		try {
-        			signStageUpdater.loadDialogue();
-        		} catch (IOException e) {
-        			e.printStackTrace();
-        		} catch (JSONException e) {
-        			e.printStackTrace();
-        		}
-        	}
-    	}.start();
-    	
-        jsonDlHandler = new Handler() { 
-	        @Override 
-	        public void handleMessage(Message msg) {  //only called when we're done loading all JSON
-	        	PowerGarden.audioManager.setupAudio(); //does setup of all sound file types from JSON
-	        	setupSoundpool();
-	        	
-	    		//**** sign staging setup ****//
-	    		Timer signScheduling = new Timer();
-	    		signScheduling.schedule(signStageUpdater, 10000, 10000); // (task, initial delay, repeated delay
-	          
-	    		//*** send setup to arduino ***//
-	    		PresentationActivity.super.sendData("setup");	
-	    		
-	        	progressBar.dismiss();
-	        } 
-        };
+        if(PowerGarden.bRegistered){
+			// prepare for a progress bar dialog 
+			progressBar = new ProgressDialog(contentView.getContext());
+			progressBar.setCancelable(true);
+			progressBar.setMessage("downloading JSON...");
+			progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressBar.show();
+	
+	        new Thread() {
+	        	public void run() {
+	        		try {
+	        			signStageUpdater.loadDialogue();
+	        		} catch (IOException e) {
+	        			e.printStackTrace();
+	        		} catch (JSONException e) {
+	        			e.printStackTrace();
+	        		}
+	        	}
+	    	}.start();
+	    	
+	        jsonDlHandler = new Handler() { 
+		        @Override 
+		        public void handleMessage(Message msg) {  //only called when we're done loading all JSON
+		        	PowerGarden.audioManager.setupAudio(); //does setup of all sound file types from JSON
+		        	setupSoundpool();
+		        	
+		    		//**** sign staging setup ****//
+		    		Timer signScheduling = new Timer();
+		    		signScheduling.schedule(signStageUpdater, 10000, 10000); // (task, initial delay, repeated delay
+		          
+		    		//*** send setup to arduino ***//
+		    		PresentationActivity.super.sendData("setup");	
+		    		
+		        	progressBar.dismiss();
+		        } 
+	        };
+        }
     
 //    	while(progressBar.isShowing()){ 
 //    		Log.d("PROGRESS BAR", "IS SHOWING");
@@ -412,7 +415,11 @@ public class PresentationActivity extends UsbActivity implements Connectable{
 //		}
 	}
 
+	
+	protected void downloadJSON(){
 
+	
+	}
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
